@@ -1,4 +1,5 @@
 {
+  self,
   inputs,
   lib,
   ...
@@ -30,6 +31,7 @@ in
       osConfig,
       config,
       pkgs,
+      system,
       ...
     }:
     let
@@ -63,12 +65,22 @@ in
           '';
           "hypr/programs.lua".text = ''
             return ${
-              createLua {
-                terminal = getExe pkgs.kitty;
+              let
                 uwsm = getExe pkgs.uwsm;
-                file_manager = getExe' pkgs.kdePackages.dolphin "dolphin";
-                browser = getExe config.programs.zen-browser.package;
-                discord = getExe pkgs.equibop;
+                getCommand =
+                  program:
+                  if builtins.isString program then
+                    "${uwsm} app -- ${program}"
+                  else
+                    "${uwsm} app -- ${getExe program}";
+              in
+              createLua {
+                uwsm = getExe pkgs.uwsm;
+                terminal = getCommand pkgs.kitty;
+                file_manager = getCommand (getExe' pkgs.kdePackages.dolphin "dolphin");
+                browser = getCommand config.programs.zen-browser.package;
+                discord = getCommand pkgs.equibop;
+                qs_toggle = getCommand self.packages.${system}.qs-toggle;
               }
             }
           '';

@@ -41,7 +41,8 @@ PanelWindow {
     }
     function execute() {
         const entry = applications[index];
-        Quickshell.execDetached(["sh", "-c", `fork ${entry.execString}`]);
+        console.log(entry.id + ".desktop");
+        Quickshell.execDetached(["fork", entry.id + ".desktop"]);
     }
 
     function search(query: string) {

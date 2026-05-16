@@ -13,10 +13,10 @@ for key, value in pairs(envs) do
 end
 
 -- Programs
-hl.bind(main_mod .. " + E", hl.dsp.exec_cmd(programs.uwsm .. " app -- " .. programs.file_manager))
-hl.bind(main_mod .. " + Q", hl.dsp.exec_cmd(programs.uwsm .. " app -- " .. programs.terminal))
-hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(programs.uwsm .. " app -- " .. programs.browser))
-hl.bind(main_mod .. " + D", hl.dsp.exec_cmd(programs.uwsm .. " app -- " .. programs.discord))
+hl.bind(main_mod .. " + E", hl.dsp.exec_cmd(programs.file_manager))
+hl.bind(main_mod .. " + Q", hl.dsp.exec_cmd(programs.terminal))
+hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(programs.browser))
+hl.bind(main_mod .. " + D", hl.dsp.exec_cmd(programs.discord))
 hl.window_rule({
   name = "kitty workspace 1",
   match = { class = "^(kitty)$" },
@@ -37,6 +37,12 @@ hl.on("hyprland.start", function()
   hl.dispatch(hl.dsp.exec_cmd(programs.terminal))
   hl.dispatch(hl.dsp.exec_cmd(programs.browser))
   hl.dispatch(hl.dsp.exec_cmd(programs.discord))
+end)
+
+hl.on("window.urgent", function(w)
+  if w ~= nil and w.workspace ~= nil then
+    hl.dispatch(hl.dsp.focus({ workspace = w.workspace.id }))
+  end
 end)
 
 hl.config({
@@ -114,11 +120,8 @@ hl.config({
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(main_mod .. " + X", hl.dsp.window.close())
--- hl.bind(
---   main_mod .. " + M",
---   hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
--- )
-hl.bind(main_mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind(main_mod .. " + V", hl.dsp.exec_cmd(programs.qs_toggle .. " clipboard toggle"))
+hl.bind(main_mod .. " + SPACE", hl.dsp.exec_cmd(programs.qs_toggle .. " launcher toggle"))
 -- hl.bind(main_mod .. " + R", hl.dsp.exec_cmd(menu))
 -- hl.bind(main_mod .. " + P", hl.dsp.window.pseudo())
 -- hl.bind(main_mod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
@@ -132,7 +135,7 @@ hl.bind(main_mod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 for i = 1, 8 do
   local key = i
   hl.bind("F" .. key, hl.dsp.focus({ workspace = i }))
-  hl.bind(main_mod .. " + " .. key, hl.dsp.window.move({ workspace = i }))
+  hl.bind(main_mod .. " + F" .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 -- Scroll through existing workspaces with mainMod + scroll
@@ -173,31 +176,21 @@ hl.bind(main_mod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 -- hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 -- hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 --
--- hl.window_rule({
---   name = "suppress-maximize-events",
---   match = { class = ".*" },
---
---   suppress_event = "maximize",
--- })
---
--- hl.window_rule({
---   name = "fix-xwayland-drags",
---   match = {
---     class = "^$",
---     title = "^$",
---     xwayland = true,
---     float = true,
---     fullscreen = false,
---     pin = false,
---   },
---   no_focus = true,
--- })
---
--- -- Hyprland-run windowrule
--- hl.window_rule({
---   name = "move-hyprland-run",
---   match = { class = "hyprland-run" },
---
---   move = "20 monitor_h-120",
---   float = true,
--- })
+
+hl.layer_rule({
+  name = "quickshell",
+  match = { namespace = "^quickshell:.*$" },
+  blur = true,
+  ignore_alpha = 0.5,
+})
+
+hl.window_rule({
+  name = "Picture in Picture windows",
+  match = { title = "^.*[Pp]icture[ -][Ii]n[ -][Pp]icture.*$" },
+  float = true,
+  pin = true,
+  rounding = 7,
+  opacity = "1 1",
+  move = { "monitor_w-window_w-10", "monitor_h-window_h-10" },
+  size = { "monitor_w/4", "monitor_h/4" },
+})

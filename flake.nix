@@ -6,6 +6,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixos-hardware.url = "github:NixOS/nixos-hardware/master";
+        nvf.url = "github:notashelf/nvf";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
