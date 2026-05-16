@@ -12,11 +12,15 @@ for key, value in pairs(envs) do
   hl.env(key, value)
 end
 
+local function exec(cmd)
+  hl.dsp.exec_cmd(programs.uwsm .. " app -- " .. cmd)
+end
+
 -- Programs
-hl.bind(main_mod .. " + E", hl.dsp.exec_cmd(programs.file_manager))
-hl.bind(main_mod .. " + B", hl.dsp.exec_cmd(programs.browser))
-hl.bind(main_mod .. " + Q", hl.dsp.exec_cmd(programs.terminal))
-hl.bind(main_mod .. " + D", hl.dsp.exec_cmd(programs.discord))
+hl.bind(main_mod .. " + E", exec(programs.file_manager))
+hl.bind(main_mod .. " + B", exec(programs.browser))
+hl.bind(main_mod .. " + Q", exec(programs.terminal))
+hl.bind(main_mod .. " + D", exec(programs.discord))
 hl.window_rule({
   name = "kitty workspace 1",
   match = { class = "^(kitty)$" },
@@ -34,9 +38,9 @@ hl.window_rule({
 })
 
 hl.on("hyprland.start", function()
-  hl.dsp.exec_cmd(programs.terminal)
-  hl.dsp.exec_cmd(programs.browser)
-  hl.dsp.exec_cmd(programs.discord)
+  exec(programs.terminal)
+  exec(programs.browser)
+  exec(programs.discord)
 end)
 
 hl.config({
