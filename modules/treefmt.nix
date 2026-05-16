@@ -17,6 +17,7 @@
           shfmt.enable = true;
           just.enable = true;
           qmlformat.enable = true;
+          stylua.enable = true;
         };
 
         settings.formatter = {

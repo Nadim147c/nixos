@@ -65,6 +65,7 @@ in
             return ${
               createLua {
                 terminal = getExe pkgs.kitty;
+                uwsm = getExe pkgs.uwsm;
                 file_manager = getExe' pkgs.kdePackages.dolphin "dolphin";
                 browser = getExe config.programs.zen-browser.package;
                 discord = getExe pkgs.equibop;
