@@ -1,19 +1,15 @@
-{
-  inputs,
-  self,
-  lib,
-  ...
-}:
-let
-  inherit (lib) getExe;
-in
+{ inputs, self, ... }:
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, system, ... }:
     {
       packages.neovim =
         (inputs.nvf.lib.neovimConfiguration {
           inherit pkgs;
+          extraSpecialArgs = {
+            inherit inputs;
+            topiary-nushell = inputs.topiary-nushell.packages.${system}.default;
+          };
           modules = (inputs.import-tree ./_config).imports;
         }).neovim;
     };
@@ -24,7 +20,7 @@ in
       inherit (self.packages.${system}) neovim;
     in
     {
-      environment.sessionVariables.EDITOR = getExe neovim;
+      environment.sessionVariables.EDITOR = "nvim";
       environment.systemPackages = [ neovim ];
     };
 

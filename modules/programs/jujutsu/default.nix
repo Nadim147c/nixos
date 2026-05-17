@@ -1,7 +1,7 @@
-{ config, ... }:
+{ config, self, ... }:
 {
   flake.modules.homeManager.base =
-    { pkgs, lib, ... }:
+    { lib, system, ... }:
     {
       programs.jujutsu = {
         enable = true;
@@ -9,7 +9,7 @@
           user.name = config.fullname;
           user.email = config.email;
           ui.default-command = "log";
-          ui.edit = lib.getExe pkgs.neovim;
+          ui.edit = lib.getExe self.packages.${system}.neovim;
           signing = {
             behavior = "own";
             backend = "ssh";

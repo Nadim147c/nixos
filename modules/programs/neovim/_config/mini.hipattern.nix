@@ -1,30 +1,20 @@
-_: {
+{ lib, ... }:
+let
+  createHighlight = pattern: group: { inherit pattern group; };
+in
+{
   vim = {
     mini.hipatterns = {
       enable = true;
       setupOpts = {
         highlighters = {
-          # Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
-          fixme = {
-            pattern = "%f[%w]()FIXME()%f[%W]";
-            group = "MiniHipatternsFixme";
-          };
-          hack = {
-            pattern = "%f[%w]()HACK()%f[%W]";
-            group = "MiniHipatternsHack";
-          };
-          todo = {
-            pattern = "%f[%w]()TODO()%f[%W]";
-            group = "MiniHipatternsTodo";
-          };
-          note = {
-            pattern = "%f[%w]()NOTE()%f[%W]";
-            group = "MiniHipatternsNote";
-          };
-
-          # TODO: Fix this...
-          # Highlight hex color strings (`#rrggbb`) using that color
-          # hex_color = hipatterns.gen_highlighter.hex_color();
+          fixme = createHighlight "%f[%w]()FIXME()%f[%W]" "MiniHipatternsFixme";
+          hack = createHighlight "%f[%w]()HACK()%f[%W]" "MiniHipatternsHack";
+          todo = createHighlight "%f[%w]()TODO()%f[%W]" "MiniHipatternsTodo";
+          note = createHighlight "%f[%w]()NOTE()%f[%W]" "MiniHipatternsNote";
+          hex_color = lib.generators.mkLuaInline /* lua */ ''
+            require("mini.hipatterns").gen_highlighter.hex_color()
+          '';
         };
       };
     };

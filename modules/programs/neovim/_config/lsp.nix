@@ -1,0 +1,92 @@
+{ lib, ... }:
+{
+  vim = {
+    diagnostics.enable = true;
+    diagnostics.config = {
+      underline = false;
+      virtual_text = true;
+      float.border = "rounded";
+    };
+
+    languages = {
+      enableFormat = true;
+      enableTreesitter = true;
+
+      bash.enable = true;
+      html.enable = true;
+      go = {
+        enable = true;
+        extensions.gopher-nvim.enable = true;
+      };
+      kotlin.enable = true;
+      lua.enable = true;
+      markdown = {
+        enable = true;
+        extensions.render-markdown-nvim.enable = true;
+      };
+      nix = {
+        enable = true;
+        format = {
+          enable = true;
+          type = [ "nixfmt" ];
+        };
+        lsp.servers = [
+          "nil"
+          "nixd"
+        ];
+      };
+      nu.enable = true;
+      python.enable = true;
+      qml = {
+        enable = true;
+        format.enable = true;
+        lsp.enable = true;
+      };
+      rust.enable = true;
+      typescript.enable = true;
+    };
+
+    lsp = {
+      enable = true;
+      formatOnSave = true;
+      lspkind.enable = true;
+      presets = {
+        tailwindcss-language-server.enable = true;
+        typescript-go.enable = true;
+      };
+      otter-nvim.enable = true;
+      trouble.enable = true;
+      servers."*" = {
+        on_attach = lib.generators.mkLuaInline /* lua */ ''
+          function(_, bufnr)
+            local function opts(desc)
+              return { buffer = bufnr, desc = "LSP " .. desc }
+            end
+
+            vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts("Go to declaration"))
+            vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts("Go to definition"))
+            vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts("Go to implementation"))
+            vim.keymap.set("n", "H", vim.diagnostic.open_float, opts("Show diagnostic in a float"))
+            vim.keymap.set("n", "gn", vim.diagnostic.goto_next, opts("Go to next diagnostic"))
+            vim.keymap.set("n", "gN", vim.diagnostic.goto_prev, opts("Go to previous diagnostic"))
+            vim.keymap.set("n", "<leader>sh", vim.lsp.buf.signature_help, opts("Show signature help"))
+            vim.keymap.set("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts("Add workspace folder"))
+            vim.keymap.set("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, opts("Remove workspace folder"))
+            vim.keymap.set("n", "<leader>ds", vim.diagnostic.setloclist, { desc = "LSP diagnostic loclist" })
+
+            vim.keymap.set("n", "<leader>wl", function()
+              print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+            end, opts("List workspace folders"))
+
+            vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts("Go to type definition"))
+
+            vim.keymap.set("n", "<leader>ra", vim.lsp.buf.rename, { expr = true })
+
+            vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts("Code action"))
+            vim.keymap.set("n", "gr", vim.lsp.buf.references, opts("Show references"))
+          end
+        '';
+      };
+    };
+  };
+}
