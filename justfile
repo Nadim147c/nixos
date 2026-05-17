@@ -13,8 +13,6 @@ check:
 fmt:
     nix fmt
 
-
 quickshell-dev:
-  systemctl --user stop quickshell.service
-  qs -p modules/programs/quickshell/shell.qml
-
+    systemctl --user stop quickshell.service
+    qs -p modules/programs/quickshell/shell.qml

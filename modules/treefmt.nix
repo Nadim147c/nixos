@@ -6,19 +6,23 @@
       system,
       ...
     }:
+    let
+      enabled.enable = true;
+    in
     {
       treefmt = {
         projectRootFile = "flake.nix";
 
-        programs = {
-          nixfmt.enable = true;
-          gofumpt.enable = true;
-          shellcheck.enable = true;
-          shfmt.enable = true;
-          just.enable = true;
-          qmlformat.enable = true;
-          stylua.enable = true;
-        };
+        programs = lib.genAttrs [
+          "nixfmt"
+          "gofumpt"
+          "shellcheck"
+          "shfmt"
+          "just"
+          "qmlformat"
+          "stylua"
+          "taplo"
+        ] (_: enabled);
 
         settings.formatter = {
           "topiary-nushell" = {

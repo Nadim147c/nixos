@@ -1,30 +1,30 @@
 schema = 3
 
 [mod]
-  [mod.'github.com/Nadim147c/real-go']
-    version = 'v0.0.0-20260320162608-66134fbe4e77'
-    hash = 'sha256-Q6Q5eLzW7La9BfOks68YueNxYplID2wHagq4BZkSyas='
+[mod.'github.com/Nadim147c/real-go']
+version = 'v0.0.0-20260320162608-66134fbe4e77'
+hash = 'sha256-Q6Q5eLzW7La9BfOks68YueNxYplID2wHagq4BZkSyas='
 
-  [mod.'github.com/adrg/xdg']
-    version = 'v0.5.3'
-    hash = 'sha256-bo6tBgHS+3sl6f4oWpmdFrZjfV6eA/3xAlysSW0bIEs='
+[mod.'github.com/adrg/xdg']
+version = 'v0.5.3'
+hash = 'sha256-bo6tBgHS+3sl6f4oWpmdFrZjfV6eA/3xAlysSW0bIEs='
 
-  [mod.'github.com/fsnotify/fsnotify']
-    version = 'v1.10.1'
-    hash = 'sha256-6LBLgsh4nKkMpgRKVsYFEaGDSU1fncBcWVSjKBdfgjU='
+[mod.'github.com/fsnotify/fsnotify']
+version = 'v1.10.1'
+hash = 'sha256-6LBLgsh4nKkMpgRKVsYFEaGDSU1fncBcWVSjKBdfgjU='
 
-  [mod.'github.com/inconshreveable/mousetrap']
-    version = 'v1.1.0'
-    hash = 'sha256-XWlYH0c8IcxAwQTnIi6WYqq44nOKUylSWxWO/vi+8pE='
+[mod.'github.com/inconshreveable/mousetrap']
+version = 'v1.1.0'
+hash = 'sha256-XWlYH0c8IcxAwQTnIi6WYqq44nOKUylSWxWO/vi+8pE='
 
-  [mod.'github.com/spf13/cobra']
-    version = 'v1.10.2'
-    hash = 'sha256-nbRCTFiDCC2jKK7AHi79n7urYCMP5yDZnWtNVJrDi+k='
+[mod.'github.com/spf13/cobra']
+version = 'v1.10.2'
+hash = 'sha256-nbRCTFiDCC2jKK7AHi79n7urYCMP5yDZnWtNVJrDi+k='
 
-  [mod.'github.com/spf13/pflag']
-    version = 'v1.0.10'
-    hash = 'sha256-uDPnWjHpSrzXr17KEYEA1yAbizfcsfo5AyztY2tS6ZU='
+[mod.'github.com/spf13/pflag']
+version = 'v1.0.10'
+hash = 'sha256-uDPnWjHpSrzXr17KEYEA1yAbizfcsfo5AyztY2tS6ZU='
 
-  [mod.'golang.org/x/sys']
-    version = 'v0.26.0'
-    hash = 'sha256-YjklsWNhx4g4TaWRWfFe1TMFKujbqiaNvZ38bfI35fM='
+[mod.'golang.org/x/sys']
+version = 'v0.26.0'
+hash = 'sha256-YjklsWNhx4g4TaWRWfFe1TMFKujbqiaNvZ38bfI35fM='
