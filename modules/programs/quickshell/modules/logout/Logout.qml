@@ -10,7 +10,7 @@ import Quickshell.Wayland
 PanelWindow {
     id: root
 
-    property real borderRadius: Appearance.round.larger
+    property real borderRadius: Appearance.round.larger * 2
     property color bg: Appearance.material.mySurface
 
     anchors.bottom: true
@@ -36,47 +36,60 @@ PanelWindow {
 
     Rectangle {
         id: body
-        x: root.borderRadius
-        implicitHeight: content.height + (Appearance.space.big * 2)
-        implicitWidth: content.width + (Appearance.space.big * 2)
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        implicitHeight: content.height + (Appearance.space.medium * 2)
+        implicitWidth: content.width + (Appearance.space.medium * 2)
         radius: root.borderRadius
         color: root.bg
 
         RowLayout {
             id: content
-            x: Appearance.space.big
-            y: Appearance.space.big
+            anchors.centerIn: parent
 
-            property real iconSize: 50
+            property real iconSize: 35
+            spacing: Appearance.space.tiny
 
             MaterialButton {
                 icon: "bedtime"
+                tooltip: "Sleep"
+                leftRadius: Appearance.round.large * 2
+                radius: Appearance.round.small
                 size: parent.iconSize
                 onClicked: Quickshell.execDetached(["systemctl", "suspend"])
             }
 
             MaterialButton {
                 icon: "lock"
+                tooltip: "Lock"
+                radius: Appearance.round.tiny
                 size: parent.iconSize
                 onClicked: Quickshell.execDetached(["loginctl", "lock-session"])
             }
 
             MaterialButton {
                 icon: "logout"
+                tooltip: "Logout"
+                radius: Appearance.round.tiny
                 size: parent.iconSize
-                onClicked: Quickshell.execDetached(["qs-hyprshutdown", "logout"])
+                onClicked: Quickshell.execDetached(["uwsm", "app", "--", "hyprshutdown"])
             }
 
             MaterialButton {
                 icon: "replay"
+                tooltip: "Reboot"
+                radius: Appearance.round.tiny
                 size: parent.iconSize
-                onClicked: Quickshell.execDetached(["qs-hyprshutdown", "reboot"])
+                onClicked: Quickshell.execDetached(["uwsm", "app", "--", "hyprshutdown", "-p", "systemctl reboot"])
             }
 
             MaterialButton {
                 icon: "power_settings_new"
+                tooltip: "Shutdown"
+                radius: Appearance.round.tiny
+                rightRadius: Appearance.round.large * 2
                 size: parent.iconSize
-                onClicked: Quickshell.execDetached(["qs-hyprshutdown", "shutdown"])
+                onClicked: Quickshell.execDetached(["uwsm", "app", "--", "hyprshutdown", "-p", "systemctl poweroff"])
             }
         }
     }

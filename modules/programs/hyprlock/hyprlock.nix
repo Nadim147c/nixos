@@ -58,7 +58,7 @@ in
         ];
         flags."--config" = mkForce {
           data = "$HYPRLOCK_CONFIG";
-          esc-fn = lib.x.qoute;
+          esc-fn = lib.x.quote;
         };
         settings = {
           background = {

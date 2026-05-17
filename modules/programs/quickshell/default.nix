@@ -23,6 +23,7 @@
         kdePackages.qt5compat
         kdePackages.qtdeclarative
         discord-voice-rpc
+        hyprshutdown
       ];
 
       xdg.configFile."quickshell".source = ./.;

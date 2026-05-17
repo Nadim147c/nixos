@@ -5,104 +5,122 @@
   ...
 }:
 let
-  inherit (lib) mapAttrsToList;
-  createLua = lib.generators.toLua { };
+  inherit (lib)
+    getExe
+    getExe'
+    mapAttrs'
+    mapAttrsToList
+    nameValuePair
+    ;
+  inherit (lib.generators) toLua;
 in
 {
 
-  flake.modules.nixos.gui =
-    { system, ... }:
-    let
-      inherit (inputs.hyprland.packages.${system}) hyprland xdg-desktop-portal-hyprland;
-    in
-    {
-      imports = [ inputs.hyprland.nixosModules.default ];
-      programs.hyprland = {
-        enable = true;
-        xwayland.enable = true;
-        package = hyprland;
-        portalPackage = xdg-desktop-portal-hyprland;
-        withUWSM = true;
-      };
+  flake.modules.nixos.gui = {
+    programs.hyprland = {
+      enable = true;
+      xwayland.enable = true;
+      withUWSM = true;
     };
+  };
 
   flake.modules.homeManager.gui =
     {
       osConfig,
-      config,
       pkgs,
       system,
+      lib,
       ...
     }:
-    let
-      inherit (lib) getExe getExe' nameValuePair;
-      createHyprlandConfig =
-        modules:
-        modules
-        |> map (source: nameValuePair "hypr/${baseNameOf source}" { inherit source; })
-        |> builtins.listToAttrs;
-    in
     {
       services.hyprpolkitagent.enable = true;
 
-      xdg.configFile =
-        createHyprlandConfig [
-          ./animations.lua
-          ./hyprland.lua
-        ]
-        // {
-          "hypr/envs.lua".text = ''
-            return ${
-              createLua {
-                CLUTTER_BACKEND = "wayland";
-                SDL_VIDEODRIVER = "wayland";
-                XDG_CURRENT_DESKTOP = "Hyprland";
-                XDG_SESSION_DESKTOP = "Hyprland";
-                XDG_SESSION_TYPE = "wayland";
-                GDK_BACKEND = "wayland,x11,*";
-              }
-            }
-          '';
-          "hypr/programs.lua".text = ''
-            return ${
-              let
-                uwsm = getExe pkgs.uwsm;
-                getCommand =
-                  program:
-                  if builtins.isString program then
-                    "${uwsm} app -- ${program}"
-                  else
-                    "${uwsm} app -- ${getExe program}";
-              in
-              createLua {
-                uwsm = getExe pkgs.uwsm;
-                terminal = getCommand pkgs.kitty;
-                file_manager = getCommand (getExe' pkgs.kdePackages.dolphin "dolphin");
-                browser = getCommand config.programs.zen-browser.package;
-                discord = getCommand pkgs.equibop;
-                qs_toggle = getCommand self.packages.${system}.qs-toggle;
-              }
-            }
-          '';
-          "hypr/displays.lua".text =
-            let
-              createDisplayAttrs =
-                name: display:
-                if display.enable then
-                  {
-                    output = name;
-                    mode = "${toString display.width}x${toString display.height}@${toString display.refreshRate}";
-                    position = "${toString display.x}x${toString display.y}";
-                  }
-                  // display.extra
-                else
-                  {
-                    output = name;
-                    disabled = true;
-                  };
-            in
-            "return ${osConfig.displays |> mapAttrsToList createDisplayAttrs |> createLua}";
+      home.activation.reloadHyprland = lib.hm.dag.entryAfter [ "writeBoundary" ] /* bash */ ''
+        ${getExe' pkgs.hyprland "hyprctl"} --instance 0 reload
+      '';
 
+      home.packages = with pkgs; [
+        playerctl
+        wl-clipboard
+      ];
+
+      xdg.configFile =
+        let
+          mkImport = source: {
+            _type = "import";
+            inherit source;
+          };
+          mkLuaObject = attrs: {
+            _type = "object";
+            text = ''
+              return ${toLua { } attrs}
+            '';
+          };
+
+          createConfig =
+            attrs:
+            mapAttrs' (
+              name: value:
+              let
+                filename = "hypr/${name}.lua";
+              in
+              if value._type == "import" then
+                nameValuePair filename { inherit (value) source; }
+              else
+                nameValuePair filename { inherit (value) text; }
+            ) attrs;
+        in
+        createConfig {
+          animations = mkImport ./animations.lua;
+          hyprland = mkImport ./hyprland.lua;
+          envs = mkLuaObject {
+            CLUTTER_BACKEND = "wayland";
+            SDL_VIDEODRIVER = "wayland";
+            XDG_CURRENT_DESKTOP = "Hyprland";
+            XDG_SESSION_DESKTOP = "Hyprland";
+            XDG_SESSION_TYPE = "wayland";
+            GDK_BACKEND = "wayland,x11,*";
+          };
+          programs =
+            let
+              uwsm = getExe pkgs.uwsm;
+              getCommand =
+                program:
+                if builtins.isString program then
+                  "${uwsm} app -- ${program}"
+                else
+                  "${uwsm} app -- ${getExe program}";
+            in
+            mkLuaObject {
+              inherit uwsm;
+              browser = getCommand inputs.helium.packages.${system}.default;
+              discord = getCommand pkgs.equibop;
+              file_manager = getCommand <| getExe' pkgs.kdePackages.dolphin "dolphin";
+              hyprshutdown = getCommand pkgs.hyprshutdown;
+              playerctl = getCommand <| getExe' pkgs.playerctl "playerctl";
+              qs_toggle = getCommand self.packages.${system}.qs-toggle;
+              terminal = getCommand pkgs.kitty;
+              wpctl = getCommand <| getExe' pkgs.wireplumber "wpctl";
+            };
+          displays =
+            let
+              createActiveDisplay =
+                output: display:
+                {
+                  inherit output;
+                  mode = "${toString display.width}x${toString display.height}@${toString display.refreshRate}";
+                  position = "${toString display.x}x${toString display.y}";
+                }
+                // display.extra;
+              createDisabledDisplay = output: display: {
+                inherit output;
+                disabled = true;
+              };
+              createDisplayAttrs =
+                name: value:
+                if value.enable then createActiveDisplay name value else createDisabledDisplay name value;
+            in
+            mkLuaObject <| mapAttrsToList createDisplayAttrs osConfig.displays;
         };
     };
 }

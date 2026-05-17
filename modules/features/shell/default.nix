@@ -16,6 +16,7 @@
         packages = [
           field
           fork
+          pkgs.comma
           pkgs.coreutils
           pkgs.chafa
           pkgs.file

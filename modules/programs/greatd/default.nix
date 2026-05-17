@@ -1,5 +1,4 @@
 {
-  inputs,
   config,
   lib,
   ...
@@ -10,9 +9,9 @@ let
 in
 {
   flake.modules.nixos.pc =
-    { pkgs, system, ... }:
+    { pkgs, ... }:
     let
-      hyprland = getExe' inputs.hyprland.packages.${system}.hyprland "start-hyprland";
+      hyprland = getExe' pkgs.hyprland "start-hyprland";
       session = {
         user = username;
         command = "${getExe pkgs.uwsm} start ${hyprland}";

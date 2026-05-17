@@ -15,7 +15,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// ---------- scoring data structures ----------
 type repoScore struct {
 	Score      int       `json:"score"`
 	LastAccess time.Time `json:"last_access"`
@@ -92,7 +91,7 @@ func isDotGit(f os.DirEntry) bool {
 
 func findGitRepos(root, current string, depth int) []string {
 	if depth < 0 {
-		return nil
+		return []string{root}
 	}
 
 	root, err := filepath.Abs(root)
@@ -147,7 +146,6 @@ func findRepos(root string, maxDepth int) []string {
 	return repos
 }
 
-// ---------- path coloring (unchanged) ----------
 const baseAnsiIndex = 31
 
 func colorizePart(part string, bold bool) string {
@@ -172,7 +170,6 @@ func colorizePath(path string) string {
 	return strings.Join(parts, sep)
 }
 
-// ---------- scoring-based sorting ----------
 func effectiveScore(sc repoScore, now time.Time) int {
 	if now.Sub(sc.LastAccess) > 14*24*time.Hour {
 		return 0
@@ -200,7 +197,6 @@ func sortReposByScore(repos []string, scores map[string]repoScore, root string) 
 	})
 }
 
-// ---------- command line interface ----------
 var flagDepth int = 5
 
 var addCmd = &cobra.Command{

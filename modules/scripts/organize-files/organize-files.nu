@@ -2,7 +2,7 @@
 def main [
   ...files: string # video files
 ] {
-  let image_dir = xdg-base-dir user-pictures
+  let image_dir = xdg-base-dir user-picture
   let video_dir = xdg-base-dir user-videos
   let audio_dir = xdg-base-dir user-music
   let document_dir = xdg-base-dir user-documents
@@ -40,6 +40,8 @@ def main [
           [_ video] => $video_dir
           [_ code] => $script_dir
           [_ archive] => $archive_dir
+          [_ document] => $document_dir
+          [_ text] => $document_dir
           [apk executable] => $apk_dir
           [_ executable] => $binary_dir
           [torrent _] => $torrent_dir

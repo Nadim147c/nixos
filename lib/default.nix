@@ -23,7 +23,7 @@ rec {
   isEmpty = list: (builtins.length list) == 0;
   isNotEmpty = list: (builtins.length list) == 0;
 
-  qoute = x: ''"${x}"'';
+  quote = x: ''"${x}"'';
 
   # Check if input is a number
   isNumber = v: isInt v || isFloat v;

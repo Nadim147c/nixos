@@ -1,7 +1,18 @@
-{ self, inputs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
 {
   perSystem =
     { pkgs, ... }:
+    let
+      createEnvFlag = name: {
+        data = "\$${name}";
+        esc-fn = lib.x.quote;
+      };
+    in
     {
       packages.aria2 = inputs.wrappers.wrappers.aria2.wrap (_: {
         inherit pkgs;
@@ -10,9 +21,14 @@
           /* bash */ ''
             export DOWNLOAD_DIR="''${XDG_DOWNLOAD_DIR:-$HOME/Downloads}"
             export SESSION_FILE="''${XDG_DATA_HOME:-$HOME/.local/share}/aria2/aria2.session"
+            mkdir -p "$DOWNLOAD_DIR"
             mkdir -p "$(dirname "$SESSION_FILE")"
           ''
         ];
+        flags = {
+          "--dir" = createEnvFlag "DOWNLOAD_DIR";
+          "--save-session" = createEnvFlag "SESSION_FILE";
+        };
         settings = {
           allow-overwrite = true;
           allow-piece-length-change = true;
@@ -21,7 +37,6 @@
           auto-file-renaming = true;
           content-disposition-default-utf8 = true;
           continue = true;
-          dir = "\${DOWNLOAD_DIR}";
           disk-cache = "64M";
           enable-rpc = false;
           file-allocation = "falloc";
@@ -31,7 +46,6 @@
           max-overall-download-limit = 0;
           min-split-size = "10M";
           no-file-allocation-limit = "8M";
-          save-session = "\${SESSION_FILE}";
           save-session-interval = 60;
           split = 10;
         };

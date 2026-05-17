@@ -24,18 +24,15 @@ Singleton {
             if (split.length > 1) {
                 const code = find(...split);
                 if (code !== 0) {
-                    console.log("[NerdFont]", icon, String.fromCharCode(code));
                     return code;
                 }
             }
 
             const code = findCode(icon);
             if (code !== 0) {
-                console.log("[NerdFont]", icon, String.fromCharCode(code));
                 return code;
             }
         }
-        console.warn("[NerdFont] Icon not found", ...icons);
         return 0;
     }
 

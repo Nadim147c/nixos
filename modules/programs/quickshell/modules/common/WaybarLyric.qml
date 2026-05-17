@@ -40,7 +40,7 @@ Singleton {
     property string trackID: ""
 
     property string coverUrl: ""
-    onCoverUrlChanged: downloadCover.exec(["coverdb", coverUrl])
+    onCoverUrlChanged: downloadCover.exec(["qs-coverdb", coverUrl])
 
     property string cover: ""
     onCoverChanged: coverColors.exec(["rong", "image", "--dry-run", "--json", cover])

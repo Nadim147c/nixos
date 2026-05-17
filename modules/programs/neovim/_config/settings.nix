@@ -10,7 +10,7 @@
     theme = {
       enable = true;
       transparent = true;
-      name = "rose-pine";
+      name = "tokyonight";
       style = "moon";
     };
 
@@ -47,8 +47,8 @@
     statusline.lualine.enable = true;
 
     ui = {
-      colorizer.enable = true;
       smartcolumn.enable = true;
+      colorizer.enable = false;
     };
     utility = {
       undotree.enable = true;

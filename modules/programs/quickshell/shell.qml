@@ -22,6 +22,7 @@ ShellRoot {
 
     Component.onCompleted: {
         Appearance.reloadTheme();
+        Yankd.search("");
     }
 
     LazyLoader {

@@ -1,4 +1,3 @@
-{ inputs, ... }:
 {
   flake.modules.nixos.base = {
     environment.pathsToLink = [
@@ -15,7 +14,7 @@
         xdgOpenUsePortal = true;
         extraPortals = [
           pkgs.kdePackages.xdg-desktop-portal-kde
-          (pkgs.lib.flakePackage' inputs.hyprland "xdg-desktop-portal-hyprland")
+          pkgs.xdg-desktop-portal-hyprland
         ];
         config.common = {
           "org.freedesktop.impl.portal.FileChooser" = [ "kde" ];

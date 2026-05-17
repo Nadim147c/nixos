@@ -4,6 +4,7 @@ _: {
     { config, ... }:
     let
       download = "${config.home.homeDirectory}/downloads";
+      projects = "${config.home.homeDirectory}/git";
       media = category: "${config.home.homeDirectory}/media/${category}";
       files = category: "${config.home.homeDirectory}/files/${category}";
     in
@@ -13,7 +14,10 @@ _: {
       xdg = {
         enable = true;
         userDirs = {
-          inherit download;
+          inherit
+            download
+            projects
+            ;
           enable = true;
           setSessionVariables = true;
           createDirectories = true;
@@ -43,6 +47,7 @@ _: {
         XDG_DOWNLOAD_DIR = download;
         XDG_MUSIC_DIR = music;
         XDG_PICTURES_DIR = pictures;
+        XDG_PROJECTS_DIR = projects;
         XDG_PUBLICSHARE_DIR = publicShare;
         XDG_TEMPLATES_DIR = templates;
         XDG_VIDEOS_DIR = videos;

@@ -2,7 +2,7 @@ switch:
     nh os switch .
 
 nixos:
-    sudo nixos-rebuild switch --flake .
+    sudo nixos-rebuild switch --flake . -L
 
 build:
     nh os build .

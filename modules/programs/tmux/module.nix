@@ -48,41 +48,23 @@
 
           set -g popup-border-lines "rounded"
           set -as terminal-features ",*:hyperlinks"
+          set -g status-style "bg=default,fg=default"
+          set -g window-status-current-style "bg=default,fg=green"
         '';
       });
     };
 
   flake.modules.homeManager.base =
-    {
-      config,
-      system,
-      ...
-    }:
+    { system, ... }:
     let
-
-      session = lib.getExe self.packages.${system}.tmux-sessionizer;
-      reloadConfig = /* bash */ ''
-        tmux source-file ${config.xdg.configHome}/tmux/tmux.conf || true
-      '';
+      sessionizer = lib.getExe self.packages.${system}.tmux-sessionizer;
     in
     {
       home.packages = [ self.packages.${system}.tmux ];
-      xdg.configFile."tmux/tmux.conf".text = /* tmux */ ''
-        source ${config.xdg.configHome}/tmux/colors.conf
-        set -g popup-border-style "fg=#{@rong_outline}"
-        set -g status-style "bg=default,fg=#{@rong_on_background}"
-        set -g window-status-current-style "bg=default,fg=#{@rong_color_2}"
-      '';
       programs = {
-        rong.settings.themes = lib.toList {
-          target = "colors.tmux";
-          links = "${config.xdg.configHome}/tmux/colors.conf";
-          cmds = reloadConfig;
-        };
-
         fish.interactiveShellInit = /* fish */ ''
           for mode in default insert visual normal
-              bind -M $mode \ep ${session}
+              bind -M $mode \ep ${sessionizer}
           end
         '';
       };

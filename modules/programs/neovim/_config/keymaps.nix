@@ -21,7 +21,7 @@
       (createKeymapDesc "n" "J" "mzJ`z" "Join lines without moving cursor")
 
       # Put without losing current yank
-      (createKeymapDesc "x" "p" ''[["_dP]]'' "Put without losing current yank")
+      (createKeymapDesc "x" "p" ''"_dP'' "Put without losing current yank")
 
       # Search and replace
       (createKeymapDesc "n" "<leader>sr" ":%s/" "Search and replace for this buffer")

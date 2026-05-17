@@ -19,11 +19,15 @@
       inputs.flake-utils.follows = "flake-utils";
     };
 
+    helium = {
+      url = "github:amaanq/helium-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     wrappers = {
       url = "github:BirdeeHub/nix-wrapper-modules";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hyprland.url = "github:hyprwm/Hyprland/v0.55.0";
 
     discord-voice-rpc = {
       url = "github:Nadim147c/discord-voice-rpc";

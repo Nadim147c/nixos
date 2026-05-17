@@ -9,7 +9,7 @@
         package = pkgs.charm-freeze;
         runShell = [
           /* bash */ ''
-            DOWNLOAD_DIR="''${XDG_PICTURES_DIR:-$HOME/Pictures/freeze}"
+            DOWNLOAD_DIR="''${XDG_PICTURES_DIR:-$HOME/Pictures}/freeze"
             mkdir -p "$DOWNLOAD_DIR"
             DOWNLOAD_FILE="''${DOWNLOAD_DIR}/$(date +'%Y-%m-%d_%H-%M-%S').png"
           ''

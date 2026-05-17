@@ -12,13 +12,13 @@
       enableFormat = true;
       enableTreesitter = true;
 
+      sql.enable = true;
       bash.enable = true;
       html.enable = true;
       go = {
         enable = true;
         extensions.gopher-nvim.enable = true;
       };
-      kotlin.enable = true;
       lua.enable = true;
       markdown = {
         enable = true;
@@ -55,7 +55,6 @@
         typescript-go.enable = true;
       };
       otter-nvim.enable = true;
-      trouble.enable = true;
       servers."*" = {
         on_attach = lib.generators.mkLuaInline /* lua */ ''
           function(_, bufnr)

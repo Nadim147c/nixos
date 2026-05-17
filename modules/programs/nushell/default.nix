@@ -25,9 +25,6 @@
             sync_on_enter = true;
           };
         };
-        extraConfig = /* nu */ ''
-          $env.config.completions.external.completer = $carapace_completer
-        '';
       };
     };
 }

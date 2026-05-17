@@ -3,7 +3,7 @@ _: {
     comments.comment-nvim = {
       enable = true;
       mappings = {
-        toggleSelectedBlock = "<leader>/";
+        toggleSelectedLine = "<leader>/";
         toggleCurrentLine = "<leader>/";
       };
     };

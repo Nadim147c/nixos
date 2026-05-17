@@ -9,7 +9,7 @@
           user.name = config.fullname;
           user.email = config.email;
           ui.default-command = "log";
-          ui.edit = lib.getExe self.packages.${system}.neovim;
+          ui.editor = "nvim";
           signing = {
             behavior = "own";
             backend = "ssh";

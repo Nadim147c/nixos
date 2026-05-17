@@ -1,0 +1,241 @@
+{ inputs, lib, ... }:
+let
+  inherit (lib)
+    toList
+    concatStringsSep
+    mapAttrsToList
+    escapeURL
+    ;
+in
+{
+  flake.modules.nixos.gui = {
+    environment.etc."chromium/policies/managed/policies.json".text = builtins.toJSON rec {
+      # EXTENSIONS
+      ExtensionInstallBlocklist = toList "*";
+      ExtensionInstallAllowlist = ExtensionInstallForcelist;
+      ExtensionInstallForcelist = [
+        "blockjmkbacgjkknlgpkjjiijinjdanf" # Ublock Origin
+        "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
+        "kekjfbackdeiabghhcdklcdoekaanoel" # MalSync
+        "oldceeleldhonbafppcapldpdifcinji" # LanguageTools
+        "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock
+        "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
+        "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader
+      ];
+      ExtensionInstallSources = toList "https://services.helium.imput.net/*";
+      DefaultBrowserSettingEnabled = false;
+      DeveloperToolsAvailability = 1;
+
+      # BOOKMARKS
+      ManagedBookmarks =
+        let
+          createFolder = name: children: { inherit name children; };
+          createBookmark = name: url: { inherit name url; };
+          createScriptlet =
+            name: javascript: createBookmark name ("javascript:" + javascript + "\nvoid undefined;\n");
+        in
+        [
+          { toplevel_name = "Tools"; }
+
+          (createFolder "Archive" [
+            (createFolder "Wayback" [
+              (createScriptlet "View" /* javascript */ ''
+                window.open("https://web.archive.org/web/*/" + location.href);
+              '')
+              (createScriptlet "Save" /* javascript */ ''
+                window.open("https://web.archive.org/save/" + location.href);
+              '')
+            ])
+            (createFolder "Archive.is" [
+              (createScriptlet "View" /* javascript */ ''
+                window.open("https://archive.ph/newest/" + location.href);
+              '')
+              (createScriptlet "Save" /* javascript */ ''
+                window.open("https://archive.ph/?run=1&url=" + encodeURIComponent(location.href));
+              '')
+            ])
+          ])
+
+          (createFolder "Reverse Image" (
+            let
+              mkReverse =
+                name: prefix:
+                createScriptlet name /* javascript */ ''
+                  document.addEventListener("click", function handler(event) {
+                    let image = event.target.closest("img");
+                    if (!image) return;
+
+                    event.preventDefault();
+                    event.stopPropagation();
+                    document.removeEventListener("click", handler, true);
+
+                    window.open("${prefix}" + encodeURIComponent(image.src));
+                  }, true);
+                '';
+            in
+            [
+              (mkReverse "Yandex" "https://yandex.com/images/search?rpt=imageview&url=")
+              (mkReverse "Google Lens" "https://lens.google.com/uploadbyurl?url=")
+              (mkReverse "Bing" "https://www.bing.com/images/search?view=detailv2&iss=sbi&q=imgurl:")
+              (mkReverse "TinEye" "https://www.tineye.com/search?url=")
+            ]
+          ))
+
+          (createFolder "Nuke" [
+            (createScriptlet "Sticky Elements" /* javascript */ ''
+              document.querySelectorAll("body *").forEach((element) => {
+                let position = getComputedStyle(element).position;
+                if (position === "fixed" || position === "sticky") element.parentNode.removeChild(element);
+              });
+
+              document.documentElement.style.overflow = "auto";
+              document.body.style.overflow = "auto";
+            '')
+
+            (createScriptlet "Copy Paste Restrictions" /* javascript */ ''
+              ["copy", "cut", "paste", "selectstart", "contextmenu", "dragstart"].forEach((eventName) => {
+                document.addEventListener(eventName, (event) => event.stopPropagation(), true);
+              });
+
+              document.querySelectorAll("*").forEach((element) => {
+                element.style.userSelect = "auto";
+                element.style.webkitUserSelect = "auto";
+              });
+            '')
+          ])
+
+          (createFolder "Toggle" (
+            let
+              mkIndication = text: /* javascript */ ''
+                {
+                  let indication = document.body.appendChild(document.createElement("div"));
+                  indication.textContent = ${text};
+
+                  Object.assign(indication.style, {
+                    position: "fixed",
+                    top: "0",
+                    left: "0",
+
+                    zIndex: "calc(infinity)",
+
+                    padding: "8px 16px",
+                    borderRadius: "8px",
+
+                    colorScheme: "light dark",
+                    background: "Canvas",
+                    color: "CanvasText",
+                    font: "14px/1 system-ui",
+
+                    pointerEvents: "none",
+                  });
+
+                  indication.animate(
+                    [
+                      { opacity: 1, offset: 0.6, easing: "cubic-bezier(0.4, 0, 0.2, 1)" },
+                      { opacity: 0, offset: 1 },
+                    ],
+                    { duration: 1500, fill: "forwards" },
+                  )
+                  .finished
+                  .then(() => indication.remove());
+                }
+              '';
+            in
+            [
+              (createScriptlet "Password Inputs" /* javascript */ ''
+                let shown = false;
+                document.querySelectorAll("input").forEach((input) => {
+                  if (input.type === "password") {
+                    input.dataset.wasPassword = "";
+                    input.type = "text";
+                    shown = true;
+                  } else if ("wasPassword" in input.dataset) {
+                    delete input.dataset.wasPassword;
+                    input.type = "password";
+                  }
+                });
+
+                ${mkIndication /* js */ ''"Passwords " + (shown ? "shown" : "hidden")''}
+              '')
+
+              (createScriptlet "Design Mode" /* javascript */ ''
+                document.designMode = document.designMode === "on" ? "off" : "on";
+
+                ${mkIndication /* js */ ''"Design mode " + document.designMode''}
+              '')
+            ]
+          ))
+        ];
+
+      # SEARCH
+      DefaultSearchProviderEnabled = true;
+      DefaultSearchProviderName = "Brave";
+      DefaultSearchProviderSearchURL = "https://search.brave.com/search?q={searchTerms}";
+      DefaultSearchProviderSuggestURL = "https://kagi.com/api/autosuggest?q={searchTerms}";
+      SearchSuggestEnabled = true;
+
+      SiteSearchSettings =
+        let
+          createSearchEngine = name: shortcut: url: { inherit name shortcut url; };
+          createQuery =
+            params:
+            let
+              mapFn =
+                name: value:
+                if value == true then "${escapeURL name}={searchTerms}" else "${escapeURL name}=${escapeURL value}";
+            in
+            mapAttrsToList mapFn params |> concatStringsSep "&";
+
+          createEngine =
+            name: alias: url: params:
+            let
+              queryStr = createQuery params;
+              fullUrl = if queryStr == "" then url else "${url}?${queryStr}";
+            in
+            createSearchEngine name alias fullUrl;
+        in
+        [
+          (createEngine "Anilist Anime" "@anime" "https://anilist.co/search/anime" { search = true; })
+          (createEngine "Anilist Manga" "@manga" "https://anilist.co/search/manga" { search = true; })
+          (createEngine "Arch Wiki" "@archwiki" "https://wiki.archlinux.org/index.php" { search = true; })
+          (createEngine "Brave" "@brave" "https://search.brave.com/search" { q = true; })
+          (createEngine "Flathub" "@flathub" "https://flathub.org/en/apps/search" { q = true; })
+          (createEngine "MyNixOS" "@nix" "https://mynixos.com/search" { q = true; })
+          (createEngine "Go" "@go" "https://pkg.go.dev/search" { q = true; })
+          (createEngine "YouTube" "@yt" "https://youtube.com/results" { search_query = true; })
+          (createEngine "GitHub" "@gh" "https://github.com/search" {
+            q = true;
+            type = "repositories";
+          })
+          (createEngine "Home Manager Options" "@home" "https://home-manager-options.extranix.com/" {
+            query = true;
+            release = "master";
+          })
+          (createEngine "NixOS Options" "@nixos" "https://search.nixos.org/options" {
+            query = true;
+            channel = "unstable";
+            sort = "relevance";
+            type = "options";
+          })
+          (createEngine "Nix Packages" "@nixpkgs" "https://search.nixos.org/packages" {
+            query = true;
+            channel = "unstable";
+            sort = "relevance";
+            type = "packages";
+          })
+          (createEngine "Wikipedia" "@wiki" "https://en.wikipedia.org/w/index.php" {
+            search = true;
+            title = "Special:Search";
+            profile = "advanced";
+            fulltext = "1";
+          })
+        ];
+    };
+  };
+
+  flake.modules.homeManager.gui =
+    { pkgs, ... }:
+    {
+      home.packages = [ (pkgs.lib.flakePackage inputs.helium) ];
+    };
+}

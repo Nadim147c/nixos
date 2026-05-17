@@ -10,40 +10,52 @@ import (
 	"os/exec"
 	"path"
 	"path/filepath"
+	"regexp"
 	"strings"
+
+	"github.com/spf13/pflag"
 )
 
 func main() {
 	log.SetOutput(os.Stderr)
 	log.SetFlags(0)
 
-	if len(os.Args) < 2 || os.Args[1] == "--help" {
-		log.Fatalf("Use: %s <url> ...<git-flags>\n", filepath.Base(os.Args[0]))
+	var targetDir string
+	pflag.StringVarP(&targetDir, "destination", "d", "", "destination file")
+	pflag.SetInterspersed(false)
+
+	pflag.Parse()
+
+	if pflag.NArg() < 1 {
+		pflag.Usage()
+		os.Exit(1)
 	}
 
-	rawURL := os.Args[1]
-	extraArgs := os.Args[2:]
+	rawURL := pflag.Arg(0)
+	extraArgs := pflag.Args()[1:]
 
 	cloneURI, cloneDir, err := parseURL(rawURL)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Adjust clone directory using gh username if available
-	if username := getGitHubUsername(); username != "" {
-		cloneDir = strings.Replace(cloneDir, username+"/", "", 1)
+	if targetDir == "" {
+		username := getGitHubUsername()
+		if username != "" {
+			cloneDir = strings.Replace(cloneDir, username+"/", "", 1)
+		}
+
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+		targetDir = filepath.Join(homeDir, "git", cloneDir)
 	}
 
-	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		log.Fatal(err)
-	}
-	targetDir := filepath.Join(homeDir, "git", cloneDir)
-
-	args := []string{"clone", cloneURI, targetDir}
+	args := []string{"git", "clone", cloneURI, targetDir}
 	args = append(args, extraArgs...)
 
-	cmd := exec.Command("git", args...)
+	cmd := exec.Command("jj", args...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -107,8 +119,17 @@ func parseHTTPS(raw string) (uri, dir string, err error) {
 		return "", "", errors.New("URL must be http or https")
 	}
 
-	host := u.Host
+	host := u.Hostname()
 	pathStr := strings.TrimPrefix(u.Path, "/")
+
+	gitlabRe := regexp.MustCompile(`^gitlab\..*$`)
+
+	if gitlabRe.MatchString(host) {
+		cleanPath, _, _ := cutNthSep(pathStr, "/", 2)
+		uri = fmt.Sprintf("git@%s:%s", host, cleanPath)
+		dir = cleanPath
+		return
+	}
 
 	switch host {
 	case "gist.github.com":
