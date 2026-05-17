@@ -15,7 +15,7 @@
             backend = "ssh";
             key = "~/.ssh/master.pub";
           };
-          templates.draft_commit_description = ''
+          templates.draft_commit_description = /* js */ ''
             concat(
               description,
               surround(
