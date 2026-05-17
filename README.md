@@ -32,7 +32,7 @@ You can run any of the following programs directly via `nix run .#<name>` (e.g.,
 - **btop**: The best process viewer.
 - **buildix**: Build nixpkgs package.
 - **compile-scss**: Compile scss files.
-- **control**: System control panel.
+- **control**: Launch application with cpu and ram limit.
 - **crop-image**: Crop image.
 - **fastfetch**: Fast system information.
 - **fd**: Fast find command.
@@ -45,7 +45,7 @@ You can run any of the following programs directly via `nix run .#<name>` (e.g.,
 - **fork**: Fork any process to background.
 - **freeze**: Screenshot tool for cmdline.
 - **fzf**: Interactive fuzzy finder.
-- **gimme**: Nix shell wrapper which
+- **gimme**: Nix shell wrapper.
 - **git-copy**: Git clone wrapper which saves repos in
   `~/git/<username>/<reponame>`.
 - **google-fonts**: Download google fonts.
