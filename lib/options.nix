@@ -11,6 +11,18 @@ let
     mkOption {
       inherit type default;
     };
+
+  recursiveType = types.nullOr (
+    types.oneOf [
+      types.bool
+      types.int
+      types.float
+      types.str
+      types.path
+      (types.attrsOf recursiveType)
+      (types.listOf recursiveType)
+    ]
+  );
 in
 {
   inherit createOption;
@@ -20,7 +32,8 @@ in
   int = default: createOption types.int default;
   line = default: createOption types.singleLineStr default;
   str = default: createOption types.str default;
-  block = default: createOption lib.types.lines default;
+  block = default: createOption types.lines default;
+  recursive = default: createOption recursiveType default;
 
   null =
     let
@@ -33,7 +46,8 @@ in
       int = default: option types.int default;
       line = default: option types.singleLineStr default;
       str = default: option types.str default;
-      block = default: option lib.types.lines default;
+      block = default: option types.lines default;
+      recursive = default: option recursiveType default;
     };
 
   attrs =
@@ -48,7 +62,8 @@ in
       int = default: option types.int default;
       line = default: option types.singleLineStr default;
       str = default: option types.str default;
-      block = default: option lib.types.lines default;
+      block = default: option types.lines default;
+      recursive = default: option recursiveType default;
     };
 
   list =
@@ -63,5 +78,6 @@ in
       line = default: option types.singleLineStr default;
       str = default: option types.str default;
       block = default: option lib.types.lines default;
+      recursive = default: option recursiveType default;
     };
 }

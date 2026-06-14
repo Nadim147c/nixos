@@ -1,14 +1,12 @@
-{ ... }:
 {
-  flake.modules.homeManager.dev = {
+  flake.modules.nixos.dev = {
     programs.direnv = {
       enable = true;
       silent = true;
-      mise.enable = true;
       nix-direnv.enable = true;
+      loadInNixShell = true;
       enableBashIntegration = true;
-      # enableFishIntegration = true;
-      enableNushellIntegration = true;
+      enableFishIntegration = true;
       enableZshIntegration = true;
     };
   };

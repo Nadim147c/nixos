@@ -1,4 +1,4 @@
-_: {
+{
   flake.modules.nixos.base = {
     boot = {
       loader.systemd-boot = {

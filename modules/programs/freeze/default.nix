@@ -1,30 +1,88 @@
-{ self, inputs, ... }:
 {
-
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList getExe getExe';
+  inherit (lib.x) quote;
+in
+{
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
+    let
+      center-screenshot = pkgs.writers.writePython3Bin "center-screenshot" {
+        libraries = [ pkgs.python3Packages.wand ];
+        makeWrapperArgs = [ "--prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.imagemagick ]}" ];
+      } (builtins.readFile ./center_screenshot.py);
+
+      xdg-base-dir = getExe self'.packages.xdg-base-dir;
+      date = getExe' pkgs.uutils-coreutils-noprefix "date";
+    in
     {
-      packages.freeze = inputs.wrappers.lib.wrapPackage (_: {
+      packages.freeze = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.charm-freeze;
-        runShell = [
-          /* bash */ ''
-            DOWNLOAD_DIR="''${XDG_PICTURES_DIR:-$HOME/Pictures}/freeze"
-            mkdir -p "$DOWNLOAD_DIR"
-            DOWNLOAD_FILE="''${DOWNLOAD_DIR}/$(date +'%Y-%m-%d_%H-%M-%S').png"
-          ''
-        ];
-        flags."--output" = {
-          data = "$DOWNLOAD_FILE";
-          esc-fn = x: "\"${x}\"";
+        runShell = toList /* bash */ ''
+          screenshot_file="$(${xdg-base-dir} user-pictures)/freeze/$(${date} +'%Y-%m-%d_%H-%M-%S').png"
+          mkdir -p "$(dirname "$screenshot_file")"
+        '';
+        flags = {
+          "--theme" = "rose-pine";
+          "--output" = {
+            data = "$screenshot_file";
+            esc-fn = quote;
+          };
         };
         flagSeparator = "=";
-      });
+      };
+
+      packages.termshot = pkgs.writeShellApplication {
+        name = "termshot";
+        runtimeInputs = [
+          center-screenshot
+          self'.packages.xdg-base-dir
+          pkgs.uutils-coreutils-noprefix
+          pkgs.chafa
+          pkgs.charm-freeze
+          pkgs.uutils-coreutils-noprefix
+          pkgs.wl-clipboard
+        ];
+        text = ''
+          screenshot_file="$(xdg-base-dir user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"
+          mkdir -p "$(dirname "$screenshot_file")"
+          printf "Creating screenshot -> %q\n" "$screenshot_file"
+
+          temp_dir=$(mktemp -d)
+          temp_screenshot="$temp_dir/screenshot.png"
+
+          cleanup() {
+            rm -vrf "$temp_dir"
+          }
+          trap cleanup EXIT
+
+          freeze "$@" --theme=rose-pine --output="$temp_screenshot"
+
+          center-screenshot "$temp_screenshot" "$screenshot_file"
+
+          wl-copy < "$screenshot_file"
+
+          chafa "$screenshot_file"
+        '';
+      };
+
     };
 
-  flake.modules.homeManager.base =
-    { pkgs, ... }:
+  flake.modules.nixos.base =
+    { system, ... }:
+    let
+      inherit (self.packages.${system}) freeze termshot;
+    in
     {
-      home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.freeze ];
+      packages = [
+        freeze
+        termshot
+      ];
     };
 }

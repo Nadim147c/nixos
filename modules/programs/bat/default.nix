@@ -1,15 +1,14 @@
-{ lib, ... }:
 {
-  flake.modules.homeManager.base =
-    { pkgs, ... }:
+  flake.modules.nixos.base =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib) getExe;
+    in
     {
-      home.shellAliases.man = "${lib.getExe' pkgs.bat-extras.batman "batman"}";
-      programs.bat = {
-        enable = true;
-        config = {
-          pager = "${pkgs.less}/bin/less -rF";
-          theme = "ansi";
-        };
-      };
+      environment.shellAliases.cat = getExe pkgs.bat;
+      packages = [
+        pkgs.bat
+        pkgs.bat-extras.batman
+      ];
     };
 }

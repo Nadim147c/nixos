@@ -4,43 +4,102 @@
   lib,
   ...
 }:
+let
+  inherit (lib.x) singleton;
+  inherit (lib) toList makeBinPath;
+in
 {
 
   perSystem =
     { pkgs, ... }:
     {
-      packages.rong-impure = inputs.wrappers.lib.wrapPackage (_: {
+      packages.rong-impure = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.lib.flakePackage inputs.rong;
-        runShell = [
-          /* bash */ ''
-            local_override="$HOME/.local/bin/rong"
-            if [ -x "$local_override" ]; then
-              exec -a "$0" "$local_override" "$@"
-              exit
-            fi
-          ''
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          (makeBinPath [ pkgs.ffmpeg ])
         ];
-      });
+        runShell = singleton /* bash */ ''
+          override="$HOME/.local/bin/rong"
+          if [[ -x "$override" ]]; then
+            exec -a "$0" "$override" "$@"
+            exit
+          fi
+        '';
+      };
     };
 
-  flake.modules.homeManager.base = {
-    imports = [ inputs.rong.homeModules.rong ];
-  };
+  flake.modules.nixos.base =
+    {
+      config,
+      system,
+      lib,
+      ...
+    }:
+    let
+      inherit (lib) mkIf;
+      inherit (lib.options) mkOption mkEnableOption;
+      inherit (lib.types)
+        attrsOf
+        bool
+        float
+        int
+        listOf
+        nullOr
+        oneOf
+        path
+        str
+        package
+        ;
 
-  flake.modules.homeManager.gui =
+      cfg = config.programs.rong;
+    in
+    {
+      options.programs.rong = {
+        enable = mkEnableOption "rong";
+        package = mkOption {
+          type = nullOr package;
+          default = self.packages.${system}.rong-impure;
+        };
+        settings = mkOption {
+          type =
+            let
+              valueType = nullOr (oneOf [
+                bool
+                int
+                float
+                str
+                path
+                (attrsOf valueType)
+                (listOf valueType)
+              ]);
+            in
+            valueType;
+          default = { };
+        };
+      };
+
+      config = mkIf cfg.enable {
+        packages = mkIf (cfg.package != null) [ cfg.package ];
+        home.xdg.config.files."rong/config.json" = mkIf (cfg.settings != { }) {
+          generator = builtins.toJSON;
+          value = cfg.settings;
+        };
+      };
+    };
+
+  flake.modules.nixos.gui =
     {
       config,
       system,
       ...
     }:
     {
-      xdg.configFile."gtk-4.0/gtk.css".enable = lib.mkForce false;
-
       programs.rong = {
         enable = true;
         package = self.packages.${system}.rong-impure;
-        # wallpaper = ./../../../wallpaper.png;
         settings = {
           dark = true;
           preview-format = "jpg";
@@ -65,20 +124,21 @@
           };
           links =
             let
-              mkPath = prefix: list: lib.toList list |> map (x: "${prefix}/${x}");
+              createPath = prefix: list: toList list |> map (x: "${prefix}/${x}");
             in
             {
-              "qtct.colors" = "${config.xdg.dataHome}/color-schemes/Rong.colors";
-              "qtct.conf" = mkPath config.xdg.configHome [
+              "qtct.colors" = "${config.home.xdg.data.directory}/color-schemes/Rong.colors";
+              "qtct.conf" = createPath config.home.xdg.config.directory [
                 "qt5ct/colors/rong.conf"
                 "qt6ct/colors/rong.conf"
               ];
-              "gtk.css" = mkPath config.xdg.configHome [
+              "gtk.css" = createPath config.home.xdg.config.directory [
                 "gtk-3.0/gtk.css"
                 "gtk-4.0/gtk.css"
               ];
             };
         };
       };
+
     };
 }

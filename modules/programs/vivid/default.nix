@@ -1,8 +1,8 @@
 {
-  flake.modules.homeManager.base = {
+  flake.modules.nixos.base = {
     programs.vivid = {
       enable = true;
-      activeTheme = "ansi";
+      theme = "ansi";
     };
   };
 }

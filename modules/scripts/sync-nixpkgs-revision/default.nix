@@ -1,4 +1,3 @@
-_:
 let
   name = "sync-nixpkgs-revision";
 in

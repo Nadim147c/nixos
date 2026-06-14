@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import qs.modules.end4
 import qs.modules.common
 
@@ -102,13 +103,12 @@ Item {
 
     Loader {
         active: root.materialName === "" && root.nerdSymbol === ""
+        anchors.centerIn: parent
         sourceComponent: IconImage {
             id: fallbackIcon
-            implicitSize: root.size
-
-            source: {
-                return root.item.icon;
-            }
+            anchors.centerIn: root
+            implicitSize: root.size * 0.5
+            source: root.item.icon
             smooth: true
             layer.enabled: true
             layer.effect: MultiEffect {

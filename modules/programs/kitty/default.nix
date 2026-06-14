@@ -1,38 +1,28 @@
 {
-  lib,
   self,
   inputs,
+  lib,
   ...
 }:
+let
+  inherit (lib) getExe toList;
+in
 {
-
-  flake.modules.homeManager.gui =
+  perSystem =
+    { pkgs, ... }:
     {
-      config,
-      pkgs,
-      ...
-    }:
-    {
-      programs.rong.settings.themes = lib.toList {
-        target = "kitty-full.conf";
-        links = "${config.xdg.configHome}/kitty/colors.conf";
-        cmds = "${lib.getExe' pkgs.procps "pkill"} -SIGUSR1 kitty";
-      };
-
-      home.packages = [
-        pkgs.nerd-fonts.jetbrains-mono
-      ];
-      programs.kitty = {
-        enable = true;
+      packages.kitty = inputs.wrappers.wrappers.kitty.wrap {
+        inherit pkgs;
+        package = pkgs.kitty;
         font = {
           name = "JetBrainsMono Nerd Font";
           size = 10;
         };
         extraConfig = /* bash */ ''
-          include colors.conf
+          include ~/.config/kitty/colors.conf
         '';
         settings = {
-          shell = lib.getExe pkgs.fish;
+          shell = getExe pkgs.fish;
           bold_font = "auto";
           italic_font = "auto";
           bold_italic_font = "auto";
@@ -48,5 +38,30 @@
           "ctrl+v" = "paste_from_clipboard";
         };
       };
+    };
+
+  flake.modules.nixos.gui =
+    {
+      config,
+      pkgs,
+      system,
+      ...
+    }:
+    {
+      programs.rong.settings.themes = toList {
+        target = "kitty-full.conf";
+        links = "${config.home.xdg.config.directory}/kitty/colors.conf";
+        cmds = pkgs.writers.writeNu "reload-kitty" /* nu */ ''
+          let pids = ps | find kitty | get pid
+          if ($pids | is-not-empty) {
+            kill -s 10 ...$pids
+          }
+        '';
+      };
+
+      packages = [
+        pkgs.nerd-fonts.jetbrains-mono
+        self.packages.${system}.kitty
+      ];
     };
 }

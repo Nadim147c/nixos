@@ -1,48 +1,107 @@
-{ inputs, self, ... }:
 {
-
-  flake.modules.homeManager.gui =
+  inputs,
+  self,
+  lib,
+  ...
+}:
+let
+  inherit (lib)
+    toList
+    attrValues
+    cleanSource
+    filterAttrs
+    getExe
+    hasPrefix
+    makeBinPath
+    ;
+  inherit (lib.fileset) toSource unions;
+  inherit (lib.x) singleton;
+in
+{
+  perSystem =
     {
-      config,
       pkgs,
+      self',
       system,
       ...
     }:
     let
-      discord-voice-rpc = pkgs.lib.flakePackage inputs.discord-voice-rpc;
-      qtLibs = with pkgs; [
-        waybar-lyric
+      discord-voice-rpc = inputs.discord-voice-rpc.packages.${system}.default;
+
+      buildInputs = with pkgs; [
+        kdePackages.qt5compat
+        kdePackages.qtdeclarative
         qt6.qtimageformats
         qt6.qtmultimedia
         qt6.qtsvg
-        self.packages.${system}.qt-m3shapes
+        self'.packages.qt-m3shapes
       ];
+
+      quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
+      extraBinaries = quickshellScripts ++ [
+        self'.packages.hyprscreenshot
+        self'.packages.rong-impure
+        self'.packages.wallpaper
+        self'.packages.waybar-lyric-impure
+        self'.packages.yankd-impure
+        self'.packages.control
+        pkgs.gtk3
+        pkgs.uwsm
+        pkgs.hyprshutdown
+        discord-voice-rpc
+      ];
+
+      quickshellConfig = cleanSource (toSource {
+        root = ./.;
+        fileset = unions [
+          ./modules
+          ./shell.qml
+        ];
+      });
     in
     {
-      home.packages = with pkgs; [
-        kdePackages.qt5compat
-        kdePackages.qtdeclarative
-        discord-voice-rpc
-        hyprshutdown
-      ];
 
-      xdg.configFile."quickshell".source = ./.;
+      packages.quickshell = inputs.wrappers.lib.wrapPackage {
+        inherit pkgs;
+        package = (pkgs.lib.flakePackage inputs.quickshell).overrideAttrs (oldAttrs: {
+          buildInputs = buildInputs ++ oldAttrs.buildInputs;
+        });
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          (makeBinPath extraBinaries)
+        ];
+        flags."--path" = toString quickshellConfig;
+        flagSeparator = "=";
+      };
+    };
+
+  flake.modules.nixos.gui =
+    {
+      config,
+      system,
+      ...
+    }:
+    {
+      packages = [
+        self.packages.${system}.quickshell
+      ];
 
       programs.rong.settings.installs = {
-        "quickshell.json" = "${config.xdg.stateHome}/quickshell/colors.json";
+        "quickshell.json" = "${config.home.xdg.state.directory}/quickshell/colors.json";
       };
 
-      programs.quickshell = {
+      home.systemd.services.quickshell = rec {
         enable = true;
-        package = (pkgs.lib.flakePackage inputs.quickshell).overrideAttrs (oldAttrs: {
-          buildInputs = qtLibs ++ oldAttrs.buildInputs;
-        });
-        systemd.enable = true;
+        description = "mpvpaper control daemon";
+        partOf = toList "graphical-session.target";
+        after = partOf;
+        wantedBy = partOf;
+        serviceConfig = {
+          ExecStart = getExe self.packages."${system}".quickshell;
+          Restart = "on-failure";
+          RestartSec = 10;
+        };
       };
-
-      wayland.windowManager.hyprland.settings.bind = [
-        "$mainMod, V, exec, qs-toggle clipboard toggle"
-        "$mainMod, SPACE, exec, qs-toggle launcher toggle"
-      ];
     };
 }

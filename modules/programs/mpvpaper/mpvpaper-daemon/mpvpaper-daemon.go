@@ -55,6 +55,7 @@ var (
 	// StateFile is the path to the wallpaper state file
 	StateFile string
 )
+var mpvPaperProc *exec.Cmd
 
 // main is the entry point of the application
 func main() {
@@ -112,7 +113,7 @@ func main() {
 
 		// Update workspace on workspace change events
 		if event == "workspacev2" {
-			id := strings.Split(data, ",")[0]
+			id, _, _ := strings.Cut(data, ",")
 			fmt.Sscanf(id, "%d", &workspace)
 		} else if !slices.Contains(events, event) {
 			continue
@@ -137,6 +138,12 @@ func main() {
 
 	if err := scanner.Err(); err != nil {
 		slog.Error("scanner failed", "error", err)
+	}
+
+	cancel()
+
+	if mpvPaperProc != nil {
+		mpvPaperProc.Wait()
 	}
 }
 
@@ -226,6 +233,7 @@ func startMpvPaper(ctx context.Context, path []byte) error {
 		"*", string(path),
 	}
 	cmd := exec.CommandContext(ctx, "mpvpaper", args...)
+	mpvPaperProc = cmd
 	return cmd.Start()
 }
 

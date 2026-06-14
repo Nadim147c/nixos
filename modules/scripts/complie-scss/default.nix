@@ -1,8 +1,6 @@
-{
-  lib,
-  ...
-}:
+{ lib, ... }:
 let
+  inherit (lib) getExe;
   name = "compile-scss";
 in
 {
@@ -20,7 +18,7 @@ in
       pkgs.writeShellScriptBin name ''
         input="$1"
         output=$(echo "$input" | sed 's/scss$/css/')
-        ${lib.getExe pkgs.dart-sass} --no-source-map "$input:$output"
+        ${getExe pkgs.dart-sass} --no-source-map "$input:$output"
       '';
   };
 }

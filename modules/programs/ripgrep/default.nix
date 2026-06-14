@@ -1,4 +1,12 @@
-{ self, inputs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList;
+in
 {
   perSystem =
     { pkgs, ... }:
@@ -23,9 +31,9 @@
       );
     };
 
-  flake.modules.homeManager.base =
-    { pkgs, ... }:
+  flake.modules.nixos.base =
+    { system, ... }:
     {
-      home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.ripgrep ];
+      packages = toList self.packages.${system}.ripgrep;
     };
 }

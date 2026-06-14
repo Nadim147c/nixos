@@ -1,20 +1,50 @@
-{ lib, ... }:
 {
-  flake.modules.homeManager.base =
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib.x) singleton;
+in
+{
+  perSystem =
     { pkgs, ... }:
+    let
+      makePathPrefix = name: paths: [
+        name
+        ":"
+        paths
+      ];
+    in
     {
-      home.packages = with pkgs.kdePackages; [
-        dolphin
+      packages.dolphin = inputs.wrappers.lib.wrapPackage {
+        inherit pkgs;
+        package = pkgs.kdePackages.dolphin;
+        runShell = singleton /* bash */ ''
+          ${pkgs.kdePackages.kservice}/bin/kbuildsycoca6
+        '';
+        prefixVar = [
+          (makePathPrefix "PATH" "/run/wrappers:/run/current-system/sw/bin")
+          (makePathPrefix "XDG_CONFIG_DIRS" "${pkgs.kdePackages.plasma-workspace}/etc/xdg")
+        ];
+      };
+    };
+
+  flake.modules.nixos.base =
+    { pkgs, system, ... }:
+    {
+      packages = with pkgs.kdePackages; [
+        self.packages.${system}.dolphin
         ffmpegthumbs
         kdegraphics-thumbnailers
         qtsvg
       ];
 
-      wayland.windowManager.hyprland.settings = {
-        "$files" = lib.x.wrapUWSM' pkgs pkgs.kdePackages.dolphin "dolphin";
-      };
+      environment.etc."xdg/menus/applications.menu".source =
+        "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
 
-      xdg.configFile."dolphinrc".text = ''
+      home.xdg.config.files."dolphinrc".text = ''
         [UiSettings]
         ColorScheme=Rong
       '';

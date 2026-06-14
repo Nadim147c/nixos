@@ -15,6 +15,7 @@
       sql.enable = true;
       bash.enable = true;
       html.enable = true;
+      zig.enable = true;
       go = {
         enable = true;
         extensions.gopher-nvim.enable = true;
@@ -36,7 +37,16 @@
         ];
       };
       nu.enable = true;
-      python.enable = true;
+      python = {
+        enable = true;
+        format = {
+          enable = true;
+          type = [
+            "black"
+            "isort"
+          ];
+        };
+      };
       qml = {
         enable = true;
         format.enable = true;
@@ -53,6 +63,7 @@
       presets = {
         tailwindcss-language-server.enable = true;
         typescript-go.enable = true;
+        zls.enable = true;
       };
       otter-nvim.enable = true;
       servers."*" = {

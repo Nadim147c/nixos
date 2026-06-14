@@ -1,34 +1,34 @@
 { self, lib, ... }:
 {
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     {
-      config,
       pkgs,
       system,
       ...
     }:
     let
-      inherit (self.packages.${system}) fork field;
+      inherit (self.packages.${system}) field;
       less = "${pkgs.less}/bin/less -r -F";
     in
     {
-      home = {
-        packages = [
-          field
-          fork
-          pkgs.comma
-          pkgs.coreutils
-          pkgs.chafa
-          pkgs.file
-          pkgs.gum
-          pkgs.jq
-          pkgs.killall
-          pkgs.perf
-          pkgs.procps
-          pkgs.xxd
-          pkgs.yq
-        ];
+      packages = [
+        field
+        pkgs.magika
+        pkgs.comma
+        pkgs.uutils-coreutils-noprefix
+        pkgs.uutils-findutils
+        pkgs.chafa
+        pkgs.file
+        pkgs.gum
+        pkgs.jq
+        pkgs.killall
+        pkgs.perf
+        pkgs.procps
+        pkgs.xxd
+        pkgs.yq
+      ];
 
+      environment = {
         sessionVariables = {
           # Pager settings
           LESS = "-r -F";
@@ -39,14 +39,6 @@
           GCC_COLORS = "error=1;31:warning=1;33:note=1;47;107:caret=1;47;107:locus=40;1;35:quote=1;33";
           GREP_COLORS = ":mt=1;36:ms=41;1;30:mc=1;41:sl=:cx=:fn=1;35;40:ln=32:bn=32:se=1;36;40";
         };
-
-        sessionPath = [
-          "${config.home.homeDirectory}/.local/bin"
-          "${config.xdg.dataHome}/cargo/bin"
-          "${config.xdg.dataHome}/pnpm"
-          "${config.xdg.cacheHome}/.bun/bin"
-          "${config.xdg.dataHome}/go/bin"
-        ];
 
         shellAliases =
           let

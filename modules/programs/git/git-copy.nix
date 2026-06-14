@@ -1,4 +1,3 @@
-_:
 let
   name = "git-copy";
 in

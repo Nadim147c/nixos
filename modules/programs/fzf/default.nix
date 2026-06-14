@@ -1,33 +1,37 @@
-{ self, inputs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList getExe;
+in
 {
   perSystem =
-    { pkgs, lib, ... }:
     {
-      packages.fzf = inputs.wrappers.lib.wrapPackage (_: {
+      self',
+      pkgs,
+      ...
+    }:
+    {
+      packages.fzf = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.fzf;
-        env = {
-          FZF_DEFAULT_COMMAND = "${lib.getExe pkgs.fd} --type f --color=always";
+        envDefault = {
+          FZF_DEFAULT_COMMAND = "${getExe self'.packages.fd} --color=always";
           FZF_DEFAULT_OPTS = ''
             --border
             --ansi
             --layout=reverse
           '';
         };
-      });
+      };
     };
 
-  flake.modules.homeManager.base =
-    { pkgs, lib, ... }:
+  flake.modules.nixos.base =
+    { system, ... }:
     {
-      programs.fzf = {
-        enable = true;
-        package = self.packages.${pkgs.stdenv.hostPlatform.system}.fzf;
-        enableBashIntegration = true;
-        enableFishIntegration = true;
-        # enableNushellIntegration = true;
-        enableZshIntegration = true;
-        colors.bg = lib.mkForce "";
-      };
+      packages = toList self.packages.${system}.fzf;
     };
 }

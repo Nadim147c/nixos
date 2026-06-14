@@ -1,6 +1,5 @@
-_: {
+{
   flake.modules.nixos.base = {
-
     networking = {
       nameservers = [
         "127.0.0.1"
@@ -42,13 +41,4 @@ _: {
       };
     };
   };
-
-  flake.modules.homeModule.base =
-    { pkgs, ... }:
-    {
-      home.packages = with pkgs; [
-        dig
-        lsof
-      ];
-    };
 }

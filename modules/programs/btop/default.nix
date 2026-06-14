@@ -1,9 +1,17 @@
-{ self, inputs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList;
+in
 {
   perSystem =
     { pkgs, ... }:
     {
-      packages.btop = inputs.wrappers.wrappers.btop.wrap (_: {
+      packages.btop = inputs.wrappers.wrappers.btop.wrap {
         inherit pkgs;
         package = pkgs.btop;
         settings = {
@@ -11,12 +19,12 @@
           vim_keys = true;
           update_ms = 200;
         };
-      });
+      };
     };
 
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     { system, ... }:
     {
-      home.packages = [ self.packages.${system}.btop ];
+      home.packages = toList self.packages.${system}.btop;
     };
 }

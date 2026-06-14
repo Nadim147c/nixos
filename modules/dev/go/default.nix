@@ -1,44 +1,37 @@
 { lib, ... }:
 {
-  flake.modules = {
-    nixos.base =
-      { config, ... }:
-      {
-        options.dev.go.enable = lib.x.opt.bool false;
-        config.home.dev.go.enable = config.dev.go.enable;
-      };
+  flake.modules.nixos.dev =
+    { config, pkgs, ... }:
+    let
+      cfg = config.dev.go;
+    in
+    {
+      options.dev.go.enable = lib.x.opt.bool true;
 
-    nixos.dev.dev.go.enable = true;
-    homeManager.dev.dev.go.enable = true;
+      config = lib.mkIf cfg.enable {
+        packages = with pkgs; [
+          go
+          gotools
+          gofumpt
+          golangci-lint
+          golangci-lint-langserver
+          gopls
+          revive
+        ];
 
-    homeManager.base =
-      { config, pkgs, ... }:
-      {
-        options.dev.go.enable = lib.x.opt.bool false;
-
-        config = lib.mkIf config.dev.go.enable {
-          home.packages = with pkgs; [
-            gofumpt
-            golangci-lint
-            golangci-lint-langserver
-            gopls
-            revive
-          ];
-          home.sessionVariables = {
-            GOMODCACHE = "${config.xdg.cacheHome}/go/mod";
-            GOBIN = "${config.xdg.dataHome}/go/bin";
-            GOPATH = "${config.xdg.dataHome}/go";
+        sessionVariables =
+          let
+            data = config.home.xdg.data.directory;
+            cache = config.home.xdg.cache.directory;
+          in
+          {
+            GOMODCACHE = "${cache}/go/mod";
+            GOBIN = "${data}/go/bin";
+            GOPATH = "${data}/go";
             CGO_ENABLED = "0";
           };
-          programs.go = {
-            enable = true;
-            telemetry.mode = "off";
-            env = {
-              GOPATH = "${config.xdg.dataHome}/go";
-              GOBIN = "${config.xdg.dataHome}/go/bin";
-            };
-          };
-        };
+
+        home.xdg.config.files."go/telemetry/mode".text = "off 2026-06-01";
       };
-  };
+    };
 }

@@ -1,6 +1,10 @@
 -- Sets "Windows" key as main modifier
 local main_mod = "SUPER"
 
+local function monitor_off(b)
+  hl.dispatch(hl.dsp.dpms(b))
+end
+
 local function get_binds(...)
   local args = { ... }
   return table.concat(args, " + ")
@@ -9,8 +13,6 @@ end
 local displays = require("displays")
 local programs = require("programs")
 local envs = require("envs")
-
-hl.dispatch(hl.dsp.exec_cmd(programs.uwsm .. " finalize"))
 
 for _, value in pairs(displays) do
   hl.monitor(value)
@@ -32,7 +34,7 @@ hl.window_rule({
 })
 hl.window_rule({
   name = "browser workspace 2",
-  match = { class = "^(zen-(beta|browser))$" },
+  match = { class = "^(zen-(beta|browser)|helium)$" },
   workspace = "2 silent",
 })
 hl.window_rule({
@@ -42,6 +44,8 @@ hl.window_rule({
 })
 
 hl.on("hyprland.start", function()
+  hl.dispatch(hl.dsp.exec_cmd("systemctl --user start hyprland-session.target"))
+  hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY"))
   hl.dispatch(hl.dsp.exec_cmd(programs.terminal))
   hl.dispatch(hl.dsp.exec_cmd(programs.browser))
   hl.dispatch(hl.dsp.exec_cmd(programs.discord))
@@ -192,6 +196,6 @@ hl.window_rule({
   pin = true,
   rounding = 7,
   opacity = "1 1",
-  move = { "monitor_w-window_w-10", "monitor_h-window_h-10" },
+  move = { "monitor_w-(monitor_w/4)-10", "monitor_h-(monitor_h/4)-10" },
   size = { "monitor_w/4", "monitor_h/4" },
 })

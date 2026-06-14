@@ -32,8 +32,4 @@ in
   flake.modules.nixos.base = {
     nixpkgs.overlays = overlays;
   };
-
-  flake.modules.homeManager.base = {
-    nixpkgs.overlays = overlays;
-  };
 }

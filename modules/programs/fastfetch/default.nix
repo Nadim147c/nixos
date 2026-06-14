@@ -1,10 +1,18 @@
-{ self, inputs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList;
+in
 {
 
   perSystem =
     { pkgs, ... }:
     {
-      packages.fastfetch = inputs.wrappers.wrappers.fastfetch.wrap (_: {
+      packages.fastfetch = inputs.wrappers.wrappers.fastfetch.wrap {
         inherit pkgs;
         package = pkgs.fastfetch;
         settings = {
@@ -40,12 +48,12 @@
             { type = "colors"; }
           ];
         };
-      });
+      };
     };
 
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     { system, ... }:
     {
-      home.packages = [ self.packages.${system}.fastfetch ];
+      packages = toList self.packages.${system}.fastfetch;
     };
 }

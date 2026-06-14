@@ -1,14 +1,19 @@
-_: {
-  flake.modules.homeManager.base =
-    { config, pkgs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList getExe;
+in
+{
+  perSystem =
+    { pkgs, ... }:
     {
-      home.sessionVariables.STARSHIP_CACHE = "${config.xdg.cacheHome}/starship";
-      programs.starship = {
-        enable = true;
-        enableBashIntegration = true;
-        enableFishIntegration = true;
-        enableNushellIntegration = true;
-        enableZshIntegration = true;
+      packages.starship = inputs.wrappers.wrappers.starship.wrap {
+        inherit pkgs;
+        package = pkgs.starship;
         settings = {
           add_newline = false;
 
@@ -107,6 +112,41 @@ _: {
           };
         };
       };
+    };
 
+  flake.modules.nixos.base =
+    {
+      config,
+      pkgs,
+      system,
+      ...
+    }:
+    let
+      bin = getExe self.packages.${system}.starship;
+      nushellSource = pkgs.runCommand "starship.nu" { } ''
+        ${bin} init nu | sed 's|"/homeless-shelter|$"($env.HOME)|g' > "$out"
+      '';
+    in
+    {
+      sessionVariables.STARSHIP_CACHE = "${config.home.xdg.cache.directory}/starship";
+      packages = toList self.packages.${system}.starship;
+
+      programs = {
+        bash.interactiveShellInit = ''
+          source <(${bin} init bash)
+        '';
+
+        zsh.interactiveShellInit = ''
+          source <(${bin} init zsh)
+        '';
+
+        fish.interactiveShellInit = ''
+          ${bin} init fish | source
+        '';
+
+        nushell.interactiveShellInit = ''
+          source ${nushellSource}
+        '';
+      };
     };
 }

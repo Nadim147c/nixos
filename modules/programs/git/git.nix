@@ -1,6 +1,9 @@
 { config, ... }:
+let
+  inherit (config) fullname email;
+in
 {
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     { pkgs, lib, ... }:
     let
       inherit (lib) getExe;
@@ -8,22 +11,22 @@
         mkdir -p $out/bin
         ln -s ${getExe pkgs.svu} $out/bin/git-svu
       '';
-
       cmd = pkg: text: "!${getExe pkg} ${text}";
     in
     {
-      home.packages = with pkgs; [
+      packages = with pkgs; [
         git-cliff
         git-extras
         git-svu
         svu
+        gh
       ];
 
       programs.git = {
         enable = true;
-        settings = {
-          user.name = config.fullname;
-          user.email = config.email;
+        config = {
+          user.name = fullname;
+          user.email = email;
 
           alias = {
             grep = cmd pkgs.ripgrep "--color=always --hidden --glob=!.git";

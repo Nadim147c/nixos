@@ -1,34 +1,33 @@
 { lib, ... }:
 {
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     { config, pkgs, ... }:
     {
       programs.zsh = {
         enable = true;
-        enableCompletion = false;
-        history.path = "${config.xdg.dataHome}/zsh/history";
-        dotDir = "${config.xdg.configHome}/zsh";
-        history.ignoreSpace = true;
-        completionInit = "";
-        initContent =
+        histFile = "${config.home.xdg.data.directory}/zsh/history";
+        enableCompletion = true;
+        histSize = 100000;
+        shellInit =
           let
-            plugins = [
-              pkgs.zsh-fzf-tab
-              pkgs.zsh-fast-syntax-highlighting
-              pkgs.zsh-autosuggestions
-            ];
-
+            inherit (lib) flatten mkAfter;
+            inherit (lib.strings) join;
+            inherit (lib.filesystem) listFilesRecursive;
+            check = p: (builtins.match ".*\\.plugin\\.zsh" p) != null;
             # recusivily find *.plugin.zsh file to source theme!
             pluginFiles =
-              let
-                inherit (lib) flatten;
-                find = lib.filesystem.listFilesRecursive;
-                check = p: (builtins.match ".*\\.plugin\\.zsh" p) != null;
-                join = lib.strings.join "\n";
-              in
-              plugins |> map find |> flatten |> builtins.filter check |> map (p: "source ${p}") |> join;
+              [
+                pkgs.zsh-fzf-tab
+                pkgs.zsh-fast-syntax-highlighting
+                pkgs.zsh-autosuggestions
+              ]
+              |> map listFilesRecursive
+              |> flatten
+              |> builtins.filter check
+              |> map (p: "source ${p}")
+              |> join "\n";
           in
-          lib.mkAfter /* bash */ ''
+          mkAfter /* bash */ ''
             ${pluginFiles}
 
             zstyle ':completion:*:git-checkout:*' sort false

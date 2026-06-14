@@ -4,30 +4,33 @@
   lib,
   ...
 }:
+let
+  inherit (lib) toList getExe;
+  inherit (lib.x) quote;
+in
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
     let
       createEnvFlag = name: {
         data = "\$${name}";
-        esc-fn = lib.x.quote;
+        esc-fn = quote;
       };
+      xdg-base-dir = getExe self'.packages.xdg-base-dir;
     in
     {
-      packages.aria2 = inputs.wrappers.wrappers.aria2.wrap (_: {
+      packages.aria2 = inputs.wrappers.wrappers.aria2.wrap {
         inherit pkgs;
         package = pkgs.aria2;
-        runShell = [
-          /* bash */ ''
-            export DOWNLOAD_DIR="''${XDG_DOWNLOAD_DIR:-$HOME/Downloads}"
-            export SESSION_FILE="''${XDG_DATA_HOME:-$HOME/.local/share}/aria2/aria2.session"
-            mkdir -p "$DOWNLOAD_DIR"
-            mkdir -p "$(dirname "$SESSION_FILE")"
-          ''
-        ];
+        runShell = toList /* bash */ ''
+          export download_dir=$(${xdg-base-dir} user-download)
+          export session_file="$(${xdg-base-dir} state-home)/aria2/aria2.session"
+          mkdir -p "$download_dir"
+          mkdir -p "$(dirname "$session_file")"
+        '';
         flags = {
-          "--dir" = createEnvFlag "DOWNLOAD_DIR";
-          "--save-session" = createEnvFlag "SESSION_FILE";
+          "--dir" = createEnvFlag "download_dir";
+          "--save-session" = createEnvFlag "session_file";
         };
         settings = {
           allow-overwrite = true;
@@ -49,12 +52,12 @@
           save-session-interval = 60;
           split = 10;
         };
-      });
+      };
     };
 
-  flake.modules.homeManager.base =
-    { pkgs, ... }:
+  flake.modules.nixos.base =
+    { system, ... }:
     {
-      home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.aria2 ];
+      packages = toList self.packages.${system}.aria2;
     };
 }

@@ -1,31 +1,28 @@
-{ self, ... }:
+{ self, lib, ... }:
+let
+  inherit (lib) getExe toList;
+in
 {
 
-  flake.modules.homeManager.gui =
+  flake.modules.nixos.gui =
     {
       pkgs,
       system,
       ...
     }:
     {
-      home.packages = with pkgs; [ mpvpaper ];
+      packages = with pkgs; [ mpvpaper ];
 
-      wayland.windowManager.hyprland.settings.bind = [
-        "$mainMod, W, exec, ${self.packages.${system}.wallpaper}/bin/wallpaper"
-      ];
-
-      systemd.user.services.mpvpaper-daemon = {
-        Unit = {
-          Description = "mpvpaper control daemon";
-          After = [ "graphical-session.target" ];
-          PartOf = [ "graphical-session.target" ];
-        };
-        Service = {
-          ExecStart = "${self.packages.${system}.mpvpaper-daemon}/bin/mpvpaper-daemon";
-          Restart = "on-failure";
+      home.systemd.services.mpvpaper-daemon = rec {
+        enable = true;
+        description = "mpvpaper control daemon";
+        partOf = toList "graphical-session.target";
+        after = partOf;
+        wantedBy = partOf;
+        serviceConfig = {
+          ExecStart = getExe self.packages.${system}.mpvpaper-daemon;
           RestartSec = 10;
         };
-        Install.WantedBy = [ "graphical-session.target" ];
       };
     };
 }

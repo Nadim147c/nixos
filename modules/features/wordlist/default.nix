@@ -1,4 +1,3 @@
-{ config, ... }:
 {
   flake.modules.nixos.hack =
     { pkgs, ... }:
@@ -16,12 +15,5 @@
           ];
         };
       };
-      home.imports = [ config.flake.modules.homeManager.hack ];
-    };
-
-  flake.modules.homeManager.hack =
-    { pkgs, ... }:
-    {
-      home.packages = with pkgs; [ scowl ];
     };
 }

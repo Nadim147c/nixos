@@ -4,6 +4,9 @@
   inputs,
   ...
 }:
+let
+  inherit (lib) toList getExe;
+in
 {
 
   perSystem =
@@ -13,7 +16,7 @@
       session = lib.getExe self'.packages.tmux-sessionizer;
     in
     {
-      packages.tmux = inputs.wrappers.wrappers.tmux.wrap (_: {
+      packages.tmux = inputs.wrappers.wrappers.tmux.wrap {
         inherit pkgs;
         package = pkgs.tmux;
         baseIndex = 1;
@@ -51,22 +54,20 @@
           set -g status-style "bg=default,fg=default"
           set -g window-status-current-style "bg=default,fg=green"
         '';
-      });
+      };
     };
 
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     { system, ... }:
     let
-      sessionizer = lib.getExe self.packages.${system}.tmux-sessionizer;
+      sessionizer = getExe self.packages.${system}.tmux-sessionizer;
     in
     {
-      home.packages = [ self.packages.${system}.tmux ];
-      programs = {
-        fish.interactiveShellInit = /* fish */ ''
-          for mode in default insert visual normal
-              bind -M $mode \ep ${sessionizer}
-          end
-        '';
-      };
+      packages = toList self.packages.${system}.tmux;
+      programs.fish.interactiveShellInit = /* fish */ ''
+        for mode in default insert visual normal
+            bind -M $mode \ep ${sessionizer}
+        end
+      '';
     };
 }

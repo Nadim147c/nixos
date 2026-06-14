@@ -1,4 +1,4 @@
-_: {
+{
   flake.modules.nixos.dev = {
     boot.binfmt.emulatedSystems = [
       "wasm32-wasi"

@@ -1,4 +1,3 @@
-_:
 let
   name = "control";
 in
@@ -11,6 +10,7 @@ in
       flags = {
         "-c, --cpu=" = "CPU limit";
         "-m, --memory=" = "Memory limit";
+        "-s, --scope" = "Run in terminal scope";
       };
       completion = {
         positional = [

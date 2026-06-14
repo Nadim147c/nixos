@@ -1,15 +1,15 @@
 { lib, ... }:
 {
 
-  flake.modules.homeManager.gui =
+  flake.modules.nixos.gui =
     { config, pkgs, ... }:
     {
-      home.packages = [ pkgs.equibop ];
+      packages = [ pkgs.equibop ];
 
       programs.rong.settings.links."midnight-discord.css" = [
-        "${config.xdg.configHome}/equibop/settings/quickCss.css"
+        "${config.home.xdg.config.directory}/equibop/settings/quickCss.css"
       ];
 
-      xdg.mimeApps = lib.x.genMimes "equibop.desktop" [ "x-scheme-handler/discord" ];
+      home.xdg.mime-apps = lib.x.genMimes "equibop.desktop" [ "x-scheme-handler/discord" ];
     };
 }

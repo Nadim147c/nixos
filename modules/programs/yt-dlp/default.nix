@@ -1,7 +1,16 @@
-{ self, inputs, ... }:
+{
+  self,
+  inputs,
+  lib,
+  ...
+}:
+let
+  inherit (lib) toList getExe getExe';
+  inherit (lib.x) quote;
+in
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
     let
       videoSettings = {
         color = "always";
@@ -14,7 +23,6 @@
         list-formats = true;
         merge-output-format = "mp4";
         output = "%(title)s-%(id)s.%(ext)s";
-        paths = "\${XDG_DOWNLOAD_DIR}";
         simulate = false;
         sponsorblock-mark = "all";
         sub-langs = "all";
@@ -30,40 +38,42 @@
         format = "ba/ba*/b";
         list-formats = true;
         output = "%(title)s-%(id)s.%(ext)s";
-        paths = "\${XDG_DOWNLOAD_DIR}";
         # recode-video = "mp3";
         simulate = false;
         sponsorblock = false;
       };
 
-      env."XDG_DOWNLOAD_DIR" = {
-        data = "\${XDG_DOWNLOAD_DIR:-$HOME/Videos}/";
-        esc-fn = x: ''"${x}"'';
-      };
     in
     {
-      packages.yt-dlp = inputs.wrappers.wrappers.yt-dlp.wrap (_: {
+      packages.yt-dlp = inputs.wrappers.wrappers.yt-dlp.wrap {
         inherit pkgs;
         package = pkgs.yt-dlp;
-        envDefault = env;
+        flags."--paths" = {
+          data = "$(${getExe self'.packages.xdg-base-dir} user-videos)";
+          esc-fn = quote;
+        };
         settings = videoSettings;
-      });
-      packages.yt-dlm = inputs.wrappers.wrappers.yt-dlp.wrap (_: {
+      };
+      packages.yt-dlm = inputs.wrappers.wrappers.yt-dlp.wrap {
         inherit pkgs;
         package = pkgs.yt-dlp;
+        flags."--paths" = {
+          data = "$(${getExe self'.packages.xdg-base-dir} user-musics)";
+          esc-fn = quote;
+        };
         filesToExclude = [ "bin/yt-dlp" ];
         binName = "yt-dlm";
         settings = audioSettings;
-      });
+      };
     };
 
-  flake.modules.homeManager.base =
+  flake.modules.nixos.base =
     { system, ... }:
     let
       inherit (self.packages.${system}) yt-dlp yt-dlm;
     in
     {
-      home.packages = [
+      packages = [
         yt-dlp
         yt-dlm
       ];

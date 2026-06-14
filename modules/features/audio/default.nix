@@ -1,4 +1,4 @@
-_: {
+{
   flake.modules.nixos.base = {
     services.pipewire = {
       enable = true;

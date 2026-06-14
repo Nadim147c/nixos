@@ -1,47 +1,38 @@
 { self, lib, ... }:
 let
-  option = {
-    options.custom.font = {
-      enable = lib.x.opt.bool false;
-      sans = lib.x.opt.line "Roboto Flex";
-      serif = lib.x.opt.line "Roboto Serif";
-      mono = lib.x.opt.line "JetBrainsMono Nerd Font";
-      size = lib.x.opt.num 10;
-    };
-  };
+  inherit (lib) unique toList;
 in
 {
-  flake.modules = {
-    nixos.base = option;
-    homeManager.base = option;
-    nixos.gui =
-      { config, ... }:
-      {
-        custom.font.enable = true;
-        home.custom.font = config.custom.font;
+  flake.modules.nixos.gui =
+    {
+      config,
+      pkgs,
+      system,
+      ...
+    }:
+    let
+      cfg = config.custom.font;
+      inherit (self.packages.${system})
+        electroharmonix
+        google-fonts
+        ;
+    in
+    {
+      options.custom.font = {
+        enable = lib.x.opt.bool true;
+        sans = lib.x.opt.line "Roboto Flex";
+        serif = lib.x.opt.line "Roboto Serif";
+        mono = lib.x.opt.line "JetBrainsMono Nerd Font";
+        size = lib.x.opt.num 10;
       };
 
-    homeManager.gui =
-      {
-        config,
-        pkgs,
-        system,
-        ...
-      }:
-      let
-        cfg = config.custom.font;
-        inherit (lib) unique;
-        inherit (self.packages.${system})
+      config = lib.mkIf cfg.enable {
+        environment.pathsToLink = toList "/share/fonts";
+        packages = with pkgs; [
           electroharmonix
           google-fonts
-          ;
-      in
-      lib.mkIf cfg.enable {
-        home.packages = with pkgs; [
-          electroharmonix
           fontconfig
           material-symbols
-          google-fonts
           nerd-fonts.jetbrains-mono
           noto-fonts
           noto-fonts-cjk-sans
@@ -57,8 +48,8 @@ in
 
         fonts.fontconfig = {
           inherit (cfg) enable;
-          antialiasing = true;
-          hinting = "slight";
+          antialias = true;
+          hinting.enable = true;
           defaultFonts = {
             sansSerif = unique [
               cfg.sans
@@ -90,5 +81,5 @@ in
           };
         };
       };
-  };
+    };
 }

@@ -1,13 +1,12 @@
 {
-  flake.modules.homeManager.dev =
+  flake.modules.nixos.dev =
     { pkgs, ... }:
     {
-      home.packages = with pkgs; [
+      packages = with pkgs; [
         curl
         gcc
         gnumake
         just
-        neovim
         sd
         skim
         tree

@@ -1,4 +1,3 @@
-_:
 let
   name = "nix-update-file";
 in

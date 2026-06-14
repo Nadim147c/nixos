@@ -25,6 +25,8 @@ rec {
 
   quote = x: ''"${x}"'';
 
+  singleton = elem: [ elem ];
+
   # Check if input is a number
   isNumber = v: isInt v || isFloat v;
 
@@ -176,7 +178,7 @@ rec {
       mimes = genAttrs types (_: toList desktops);
     in
     {
-      associations.added = mimes;
-      defaultApplications = mimes;
+      added-associations = mimes;
+      default-applications = mimes;
     };
 }

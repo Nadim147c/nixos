@@ -17,17 +17,11 @@ Rectangle {
     Behavior on fg {
         animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
     }
-    readonly property var from: OkLch.fromColor(Appearance.material.myPrimary)
-    readonly property var to: OkLch.fromColor(Appearance.material.myError)
+    readonly property var from: OkLab.fromColor(Appearance.material.myPrimary)
+    readonly property var to: OkLab.fromColor(Appearance.material.myError)
     property color fg: {
         const ratio = Utils.cubicBezier([0.75, 0.25, 0.25, 0.75], usages);
-        const h = Utils.blend(from.h, to.h, ratio);
-        const lch = {
-            l: from.l,
-            c: from.c,
-            h
-        };
-        return OkLch.toColor(lch);
+        return OkLab.toColor(OkLab.blend(from, to, ratio));
     }
 
     CircularProgress {

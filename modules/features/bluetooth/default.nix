@@ -8,7 +8,25 @@
     services.blueman.enable = true;
   };
 
-  flake.modules.homeManager.wireless = {
-    services.blueman-applet.enable = false;
-  };
+  flake.modules.nixos.gui =
+    { pkgs, lib, ... }:
+    let
+      inherit (lib) toList getExe';
+    in
+    {
+      home.systemd.services.blueman-applet = rec {
+        enable = true;
+        description = "Blueman applet";
+        requires = toList "tray.target";
+        partOf = toList "graphical-session.target";
+        after = [
+          "graphical-session.target"
+          "tray.target"
+        ];
+        wantedBy = partOf;
+        serviceConfig = {
+          ExecStart = getExe' pkgs.blueman "blueman-applet";
+        };
+      };
+    };
 }

@@ -1,38 +1,42 @@
 {
   self,
   inputs,
+  lib,
   ...
 }:
+let
+  inherit (lib) getExe toList;
+in
 {
-
   perSystem =
     { pkgs, ... }:
     {
-      packages.yankd-impure = inputs.wrappers.lib.wrapPackage (_: {
+      packages.yankd-impure = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.lib.flakePackage inputs.yankd;
-        runShell = [
-          /* bash */ ''
-            local_override="$HOME/.local/bin/yankd"
-            if [ -x "$local_override" ]; then
-              exec -a "$0" "$local_override" "$@"
-              exit
-            fi
-          ''
-        ];
-      });
+        runShell = toList /* bash */ ''
+          override="$HOME/.local/bin/yankd"
+          if [ -x "$override" ]; then
+            exec -a "$0" "$override" "$@"
+            exit
+          fi
+        '';
+      };
     };
 
-  flake.modules.homeManager.base = {
-    imports = [ inputs.yankd.homeModules.yankd ];
-  };
-
-  flake.modules.homeManager.gui =
+  flake.modules.nixos.gui =
     { system, ... }:
     {
-      services.yankd = {
+      packages = toList self.packages.${system}.yankd-impure;
+      home.systemd.services.yankd = rec {
         enable = true;
-        package = self.packages.${system}.yankd-impure;
+        description = "yankd wayland clipboard daemon";
+        partOf = toList "graphical-session.target";
+        after = partOf;
+        wantedBy = partOf;
+        serviceConfig = {
+          ExecStart = "${getExe self.packages.${system}.yankd-impure} daemon";
+        };
       };
     };
 }

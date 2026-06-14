@@ -1,56 +1,40 @@
-_: {
-  flake.modules.nixos.base = { };
-  flake.modules.homeManager.base =
+{ lib, ... }:
+let
+  inherit (lib) mapAttrs;
+  inherit (lib.generators) toKeyValue;
+  inherit (lib.x) quote;
+in
+{
+  flake.modules.nixos.base =
     { config, ... }:
     let
-      download = "${config.home.homeDirectory}/downloads";
-      projects = "${config.home.homeDirectory}/git";
-      media = category: "${config.home.homeDirectory}/media/${category}";
-      files = category: "${config.home.homeDirectory}/files/${category}";
+      download = "${config.home.directory}/downloads";
+      projects = "${config.home.directory}/git";
+      media = category: "${config.home.directory}/media/${category}";
+      files = category: "${config.home.directory}/files/${category}";
+      dirs = {
+        XDG_DESKTOP_DIR = files "desktop";
+        XDG_DOCUMENTS_DIR = files "documents";
+        XDG_DOWNLOAD_DIR = download;
+        XDG_MUSIC_DIR = media "music";
+        XDG_PICTURES_DIR = media "pictures";
+        XDG_PROJECTS_DIR = projects;
+        XDG_PUBLICSHARE_DIR = files "public-share";
+        XDG_TEMPLATES_DIR = files "templates";
+        XDG_VIDEOS_DIR = media "videos";
+      };
     in
     {
-      home.preferXdgDirectories = true;
-
-      xdg = {
-        enable = true;
-        userDirs = {
-          inherit
-            download
-            projects
-            ;
-          enable = true;
-          setSessionVariables = true;
-          createDirectories = true;
-          desktop = files "desktop";
-          documents = files "documents";
-          music = media "music";
-          pictures = media "pictures";
-          publicShare = files "public-share";
-          templates = files "templates";
-          videos = media "videos";
-        };
-
-        autostart = {
-          enable = true;
-          readOnly = true;
-        };
+      home.xdg.config.files."user-dirs.dirs" = {
+        generator = value: toKeyValue { } (mapAttrs (_: quote) value);
+        value = dirs;
       };
 
-      home.sessionVariables = with config.xdg.userDirs; {
-        XDG_CONFIG_HOME = config.xdg.configHome;
-        XDG_DATA_HOME = config.xdg.dataHome;
-        XDG_CACHE_HOME = config.xdg.cacheHome;
-        XDG_STATE_HOME = config.xdg.stateHome;
-
-        XDG_DESKTOP_DIR = desktop;
-        XDG_DOCUMENTS_DIR = documents;
-        XDG_DOWNLOAD_DIR = download;
-        XDG_MUSIC_DIR = music;
-        XDG_PICTURES_DIR = pictures;
-        XDG_PROJECTS_DIR = projects;
-        XDG_PUBLICSHARE_DIR = publicShare;
-        XDG_TEMPLATES_DIR = templates;
-        XDG_VIDEOS_DIR = videos;
+      sessionVariables = dirs // {
+        XDG_CONFIG_HOME = config.home.xdg.config.directory;
+        XDG_DATA_HOME = config.home.xdg.data.directory;
+        XDG_CACHE_HOME = config.home.xdg.cache.directory;
+        XDG_STATE_HOME = config.home.xdg.state.directory;
       };
     };
 }

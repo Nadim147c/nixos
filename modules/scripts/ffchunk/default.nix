@@ -1,4 +1,3 @@
-{ ... }:
 let
   name = "ffchunk";
 in

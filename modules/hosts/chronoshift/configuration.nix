@@ -16,7 +16,7 @@ in
       ];
 
       # Small ahh display
-      custom.cursor.size = 22;
+      cursor.size = 22;
 
       displays = {
         "eDP-1".enable = false;

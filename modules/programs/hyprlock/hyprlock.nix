@@ -150,22 +150,21 @@ in
       });
     };
 
-  flake.modules.nixos.gui = {
-    security.pam.services.hyprlock.enable = true;
-  };
-
-  flake.modules.homeManager.gui =
+  flake.modules.nixos.gui =
     { pkgs, system, ... }:
+    let
+      inherit (self.packages.${system})
+        electroharmonix
+        hyprlock
+        ;
+    in
     {
-      home.packages = with pkgs; [
-        self.packages.${system}.electroharmonix
-        nerd-fonts.jetbrains-mono
-        roboto-flex
+      security.pam.services.hyprlock.enable = true;
+      home.packages = [
+        electroharmonix
+        hyprlock
+        pkgs.nerd-fonts.jetbrains-mono
+        pkgs.roboto-flex
       ];
-
-      programs.hyprlock = {
-        enable = true;
-        package = self.packages.${system}.hyprlock;
-      };
     };
 }

@@ -19,7 +19,6 @@ let
     ;
 in
 {
-
   options.scripts = mkOption {
     type = attrsOf (submodule {
       options = {
@@ -32,26 +31,23 @@ in
   };
 
   config = {
-    flake.modules.homeManager.base =
+    flake.modules.nixos.base =
       { pkgs, ... }:
-      let
-        createCompletion = name: value: {
-          "carapace/${name}.yaml" = {
-            source = pkgs.writers.writeYAML "carapace.yaml" value.completion;
-          };
-        };
-      in
       {
-        home.packages =
-          let
-            getPackage = name: value: optional value.cond (value.script pkgs);
-          in
-          config.scripts |> mapAttrsToList getPackage |> flatten;
+        packages =
+          config.scripts |> mapAttrsToList (name: value: optional value.cond (value.script pkgs)) |> flatten;
 
-        xdg.configFile =
+        home.xdg.config.files =
           config.scripts
           |> filterAttrs (_: value: value.completion != { })
-          |> mapAttrsToList createCompletion
+          |> mapAttrsToList (
+            name: value: {
+              "carapace/${name}.yaml" = {
+                generator = lib.generators.toYAML { };
+                value = value.completion;
+              };
+            }
+          )
           |> mkMerge;
       };
 

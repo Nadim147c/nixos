@@ -19,7 +19,7 @@ in
       createScripts = scripts: genAttrs' scripts (script: nameValuePair script.pname { path = script; });
     in
     {
-      packages.mpv = inputs.wrappers.wrappers.mpv.wrap (_: {
+      packages.mpv = inputs.wrappers.wrappers.mpv.wrap {
         inherit pkgs;
         package = pkgs.mpv;
         script = createScripts (
@@ -69,10 +69,10 @@ in
           -             add speed -0.1
           KP_SUBTRACT   add speed -0.1
         '';
-      });
+      };
     };
 
-  flake.modules.homeManager.gui =
+  flake.modules.nixos.gui =
     { pkgs, ... }:
     let
       createMimesList =
@@ -95,7 +95,7 @@ in
 
     in
     {
-      home.packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.mpv ];
-      xdg.mimeApps = lib.x.genMimes "mpv.desktop" (audioMimes ++ videoMimes);
+      packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.mpv ];
+      home.xdg.mime-apps = lib.x.genMimes "mpv.desktop" (audioMimes ++ videoMimes);
     };
 }

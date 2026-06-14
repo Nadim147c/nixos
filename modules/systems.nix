@@ -9,9 +9,4 @@
     {
       _module.args.system = pkgs.stdenv.hostPlatform.system;
     };
-  flake.modules.homeManager.base =
-    { pkgs, ... }:
-    {
-      _module.args.system = pkgs.stdenv.hostPlatform.system;
-    };
 }
