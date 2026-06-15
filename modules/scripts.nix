@@ -42,7 +42,7 @@ in
           |> filterAttrs (_: value: value.completion != { })
           |> mapAttrsToList (
             name: value: {
-              "carapace/${name}.yaml" = {
+              "carapace/specs/${name}.yaml" = {
                 generator = lib.generators.toYAML { };
                 value = value.completion;
               };
