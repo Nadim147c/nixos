@@ -1,4 +1,7 @@
 { lib, ... }:
+let
+  inherit (lib.generators) mkLuaInline;
+in
 {
   vim = {
     diagnostics.enable = true;
@@ -12,7 +15,11 @@
       enableFormat = true;
       enableTreesitter = true;
 
-      sql.enable = true;
+      sql = {
+        enable = true;
+        lsp.enable = false;
+        format.enable = false;
+      };
       bash.enable = true;
       html.enable = true;
       zig.enable = true;
@@ -67,7 +74,7 @@
       };
       otter-nvim.enable = true;
       servers."*" = {
-        on_attach = lib.generators.mkLuaInline /* lua */ ''
+        on_attach = mkLuaInline /* lua */ ''
           function(_, bufnr)
             local function opts(desc)
               return { buffer = bufnr, desc = "LSP " .. desc }
