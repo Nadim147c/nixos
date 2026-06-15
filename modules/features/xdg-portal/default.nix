@@ -8,8 +8,11 @@
       ];
       xdg.portal = {
         enable = true;
-        xdgOpenUsePortal = true;
-        extraPortals = [ pkgs.kdePackages.xdg-desktop-portal-kde ];
+        xdgOpenUsePortal = false;
+        extraPortals = [
+          pkgs.kdePackages.xdg-desktop-portal-kde
+          pkgs.xdg-desktop-portal-gtk
+        ];
         config.common = {
           "org.freedesktop.impl.portal.FileChooser" = [ "kde" ];
           default = [
@@ -18,6 +21,5 @@
           ];
         };
       };
-
     };
 }
