@@ -15,27 +15,26 @@
       url = "github:amaanq/helium-flake";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager/master";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
       inputs.nix-darwin.follows = "";
     };
-    hjem-rum = {
-      url = "github:snugnug/hjem-rum";
+    home-manager = {
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.hjem.follows = "hjem";
     };
     import-tree.url = "github:vic/import-tree";
+    kopuz.url = "github:Kopuz-org/kopuz/master";
     ncro = {
       url = "github:feel-co/ncro";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nixos-hardware.url = "github:NixOS/nixos-hardware/master";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixos-hardware = {
+      url = "github:NixOS/nixos-hardware/master";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
     nvf.url = "github:notashelf/nvf";
     quickshell = {
       url = "github:quickshell-mirror/quickshell";
