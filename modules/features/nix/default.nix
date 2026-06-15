@@ -7,15 +7,25 @@
       eval-cache = true;
       experimental-features = [
         "nix-command"
+        "cgroups"
         "flakes"
         "pipe-operators"
       ];
       trusted-users = [
         "root"
+        "@build"
         "@wheel"
+        "@admin"
       ];
       warn-dirty = false;
       substituters = [ "http://localhost:6767" ];
+
+      builders-use-substitutes = true;
+      flake-registry = "";
+      http-connections = 50;
+      show-trace = true;
+      use-cgroups = true;
+      use-xdg-base-directories = true;
     };
 
     services.ncro = {
