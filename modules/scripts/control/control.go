@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/pflag"
@@ -27,7 +28,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	programName := pflag.Arg(0)
+	cmdName := pflag.Arg(0)
+	cmdBasename := filepath.Base(cmdName)
 	args := []string{"--user"}
 
 	if cpu != "" {
@@ -37,7 +39,7 @@ func main() {
 		args = append(args, "--property", fmt.Sprintf("MemoryMax=%s", mem))
 	}
 
-	sliceName := fmt.Sprintf("--slice=%s-%d-controlled.slice", programName, rand.Uint32()%math.MaxUint16)
+	sliceName := fmt.Sprintf("--slice=%s-%d-controlled.slice", cmdBasename, rand.Uint32()%math.MaxUint16)
 	args = append(args, sliceName)
 
 	if scope {
