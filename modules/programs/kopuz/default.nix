@@ -29,6 +29,7 @@
         self.packages.${system}.nuke-kopuz
         pkgs.picard
         pkgs.nicotine-plus
+        pkgs.lrcget
       ];
     };
 }
