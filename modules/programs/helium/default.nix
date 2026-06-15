@@ -1,22 +1,22 @@
 { inputs, lib, ... }:
 let
   inherit (lib.x) genMimes;
+  inherit (lib)
+    toList
+    concatStringsSep
+    mapAttrsToList
+    escapeURL
+    ;
 in
 {
-  flake.modules.nixos.gui =
+  perSystem =
+    { system, ... }:
     {
-      lib,
-      system,
-      ...
-    }:
-    let
-      inherit (lib)
-        toList
-        concatStringsSep
-        mapAttrsToList
-        escapeURL
-        ;
-    in
+      packages.helium = inputs.helium.packages.${system}.default;
+    };
+
+  flake.modules.nixos.gui =
+    { system, ... }:
     {
       packages = toList inputs.helium.packages.${system}.default;
 
@@ -43,6 +43,7 @@ in
         ExtensionInstallAllowlist = ExtensionInstallForcelist;
         ExtensionInstallForcelist = [
           "blockjmkbacgjkknlgpkjjiijinjdanf" # Ublock Origin
+          "jplgfhpmjnbigmhklmmbgecoobifkmpa" # Proton VPN
           "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
           "kekjfbackdeiabghhcdklcdoekaanoel" # MalSync
           "oldceeleldhonbafppcapldpdifcinji" # LanguageTools
