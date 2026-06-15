@@ -1,10 +1,6 @@
 -- Sets "Windows" key as main modifier
 local main_mod = "SUPER"
 
-local function monitor_off(b)
-  hl.dispatch(hl.dsp.dpms(b))
-end
-
 local function get_binds(...)
   local args = { ... }
   return table.concat(args, " + ")
