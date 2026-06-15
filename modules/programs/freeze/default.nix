@@ -21,6 +21,15 @@ in
       date = getExe' pkgs.uutils-coreutils-noprefix "date";
     in
     {
+      packages.chroma = inputs.wrappers.lib.wrapPackage {
+        inherit pkgs;
+        package = pkgs.chroma;
+        flags = {
+          "--style" = ./tokionight-moon.xml;
+          "--formatter" = "terminal16m";
+        };
+      };
+
       packages.freeze = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.charm-freeze;
@@ -29,7 +38,7 @@ in
           mkdir -p "$(dirname "$screenshot_file")"
         '';
         flags = {
-          "--theme" = "rose-pine";
+          "--theme" = "tokionight-moon";
           "--output" = {
             data = "$screenshot_file";
             esc-fn = quote;
@@ -77,10 +86,11 @@ in
   flake.modules.nixos.base =
     { system, ... }:
     let
-      inherit (self.packages.${system}) freeze termshot;
+      inherit (self.packages.${system}) freeze termshot chroma;
     in
     {
       packages = [
+        chroma
         freeze
         termshot
       ];
