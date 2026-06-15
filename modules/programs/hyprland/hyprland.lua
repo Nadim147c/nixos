@@ -23,6 +23,7 @@ hl.bind(get_binds(main_mod, "E"), hl.dsp.exec_cmd(programs.file_manager))
 hl.bind(get_binds(main_mod, "Q"), hl.dsp.exec_cmd(programs.terminal))
 hl.bind(get_binds(main_mod, "B"), hl.dsp.exec_cmd(programs.browser))
 hl.bind(get_binds(main_mod, "D"), hl.dsp.exec_cmd(programs.discord))
+hl.bind(get_binds(main_mod, "M"), hl.dsp.exec_cmd(programs.music))
 hl.window_rule({
   name = "kitty workspace 1",
   match = { class = "^(kitty)$" },
@@ -38,6 +39,11 @@ hl.window_rule({
   match = { class = "^(discord|vesktop|equibop)$" },
   workspace = "3 silent",
 })
+hl.window_rule({
+  name = "music workspace 4",
+  match = { class = "^(kopuz)$" },
+  workspace = "4 silent",
+})
 
 hl.on("hyprland.start", function()
   hl.dispatch(hl.dsp.exec_cmd("systemctl --user start hyprland-session.target"))
@@ -45,6 +51,7 @@ hl.on("hyprland.start", function()
   hl.dispatch(hl.dsp.exec_cmd(programs.terminal))
   hl.dispatch(hl.dsp.exec_cmd(programs.browser))
   hl.dispatch(hl.dsp.exec_cmd(programs.discord))
+  hl.dispatch(hl.dsp.exec_cmd(programs.music))
 end)
 
 hl.on("window.urgent", function(w)

@@ -5,7 +5,6 @@
   ...
 }:
 let
-  inherit (lib.x) singleton;
   inherit (lib)
     getExe
     getExe'
@@ -110,6 +109,7 @@ in
         };
         programs = mkLuaObject {
           browser = getExe inputs.helium.packages.${system}.default;
+          music = getExe inputs.kopuz.packages.${system}.default;
           discord = getExe pkgs.equibop;
           file_manager = getExe' self.packages.${system}.dolphin "dolphin";
           hyprshutdown = getExe pkgs.hyprshutdown;
