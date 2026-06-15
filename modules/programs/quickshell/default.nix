@@ -45,8 +45,7 @@ in
         self'.packages.waybar-lyric-impure
         self'.packages.yankd-impure
         self'.packages.control
-        pkgs.gtk3
-        pkgs.uwsm
+        self'.packages.app-launcher
         pkgs.hyprshutdown
         discord-voice-rpc
       ];
@@ -58,8 +57,36 @@ in
           ./shell.qml
         ];
       });
+
+      /*
+        Quickshell cannot natively execute .desktop files, and its
+        systemd service does not inherit the system PATH. This
+        wrapper uses `uwsm` to handle the application launching,
+        explicitly exposing the system PATH so desktop apps can
+        be resolved and spawned correctly.
+      */
+      app-launcher = inputs.wrappers.lib.wrapPackage {
+        inherit pkgs;
+        package = pkgs.uwsm;
+        binName = "app-launcher";
+        addFlag = [
+          "app"
+          "-t"
+          "service"
+          "--"
+        ];
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          "/run/wrappers/bin:/run/current-system/sw/bin"
+        ];
+      };
     in
     {
+      packages.app-launcher = pkgs.runCommand "app-launcher" { } ''
+        mkdir -p $out/bin
+        ln -s ${app-launcher}/bin/app-launcher $out/bin/app-launcher
+      '';
 
       packages.quickshell = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
@@ -72,7 +99,6 @@ in
           (makeBinPath extraBinaries)
         ];
         flags."--path" = toString quickshellConfig;
-        flagSeparator = "=";
       };
     };
 

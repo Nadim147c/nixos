@@ -41,8 +41,7 @@ PanelWindow {
     }
     function execute() {
         const entry = applications[index];
-        console.log(entry.id + ".desktop");
-        Quickshell.execDetached(["control", "gtk-launch", entry.id + ".desktop"]);
+        Quickshell.execDetached(["app-launcher", entry.id + ".desktop"]);
     }
 
     function search(query: string) {
