@@ -124,7 +124,10 @@ in
     let
       bin = getExe self.packages.${system}.starship;
       nushellSource = pkgs.runCommand "starship.nu" { } ''
-        ${bin} init nu | sed 's|"/homeless-shelter|$"($env.HOME)|g' > "$out"
+        ${bin} init nu | sed '
+        s#"/homeless-shelter#$"($env.HOME)#g
+        s#/nix/store/.\+/bin/starship#starship#
+        ' > "$out"
       '';
     in
     {
