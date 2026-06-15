@@ -13,7 +13,8 @@
     {
       packages = [
         field
-        pkgs.magika
+        pkgs.ffmpeg
+        pkgs.magika-cli
         pkgs.comma
         pkgs.uutils-coreutils-noprefix
         pkgs.uutils-findutils
