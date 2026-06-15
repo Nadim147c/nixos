@@ -42,7 +42,6 @@ You can run any of the following programs directly via `nix run .#<name>` (e.g.,
 - **ffscale**: Resize video.
 - **ffstack**: Stack videos.
 - **field**: `awk` like tool but only for fields.
-- **fork**: Fork any process to background.
 - **freeze**: Screenshot tool for cmdline.
 - **fzf**: Interactive fuzzy finder.
 - **gimme**: Nix shell wrapper.
