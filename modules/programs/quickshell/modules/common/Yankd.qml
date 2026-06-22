@@ -23,8 +23,6 @@ Singleton {
         Quickshell.execDetached([binName, "daemon", "pause", state]);
     }
 
-    property int maxBase36IDLength: 1
-
     property int searchIndex: 0
     onSearchIndexChanged: updatePreview()
     function setIndex(i: int) {
@@ -77,13 +75,9 @@ Singleton {
                 const data = JSON.parse(text);
                 const res = [];
                 for (const entry of data) {
-                    const idLength = entry.id.toString().length;
-                    if (idLength > root.maxBase36IDLength) {
-                        root.maxBase36IDLength = idLength;
-                    }
                     res.push(yankdSearchEntry.createObject(root, {
                         eventID: entry.id,
-                        mimeType: entry.primary_mime_type,
+                        mimeType: entry.mime_type,
                         preview: entry.preview
                     }));
                 }

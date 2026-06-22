@@ -82,8 +82,8 @@ PanelWindow {
                         Behavior on color {
                             animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
                         }
-                        property bool state: Yankd.isSearching
-                        onStateChanged: {
+                        property bool isSearching: Yankd.isSearching
+                        onIsSearchingChanged: {
                             animate = true;
                             timer.restart();
                         }
@@ -216,15 +216,6 @@ PanelWindow {
                     width: entry.width - 10
                     anchors.centerIn: parent
                     spacing: 10
-                    StyledText {
-                        id: idTxt
-                        text: entry.eventID.toString().padStart(Yankd.maxBase36IDLength, "0")
-                        color: Appearance.material.mySurfaceVariant
-                        font {
-                            family: Appearance.font.family.monospace
-                            pixelSize: Appearance.font.pixelSize.smallie
-                        }
-                    }
                     MaterialSymbol {
                         text: entry.mimeType.startsWith("image/") ? "image" : "text_ad"
                         color: Appearance.material.myPrimary

@@ -1,7 +1,7 @@
 import QtQuick
 
 QtObject {
-    property int eventID
+    property string eventID
     property string mimeType
     property string preview
 }
