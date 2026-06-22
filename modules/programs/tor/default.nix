@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.hacking =
+  flake.modules.nixos.hack =
     { pkgs, ... }:
     {
       services.tor.enable = true;
