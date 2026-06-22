@@ -72,7 +72,7 @@ PanelWindow {
                 tooltip: "Logout"
                 radius: Appearance.round.tiny
                 size: parent.iconSize
-                onClicked: Quickshell.execDetached(["uwsm", "app", "--", "hyprshutdown"])
+                onClicked: Quickshell.execDetached(["app-launcher", "hyprshutdown"])
             }
 
             MaterialButton {
@@ -80,7 +80,7 @@ PanelWindow {
                 tooltip: "Reboot"
                 radius: Appearance.round.tiny
                 size: parent.iconSize
-                onClicked: Quickshell.execDetached(["uwsm", "app", "--", "hyprshutdown", "-p", "systemctl reboot"])
+                onClicked: Quickshell.execDetached(["app-launcher", "hyprshutdown", "-p", "systemctl reboot"])
             }
 
             MaterialButton {
@@ -89,7 +89,7 @@ PanelWindow {
                 radius: Appearance.round.tiny
                 rightRadius: Appearance.round.large * 2
                 size: parent.iconSize
-                onClicked: Quickshell.execDetached(["uwsm", "app", "--", "hyprshutdown", "-p", "systemctl poweroff"])
+                onClicked: Quickshell.execDetached(["app-launcher", "hyprshutdown", "-p", "systemctl poweroff"])
             }
         }
     }
