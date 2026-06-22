@@ -123,6 +123,7 @@ in
         partOf = toList "graphical-session.target";
         after = partOf;
         wantedBy = partOf;
+        reloadTriggers = toList self.packages."${system}".quickshell;
         serviceConfig = {
           ExecStart = getExe self.packages."${system}".quickshell;
           Restart = "on-failure";
