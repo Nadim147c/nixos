@@ -98,8 +98,6 @@ hl.config({
     gaps_in = 2,
     gaps_out = 5,
     border_size = 2,
-    -- ["col.active_border"] = "$primary",
-    -- ["col.inactive_border"] = "$outline",
     layout = "dwindle",
     resize_on_border = true,
   },
@@ -126,12 +124,6 @@ hl.config({
     },
   },
 })
-
--- Default curves and animations, see https://wiki.hypr.land/Configuring/Advanced-and-Cool/Animations/
-
----------------------
----- KEYBINDINGS ----
----------------------
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(get_binds(main_mod, "X"), hl.dsp.window.close())
@@ -190,6 +182,12 @@ hl.layer_rule({
   match = { namespace = "^quickshell:.*$" },
   blur = true,
   ignore_alpha = 0.5,
+})
+
+hl.window_rule({
+  name = "Low Opacity",
+  match = { title = "^(kitty|kopuz)$" },
+  opacity = "0.85 0.70",
 })
 
 hl.window_rule({
