@@ -107,17 +107,27 @@ in
           XDG_SESSION_TYPE = "wayland";
           GDK_BACKEND = "wayland,x11,*";
         };
-        programs = mkLuaObject {
-          browser = getExe inputs.helium.packages.${system}.default;
-          music = getExe inputs.kopuz.packages.${system}.default;
-          discord = getExe pkgs.equibop;
-          file_manager = getExe' self.packages.${system}.dolphin "dolphin";
-          hyprshutdown = getExe pkgs.hyprshutdown;
-          playerctl = getExe' pkgs.playerctl "playerctl";
-          terminal = getExe self.packages.${system}.kitty;
-          qs_toggle = getExe self.packages.${system}.qs-toggle;
-          wpctl = getExe' pkgs.wireplumber "wpctl";
-        };
+        programs =
+          let
+            inherit (self.packages.${system})
+              kopuz
+              equibop
+              kitty
+              qs-toggle
+              dolphin
+              ;
+          in
+          mkLuaObject {
+            browser = getExe inputs.helium.packages.${system}.default;
+            music = getExe kopuz;
+            discord = getExe equibop;
+            file_manager = getExe' dolphin "dolphin";
+            hyprshutdown = getExe pkgs.hyprshutdown;
+            playerctl = getExe' pkgs.playerctl "playerctl";
+            terminal = getExe kitty;
+            qs_toggle = getExe qs-toggle;
+            wpctl = getExe' pkgs.wireplumber "wpctl";
+          };
         displays = mkLuaObject <| mapAttrsToList createDisplayAttrs config.displays;
       };
     };

@@ -6,6 +6,7 @@
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-utils.url = "github:numtide/flake-utils";
+    nix-flatpak.url = "github:gmodena/nix-flatpak";
     gomod2nix = {
       url = "github:nix-community/gomod2nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,7 +26,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree.url = "github:vic/import-tree";
-    kopuz.url = "github:Kopuz-org/kopuz/master";
     ncro = {
       url = "github:feel-co/ncro";
       inputs.nixpkgs.follows = "nixpkgs";
