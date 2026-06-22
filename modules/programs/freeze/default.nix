@@ -44,7 +44,6 @@ in
             esc-fn = quote;
           };
         };
-        flagSeparator = "=";
       };
 
       packages.termshot = pkgs.writeShellApplication {
