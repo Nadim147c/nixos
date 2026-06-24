@@ -186,7 +186,27 @@ PanelWindow {
                     height: parent.height - 10
                     x: 5
                     y: 5
-                    text: Yankd.preview
+                    function removeIndent(text) {
+                        const lines = text.split('\n');
+                        let minIndent = Infinity;
+                        for (const line of lines) {
+                            if (line.trim() === '')
+                                continue; // Skip empty lines
+                            const leadingSpaces = line.match(/^[ \t]*/)[0].length;
+                            minIndent = Math.min(minIndent, leadingSpaces);
+                        }
+                        if (minIndent === Infinity)
+                            return text;
+
+                        const result = lines.map(line => {
+                            if (line.trim() === '')
+                                return line; // Keep empty lines as-is
+                            return line.slice(minIndent);
+                        });
+
+                        return result.join('\n');
+                    }
+                    text: removeIndent(Yankd.preview)
                 }
             }
         }
