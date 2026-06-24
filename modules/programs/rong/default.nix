@@ -10,26 +10,15 @@ let
 in
 {
 
-  perSystem =
-    { pkgs, ... }:
-    {
-      packages.rong-impure = inputs.wrappers.lib.wrapPackage {
-        inherit pkgs;
-        package = pkgs.lib.flakePackage inputs.rong;
-        prefixVar = singleton [
-          "PATH"
-          ":"
-          (makeBinPath [ pkgs.ffmpeg ])
-        ];
-        runShell = singleton /* bash */ ''
-          override="$HOME/.local/bin/rong"
-          if [[ -x "$override" ]]; then
-            exec -a "$0" "$override" "$@"
-            exit
-          fi
-        '';
-      };
+  perSystem = { pkgs, system, ... }: {
+    packages.rong-impure = pkgs.impurify' inputs.rong.packages.${system}.default {
+      prefixVar = singleton [
+        "PATH"
+        ":"
+        (makeBinPath [ pkgs.ffmpeg ])
+      ];
     };
+  };
 
   flake.modules.nixos.base =
     {
