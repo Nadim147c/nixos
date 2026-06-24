@@ -248,7 +248,7 @@ PanelWindow {
                             color: Appearance.material.myOnBackground
                             elide: Text.ElideRight
                             textFormat: Text.PlainText
-                            text: `${entry.preview}`
+                            text: `${entry.preview}` || `Unknown Content`
                         }
                     }
                 }
