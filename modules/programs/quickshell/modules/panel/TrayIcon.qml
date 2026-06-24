@@ -13,7 +13,7 @@ Item {
     required property SystemTrayItem item
 
     property int size: 24
-    property color color: Appearance.material.myPrimary
+    property color fg: Appearance.material.myPrimary
 
     width: size
     height: size
@@ -65,6 +65,7 @@ Item {
 
         const tooltips = {
             "Discord": "",
+            "Equibop": "",
             "GoofCord": "",
             "OBS Studio": ""
         };
@@ -88,7 +89,7 @@ Item {
 
         text: root.materialName
         font.pixelSize: root.size * 0.5
-        color: root.color
+        color: root.fg
     }
 
     MaterialSymbol {
@@ -98,7 +99,7 @@ Item {
         text: root.nerdSymbol
         font.pixelSize: root.size * 0.5
         font.family: Appearance.font.family.iconNerd
-        color: root.color
+        color: root.fg
     }
 
     Loader {
@@ -109,13 +110,6 @@ Item {
             anchors.centerIn: root
             implicitSize: root.size * 0.5
             source: root.item.icon
-            smooth: true
-            layer.enabled: true
-            layer.effect: MultiEffect {
-                contrast: 0.2
-                brightness: 0
-                saturation: -1
-            }
         }
     }
 }

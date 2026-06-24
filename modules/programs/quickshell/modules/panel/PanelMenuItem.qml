@@ -3,12 +3,13 @@ import qs.modules.common
 import qs.modules.end4
 
 import QtQuick
-import QtQuick.Controls
+import QtQuick.Layouts
 
 Item {
     id: root
 
     required property string text
+    property string icon
     property real pad: Appearance.space.small
     property bool first: false
     property bool last: false
@@ -28,16 +29,27 @@ Item {
         bottomLeftRadius: root.last ? bigRound : smallRound
 
         color: mouseArea.containsMouse ? Appearance.material.myPrimary : Appearance.material.mySurfaceContainer
+        property color fg: mouseArea.containsMouse ? Appearance.material.myOnPrimary : Appearance.material.myOnSurface
 
         implicitWidth: parent.width - (Appearance.space.visible * 2)
-        implicitHeight: text.height + (pad * 2)
+        implicitHeight: row.height + (root.pad * 2)
 
-        StyledText {
-            id: text
-            y: root.pad
+        RowLayout {
+            id: row
             x: root.pad
-            text: root.text
-            color: mouseArea.containsMouse ? Appearance.material.myOnPrimary : Appearance.material.myOnSurface
+            anchors.verticalCenter: parent.verticalCenter
+            MaterialSymbol {
+                visible: root.icon !== ""
+                text: root.icon
+                color: rect.fg
+            }
+            StyledText {
+                id: text
+                y: root.pad
+                x: root.pad
+                text: root.text
+                color: rect.fg
+            }
         }
 
         MouseArea {

@@ -5,7 +5,6 @@
 import qs.modules.bar
 import qs.modules.clipboard
 import qs.modules.common
-import qs.modules.dock
 import qs.modules.logout
 import qs.modules.osd
 import qs.modules.panel
@@ -36,14 +35,6 @@ ShellRoot {
     LazyLoader {
         active: Toggle.player
         component: Player {}
-    }
-    LazyLoader {
-        active: Toggle.dock
-        component: Dock {}
-    }
-    LazyLoader {
-        active: true
-        component: DockSpawner {}
     }
     LazyLoader {
         active: Toggle.wallpaper

@@ -1,4 +1,5 @@
 import qs.modules.common
+import qs.modules.common.models
 import qs.modules.end4
 
 import QtQuick
@@ -11,7 +12,8 @@ Rectangle {
         Filled,
         FilledTonal,
         Elevated,
-        Outlined
+        Outlined,
+        Text
     }
 
     property int variant: MaterialButton.Variant.Filled
@@ -19,12 +21,17 @@ Rectangle {
 
     required property string icon
     property real size: 22
+    property bool fill: true
     property real containerSize: Math.max(icon.height, icon.width) + (Appearance.space.small * 2)
     property string tooltip: ""
     readonly property bool containsMouse: mouse.containsMouse && enable
 
+    property bool hovered: mouse.containsMouse
     signal clicked
     signal rightClicked
+    signal middleClicked
+
+    property RongColors scheme: Appearance.material
 
     implicitHeight: containerSize
     implicitWidth: containerSize
@@ -40,55 +47,59 @@ Rectangle {
     // Hover state overlay opacity added to meet Material 3 guidelines (8% primary/on-surface overlay)
     property color bgCol: {
         if (!enable)
-            return Appearance.material.mySurfaceVariant;
+            return root.scheme.mySurfaceVariant;
         switch (variant) {
         case MaterialButton.Variant.Filled:
-            return Appearance.material.myPrimary;
+            return root.scheme.myPrimary;
         case MaterialButton.Variant.FilledTonal:
-            return Appearance.material.mySecondaryContainer;
+            return root.scheme.mySecondaryContainer;
         case MaterialButton.Variant.Elevated:
-            return Appearance.material.mySurfaceContainerLow;
+            return root.scheme.mySurfaceContainerLow;
         case MaterialButton.Variant.Outlined:
             return "transparent";
+        case MaterialButton.Variant.Text:
+            return "transparent";
         default:
-            return Appearance.material.myPrimary;
+            return root.scheme.myPrimary;
         }
     }
     property color bgHoveredCol: {
         if (!enable)
-            return Appearance.material.myOnSurfaceVariant;
+            return root.scheme.myOnSurfaceVariant;
         switch (variant) {
         case MaterialButton.Variant.Filled:
-            return Qt.lighter(Appearance.material.myPrimary, 1.1); // Brightened variant for hover
+            return Qt.lighter(root.scheme.myPrimary, 1.1); // Brightened variant for hover
         case MaterialButton.Variant.FilledTonal:
-            return Qt.darker(Appearance.material.mySecondaryContainer, 1.05);
+            return Qt.darker(root.scheme.mySecondaryContainer, 1.05);
         case MaterialButton.Variant.Elevated:
-            return Appearance.material.mySurfaceContainer;
+            return root.scheme.mySurfaceContainer;
         case MaterialButton.Variant.Outlined:
-            return Qt.rgba(Appearance.material.myPrimary.r, Appearance.material.myPrimary.g, Appearance.material.myPrimary.b, 0.08); // 8% alpha tint
+            return "transparent";
+        case MaterialButton.Variant.Text:     // Material 3 states text buttons use an 8% state container on hover
+            return Qt.rgba(root.scheme.myPrimary.r, root.scheme.myPrimary.g, root.scheme.myPrimary.b, 0.08);
         default:
-            return Appearance.material.myPrimary;
+            return root.scheme.myPrimary;
         }
     }
     property color fgCol: {
         if (!enable)
-            return Appearance.material.myOnSurface;
+            return root.scheme.myOnSurface;
         switch (variant) {
         case MaterialButton.Variant.Filled:
-            return Appearance.material.myOnPrimary;
+            return root.scheme.myOnPrimary;
         case MaterialButton.Variant.FilledTonal:
-            return Appearance.material.myOnSecondaryContainer;
+            return root.scheme.myOnSecondaryContainer;
         case MaterialButton.Variant.Elevated:
-            return Appearance.material.myPrimary;
         case MaterialButton.Variant.Outlined:
-            return Appearance.material.myPrimary;
+        case MaterialButton.Variant.Text:     // Text button foreground matches the primary theme color
+            return root.scheme.myPrimary;
         default:
-            return Appearance.material.myOnPrimary;
+            return root.scheme.myOnPrimary;
         }
     }
     property color fgHoveredCol: fgCol
 
-    border.color: variant === MaterialButton.Variant.Outlined ? Appearance.material.myOutline : "transparent"
+    border.color: variant === MaterialButton.Variant.Outlined ? root.scheme.myOutline : "transparent"
     border.width: variant === MaterialButton.Variant.Outlined ? 1 : 0
 
     color: containsMouse ? bgHoveredCol : bgCol
@@ -109,10 +120,16 @@ Rectangle {
         acceptedButtons: root.enable ? (Qt.LeftButton | Qt.RightButton) : Qt.NoButton
         hoverEnabled: root.enable
         onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton) {
+            switch (mouse.button) {
+            case Qt.LeftButton:
                 root.clicked();
-            } else {
+                break;
+            case Qt.MiddleButton:
+                root.middleClicked();
+                break;
+            case Qt.RightButton:
                 root.rightClicked();
+                break;
             }
         }
 
@@ -120,6 +137,7 @@ Rectangle {
             id: icon
             x: (root.containerSize - width) / 2
             y: (root.containerSize - height) / 2
+            fill: root.fill || root.variant === MaterialButton.Variant.Text ? 1 : 0
             color: root.fg
             iconSize: root.size
             text: root.icon

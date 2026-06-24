@@ -1,6 +1,6 @@
 import qs.modules.common
+import qs.modules.widgets
 import qs.modules.end4
-import qs.modules.end4.functions
 
 import QtQuick
 import QtQuick.Layouts
@@ -41,19 +41,76 @@ PanelWindow {
         property real pad: Appearance.space.big
         implicitHeight: parent.height
         implicitWidth: content.width + (pad * 2)
-        radius: Appearance.round.larger
+        radius: Appearance.round.large
         color: Appearance.material.myBackground
+
+        border.width: 2
+        border.color: Appearance.material.myOutline
+
         ColumnLayout {
             id: content
             x: body.pad
             y: body.pad
+            Item {
+                implicitHeight: headerRow.height + (Appearance.space.tiny * 2)
+                Layout.fillWidth: true
+                RowLayout {
+                    id: headerRow
+                    implicitWidth: parent.width
+                    StyledText {
+                        id: title
+                        text: "Control Panel"
+                        font.pixelSize: Appearance.font.pixelSize.hugeass
+                        font.family: Appearance.font.family.title
+                    }
+                    Item {
+                        Layout.fillWidth: true
+                    }
+                    PanelIcon {
+                        variant: MaterialButton.Variant.Text
+                        size: 20
+                        tooltip: "Power Menu"
+                        icon: "power_settings_new"
+                        onClicked: menu.popup()
+                        menu: PanelMenu {
+                            PanelMenuItem {
+                                first: true
+                                text: "Lock"
+                                icon: "lock"
+                                onActivate: Quickshell.execDetached(["loginctl", "lock-session"])
+                            }
+                            PanelMenuItem {
+                                text: "Logout"
+                                icon: "logout"
+                                onActivate: Quickshell.execDetached(["app-launcher", "hyprshutdown"])
+                            }
+                            PanelMenuItem {
+                                text: "Sleep"
+                                icon: "bedtime"
+                                onActivate: Quickshell.execDetached(["systemctl", "suspend"])
+                            }
+                            PanelMenuItem {
+                                text: "Shutdown"
+                                icon: "power_settings_new"
+                                onActivate: Quickshell.execDetached(["app-launcher", "hyprshutdown", "-p", "systemctl poweroff"])
+                            }
+                            PanelMenuItem {
+                                last: true
+                                icon: "replay"
+                                text: "Reboot"
+                                onActivate: Quickshell.execDetached(["app-launcher", "hyprshutdown", "-p", "systemctl reboot"])
+                            }
+                        }
+                    }
+                }
+            }
             GridLayout {
-                columns: 6
+                columns: 7
                 uniformCellHeights: true
                 uniformCellWidths: true
                 Rectangle {
-                    radius: Appearance.round.large
-                    Layout.columnSpan: 3
+                    radius: Appearance.round.big
+                    Layout.columnSpan: 4
                     Layout.fillWidth: true
                     implicitHeight: 50
                     color: Appearance.material.myPrimary
@@ -88,9 +145,15 @@ PanelWindow {
                         }
                     }
                 }
-                Rectangle {
-                    radius: Appearance.round.large
+                PanelPlayer {
                     Layout.columnSpan: 3
+                    Layout.rowSpan: 2
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                }
+                Rectangle {
+                    radius: Appearance.round.big
+                    Layout.columnSpan: 4
                     Layout.fillWidth: true
                     implicitHeight: 50
                     color: Appearance.material.myPrimary
@@ -126,72 +189,55 @@ PanelWindow {
                     }
                 }
                 PanelIcon {
-                    text: "Screenshot"
+                    tooltip: "Application Launcher"
+                    icon: "apps"
+                    onClicked: Toggle.launcher = true
+                }
+                PanelIcon {
+                    tooltip: "Screenshot"
                     icon: "screenshot_region"
-                    onActivate: Hyprland.dispatch("exec screenshot")
+                    onClicked: Quickshell.execDetached(["hyprscreenshot", "region"])
                     menu: PanelMenu {
                         PanelMenuItem {
                             first: true
                             text: `Fullscreen Screenshot`
-                            onActivate: Hyprland.dispatch("exec screenshot screen")
+                            onActivate: Quickshell.execDetached(["hyprscreenshot", "screen"])
                         }
                         PanelMenuItem {
                             last: true
                             text: `Region Screenshot`
-                            onActivate: Hyprland.dispatch("exec screenshot region")
+                            onActivate: Quickshell.execDetached(["hyprscreenshot", "region"])
                         }
                     }
                 }
                 PanelIcon {
-                    text: "Recrod Screen"
+                    tooltip: "Recrod Screen"
                     icon: "screen_record"
-                    onActivate: Hyprland.dispatch("exec qs-screenrecord")
+                    onClicked: Quickshell.execDetached(["qs-screenrecord"])
                 }
                 PanelIcon {
-                    text: "QR Code"
-                    icon: "qr_code"
-                    onActivate: Toggle.qrcode = true
-                }
-                PanelIcon {
-                    text: "Year Progress"
-                    icon: "calendar_view_month"
-                    onActivate: Toggle.year = true
-                }
-                PanelIcon {
-                    text: "Clipboard"
+                    tooltip: "Clipboard"
                     icon: "content_paste_search"
-                    onActivate: Toggle.clipboard = true
+                    onClicked: Toggle.clipboard = true
                 }
                 PanelIcon {
-                    text: "Wallpaper"
+                    tooltip: "Wallpaper"
                     icon: "wallpaper"
-                    onActivate: Toggle.wallpaper = true
+                    onClicked: Toggle.wallpaper = true
                 }
                 Repeater {
                     model: SystemTray.items.values
-                    Rectangle {
+                    PanelIcon {
                         id: trayItem
                         required property SystemTrayItem modelData
-                        radius: Appearance.round.full
-                        height: 50
-                        Layout.fillWidth: true
+                        tooltip: trayItem.modelData.tooltipTitle
+                        icon: ""
 
-                        color: iconMouseArea.containsMouse ? Appearance.material.mySecondary : Appearance.material.mySurfaceContainerHighest
-                        Behavior on color {
-                            ColorAnimation {
-                                duration: 200
-                            }
-                        }
                         TrayIcon {
-                            anchors.centerIn: parent
+                            anchors.fill: parent
+                            size: trayItem.containerSize
+                            fg: trayItem.fg
                             item: trayItem.modelData
-                            size: 50
-                            color: iconMouseArea.containsMouse ? Appearance.material.myOnSecondary : Appearance.material.myPrimary
-                            Behavior on color {
-                                ColorAnimation {
-                                    duration: 200
-                                }
-                            }
                         }
 
                         PanelTrayMenu {
@@ -199,30 +245,9 @@ PanelWindow {
                             modelData: trayItem.modelData.menu
                         }
 
-                        StyledToolTip {
-                            text: trayItem.modelData.tooltipTitle
-                            extraVisibleCondition: iconMouseArea.containsMouse && text !== ""
-                        }
-
-                        MouseArea {
-                            id: iconMouseArea
-                            acceptedButtons: Qt.LeftButton | Qt.RightButton
-                            cursorShape: Qt.PointingHandCursor
-                            hoverEnabled: true
-                            anchors.fill: parent
-                            onClicked: mouse => {
-                                switch (mouse.button) {
-                                case Qt.LeftButton:
-                                    trayItem.modelData.activate();
-                                    break;
-                                case Qt.MiddleButton:
-                                    trayItem.modelData.secondaryActivate();
-                                    break;
-                                case Qt.RightButton:
-                                    menu.popup();
-                                }
-                            }
-                        }
+                        onClicked: trayItem.modelData.activate()
+                        onMiddleClicked: trayItem.modelData.secondaryActivate()
+                        onRightClicked: menu.popup()
                     }
                 }
             }
