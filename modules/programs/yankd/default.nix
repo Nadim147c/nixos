@@ -8,8 +8,18 @@ let
   inherit (lib) getExe toList;
 in
 {
-  perSystem = { pkgs, system, ... }: {
-    packages.yankd-impure = pkgs.impurify inputs.yankd.packages.${system}.default;
+  perSystem = { pkgs, ... }: {
+    packages.yankd-impure = inputs.wrappers.lib.wrapPackage {
+      inherit pkgs;
+      package = pkgs.lib.flakePackage inputs.yankd;
+      runShell = toList /* bash */ ''
+        override="$HOME/.local/bin/yankd"
+        if [ -x "$override" ]; then
+          exec -a "$0" "$override" "$@"
+          exit
+        fi
+      '';
+    };
   };
 
   flake.modules.nixos.gui = { system, ... }: {
