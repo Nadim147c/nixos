@@ -10,7 +10,7 @@ Singleton {
     readonly property bool isSearching: searchProc.running
     property string binName: "yankd"
     function search(query: string) {
-        searchProc.exec([binName, "search", "--format=json", "--limit=20", query]);
+        searchProc.exec([binName, "search", "--format=json", "--limit=100", query]);
     }
 
     function set(query: string) {
@@ -18,8 +18,9 @@ Singleton {
     }
 
     function pauseDaemon(state: string) {
-        if (!state)
+        if (!state) {
             state = "toggle";
+        }
         Quickshell.execDetached([binName, "daemon", "pause", state]);
     }
 
