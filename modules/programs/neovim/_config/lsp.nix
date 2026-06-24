@@ -22,7 +22,6 @@ in
       };
       bash.enable = true;
       html.enable = true;
-      zig.enable = true;
       go = {
         enable = true;
         extensions.gopher-nvim.enable = true;
@@ -59,18 +58,17 @@ in
         format.enable = true;
         lsp.enable = true;
       };
-      rust.enable = true;
       typescript.enable = true;
     };
 
     lsp = {
       enable = true;
       formatOnSave = true;
+      inlayHints.enable = true;
       lspkind.enable = true;
       presets = {
         tailwindcss-language-server.enable = true;
         typescript-go.enable = true;
-        zls.enable = true;
       };
       otter-nvim.enable = true;
       servers."*" = {
