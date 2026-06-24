@@ -307,7 +307,7 @@ in
             FixYoutubeEmbeds.enabled = false;
             FollowVoiceUser.enabled = false;
             FontLoader = {
-              applyOnCodeBlocks = false;
+              applyOnCodeBlocks = true;
               enabled = true;
               selectedFont = "JetBrains Mono";
             };
