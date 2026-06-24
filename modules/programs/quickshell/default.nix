@@ -111,6 +111,7 @@ in
     {
       packages = [
         self.packages.${system}.quickshell
+        inputs.discord-voice-rpc.packages.${system}.default
       ];
 
       programs.rong.settings.installs = {
