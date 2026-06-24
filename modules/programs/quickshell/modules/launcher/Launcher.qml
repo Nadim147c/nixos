@@ -110,7 +110,6 @@ PanelWindow {
                 required property string name
                 required property string icon
                 required property string execString
-                property var code: Nerdfont.find(icon, name)
                 property bool isCurrent: ListView.isCurrentItem
                 RowLayout {
                     id: row
@@ -120,18 +119,17 @@ PanelWindow {
                     spacing: 10
                     Item {
                         implicitWidth: 30
-                        MaterialSymbol {
+                        IconImage {
+                            implicitSize: 24
                             anchors.centerIn: parent
-                            visible: entry.code !== 0
-                            code: entry.code
-                            color: Appearance.material.myPrimary
-                            iconSize: Appearance.font.pixelSize.large
-                            font.family: Appearance.font.family.iconNerd
+                            source: Quickshell.iconPath(entry.icon, true)
                         }
-                        StyledImage {
-                            anchors.fill: parent
-                            visible: entry.code === 0 && Quickshell.hasThemeIcon(entry.icon)
-                            source: Quickshell.iconPath(entry.icon)
+                        MaterialSymbol {
+                            visible: Quickshell.iconPath(entry.icon, true) === ""
+                            iconSize: 24
+                            anchors.centerIn: parent
+                            color: Appearance.material.myPrimary
+                            text: "apps"
                         }
                     }
                     Item {
