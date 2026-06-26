@@ -193,6 +193,22 @@
         "type": "github"
       }
     },
+    "kopuz": {
+      "locked": {
+        "lastModified": 1782917851,
+        "narHash": "sha256-IRV5pfyIEKLk2Gdi9f7NRmiQwS1NV+vslUxgordu5X8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e33da78d58d221d54809ea02369b6d652a48a04e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "e33da78d58d221d54809ea02369b6d652a48a04e",
+        "type": "github"
+      }
+    },
     "mnw": {
       "locked": {
         "lastModified": 1780772958,
@@ -403,6 +419,7 @@
         "hjem": "hjem",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
+        "kopuz": "kopuz",
         "ncro": "ncro",
         "nix-flatpak": "nix-flatpak",
         "nixos-hardware": "nixos-hardware",
