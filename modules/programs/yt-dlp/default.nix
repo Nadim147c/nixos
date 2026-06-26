@@ -38,7 +38,8 @@ in
         format = "ba/ba*/b";
         list-formats = true;
         output = "%(title)s-%(id)s.%(ext)s";
-        # recode-video = "mp3";
+        extract-audio = true;
+        recode-video = "opus";
         simulate = false;
         sponsorblock = false;
       };
@@ -49,7 +50,7 @@ in
         inherit pkgs;
         package = pkgs.yt-dlp;
         flags."--paths" = {
-          data = "$(${getExe self'.packages.xdg-base-dir} user-videos)";
+          data = "$(${getExe self'.packages.xdg-base-dir} user-download)";
           esc-fn = quote;
         };
         settings = videoSettings;
@@ -58,7 +59,7 @@ in
         inherit pkgs;
         package = pkgs.yt-dlp;
         flags."--paths" = {
-          data = "$(${getExe self'.packages.xdg-base-dir} user-musics)";
+          data = "$(${getExe self'.packages.xdg-base-dir} user-download)";
           esc-fn = quote;
         };
         filesToExclude = [ "bin/yt-dlp" ];
