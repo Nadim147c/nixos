@@ -44,6 +44,7 @@ in
           "ssh/github" = createSSHKey "github";
           "ssh/gitlab" = createSSHKey "gitlab";
           "ssh/master" = createSSHKey "master";
+          "ssh/codeberg" = createSSHKey "codeberg";
         };
       };
 
