@@ -37,6 +37,7 @@ in
         "x-scheme-handler/unknown"
       ];
 
+      # Copied from https://github.com/RGBCube/ncc/blob/fd1860d09aaca345badff5f48b38c124b729fdf8/modules/web-browser.mod.nix
       environment.etc."chromium/policies/managed/policies.json".text = builtins.toJSON rec {
         # EXTENSIONS
         ExtensionInstallBlocklist = toList "*";
