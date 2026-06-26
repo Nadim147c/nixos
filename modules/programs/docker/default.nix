@@ -8,9 +8,9 @@ in
     dev.imports = toList containerization;
     server.imports = toList containerization;
     containerization = {
-      virtualisation.podman = {
+      virtualisation.docker = {
         enable = true;
-        dockerCompat = true;
+        enableOnBoot = false;
       };
     };
   };
