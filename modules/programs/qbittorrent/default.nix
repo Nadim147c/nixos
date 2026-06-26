@@ -80,8 +80,8 @@ in
       packages =
         toList
         <| pkgs.makeDesktopItem {
-          name = "qBittorrent Web UI";
-          desktopName = "qbittorrent-nox";
+          name = "qbittorrent-nox";
+          desktopName = "qBittorrent Web UI";
           genericName = "Internet Manager";
           exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://localhost:1616";
           terminal = false;
