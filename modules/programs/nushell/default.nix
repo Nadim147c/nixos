@@ -6,9 +6,9 @@ let
     mkIf
     mkMerge
     mkAliasOptionModule
-    mapAttrsToList
-    join
+    concatMapAttrsStringSep
     ;
+
 in
 {
   flake.modules.nixos.base =
@@ -16,7 +16,10 @@ in
     let
       inherit (config.environment) shellAliases;
       cfg = config.programs.nushell;
-      alias = shellAliases |> mapAttrsToList (name: value: "alias ${name} = ${value}") |> join "\n";
+
+      makeSource = name: value: "source ${pkgs.mkInitScript "init-${name}.nu" value}";
+      extraInit = concatMapAttrsStringSep "\n" makeSource cfg.init;
+      alias = concatMapAttrsStringSep "\n" (name: value: "alias ${name} = ${value}") shellAliases;
     in
     {
       imports = [
@@ -29,6 +32,7 @@ in
         enable = opt.bool true;
         package = opt.null.pkg pkgs.nushell;
         extraConfig = opt.block "";
+        init = opt.attrs.block { };
         settings = opt.attrs.recursive {
           show_banner = false;
           edit_mode = "vi";
@@ -51,6 +55,7 @@ in
         home.xdg.config.files."nushell/config.nu".text = mkMerge [
           (mkIf (cfg.settings != { }) "$env.config = ${toNushell { } cfg.settings}")
           (mkIf (shellAliases != { }) alias)
+          (mkIf (cfg.init != { }) extraInit)
           cfg.extraConfig
         ];
       };

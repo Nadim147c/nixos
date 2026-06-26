@@ -22,30 +22,29 @@ in
     };
 
   flake.modules.nixos.base =
-    { pkgs, system, ... }:
+    { system, ... }:
     let
       bin = getExe self.packages.${system}.carapace;
-      nushellSource = pkgs.runCommand "carapace.nu" { } ''
-        ${bin} _carapace nushell | sed 's|"/homeless-shelter|$"($env.HOME)|g' > "$out"
-      '';
     in
     {
       packages = toList self.packages.${system}.carapace;
+      # The sed expression removes the unncessary add of
+      # XDG_CONFIG_HOME/carapace/bin to path
       programs = {
-        bash.interactiveShellInit = ''
-          source <(${bin} _carapace bash)
+        bash.init.carapace = ''
+          ${bin} _carapace bash | sed '/\/homeless-shelter/d'
         '';
 
-        zsh.interactiveShellInit = ''
-          source <(${bin} _carapace zsh)
+        zsh.init.carapace = ''
+          ${bin} _carapace zsh | sed '/\/homeless-shelter/d'
         '';
 
-        fish.interactiveShellInit = ''
-          ${bin} _carapace fish | source
+        fish.init.carapace = ''
+          ${bin} _carapace fish | sed '/\/homeless-shelter/d'
         '';
 
-        nushell.interactiveShellInit = ''
-          source ${nushellSource}
+        nushell.init.carapace = ''
+          ${bin} _carapace nushell | sed '/\/homeless-shelter/d'
         '';
       };
     };

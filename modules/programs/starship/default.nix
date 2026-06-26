@@ -119,38 +119,31 @@ in
   flake.modules.nixos.base =
     {
       config,
-      pkgs,
       system,
       ...
     }:
     let
       bin = getExe self.packages.${system}.starship;
-      nushellSource = pkgs.runCommand "starship.nu" { } ''
-        ${bin} init nu | sed '
-        s#"/homeless-shelter#$"($env.HOME)#g
-        s#/nix/store/.\+/bin/starship#starship#
-        ' > "$out"
-      '';
+      pathFix = "sd '/nix/store/([^\\s])+/starship' ${bin}";
     in
     {
       sessionVariables.STARSHIP_CACHE = "${config.home.xdg.cache.directory}/starship";
       packages = toList self.packages.${system}.starship;
-
       programs = {
-        bash.interactiveShellInit = ''
-          source <(${bin} init bash)
+        bash.init.starship = ''
+          ${bin} init bash --print-full-init | ${pathFix}
         '';
 
-        zsh.interactiveShellInit = ''
-          source <(${bin} init zsh)
+        zsh.init.starship = ''
+          ${bin} init zsh --print-full-init | ${pathFix}
         '';
 
-        fish.interactiveShellInit = ''
-          ${bin} init fish | source
+        fish.init.starship = ''
+          ${bin} init fish --print-full-init | ${pathFix}
         '';
 
-        nushell.interactiveShellInit = ''
-          source ${nushellSource}
+        nushell.init.starship = ''
+          ${bin} init nu | ${pathFix}
         '';
       };
     };

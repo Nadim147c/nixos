@@ -25,18 +25,17 @@ in
 
   flake.modules.nixos.base =
     { system, ... }:
+    let
+      bin = getExe self.packages.${system}.eza;
+    in
     {
       packages = toList self.packages.${system}.eza;
-      environment.shellAliases =
-        let
-          bin = getExe self.packages.${system}.eza;
-        in
-        {
-          l = "${bin} -alh";
-          ls = "${bin}";
-          ll = "${bin} -l";
-          la = "${bin} -a";
-          lt = "${bin} --tree";
-        };
+      environment.shellAliases = {
+        l = "${bin} -alh";
+        ls = "${bin}";
+        ll = "${bin} -l";
+        la = "${bin} -a";
+        lt = "${bin} --tree";
+      };
     };
 }

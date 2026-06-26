@@ -7,27 +7,24 @@ in
     { pkgs, ... }:
     let
       init = "${getExe pkgs.zoxide} init --cmd=cd";
-      nushellSource = pkgs.runCommand "zoxide.nu" { } ''
-        ${init} nushell | sed 's|"/homeless-shelter|$"($env.HOME)|g' > "$out"
-      '';
     in
     {
       packages = toList pkgs.zoxide;
       programs = {
-        bash.interactiveShellInit = ''
-          source <(${init} bash)
+        bash.init.zoxide = ''
+          ${init} bash
         '';
 
-        zsh.interactiveShellInit = ''
-          source <(${init} zsh)
+        zsh.init.zoxide = ''
+          ${init} zsh
         '';
 
-        fish.interactiveShellInit = ''
-          ${init} fish | source
+        fish.init.zoxide = ''
+          ${init} fish
         '';
 
-        nushell.interactiveShellInit = ''
-          source ${nushellSource}
+        nushell.init.zoxide = ''
+          ${init} nushell
         '';
       };
     };
