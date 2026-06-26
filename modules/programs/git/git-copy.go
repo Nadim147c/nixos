@@ -34,7 +34,7 @@ func main() {
 	rawURL := pflag.Arg(0)
 	extraArgs := pflag.Args()[1:]
 
-	cloneURI, cloneDir, err := parseURL(rawURL)
+	cloneURI, cloneDir, err := parseHTTPS(rawURL)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -65,50 +65,6 @@ func main() {
 	}
 }
 
-// parseURL takes a raw URL (HTTPS or SSH) and returns the git clone URI
-// and the local directory path relative to ~/git.
-func parseURL(raw string) (uri, dir string, err error) {
-	// Detect SSH style: git@host:path
-	if strings.HasPrefix(raw, "git@") {
-		return parseSSH(raw)
-	}
-	// Fallback to HTTPS parsing
-	return parseHTTPS(raw)
-}
-
-// parseSSH parses strings like "git@github.com:user/repo.git"
-func parseSSH(raw string) (uri, dir string, err error) {
-	// Split into user@host and path
-	parts := strings.SplitN(raw, ":", 2)
-	if len(parts) != 2 {
-		return "", "", errors.New("invalid SSH URL format")
-	}
-	userHost := parts[0]
-	pathPart := parts[1]
-
-	// Extract host from user@host
-	_, after, ok := strings.Cut(userHost, "@")
-	if !ok {
-		return "", "", errors.New("invalid SSH URL: missing @")
-	}
-	host := after
-	cleanPath := strings.TrimSuffix(pathPart, ".git")
-	uri = raw
-
-	switch host {
-	case "gist.github.com":
-		dir = cleanPath
-	case "github.com", "gitlab.com":
-		dir = cleanPath
-	case "aur.archlinux.org":
-		pkg := path.Base(cleanPath)
-		dir = filepath.Join("aur", pkg)
-	default:
-		return "", "", fmt.Errorf("unsupported host: %s", host)
-	}
-	return uri, dir, nil
-}
-
 // parseHTTPS parses standard https:// URLs.
 func parseHTTPS(raw string) (uri, dir string, err error) {
 	u, err := url.Parse(raw)
@@ -137,7 +93,7 @@ func parseHTTPS(raw string) (uri, dir string, err error) {
 		uri = fmt.Sprintf("git@%s:%s", host, gistID)
 		dir = pathStr
 
-	case "github.com", "gitlab.com":
+	case "github.com", "gitlab.com", "codeberg.org":
 		cleanPath, _, _ := cutNthSep(pathStr, "/", 2)
 		uri = fmt.Sprintf("git@%s:%s", host, cleanPath)
 		dir = cleanPath
