@@ -60,6 +60,27 @@ hl.on("window.urgent", function(w)
   end
 end)
 
+local function toggle_mpvpaper_pause_state()
+  local workspace = hl.get_active_workspace()
+  if workspace == nil then
+    return
+  end
+  local windows = hl.get_windows({ workspace = workspace.id })
+  local command = "set pause no"
+  for _, window in pairs(windows) do
+    if (not window.floating) or (window.fullscreen == 1) then
+      command = "set pause yes"
+    end
+  end
+  hl.dispatch(hl.dsp.exec_cmd(programs.mpvpaper_send_ipc .. " '" .. command .. "'"))
+end
+
+hl.on("window.active", toggle_mpvpaper_pause_state)
+hl.on("window.class", toggle_mpvpaper_pause_state)
+hl.on("window.fullscreen", toggle_mpvpaper_pause_state)
+hl.on("window.move_to_workspace", toggle_mpvpaper_pause_state)
+hl.on("workspace.active", toggle_mpvpaper_pause_state)
+
 hl.config({
   master = {
     new_status = "master",

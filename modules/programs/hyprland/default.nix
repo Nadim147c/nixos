@@ -15,16 +15,14 @@ let
   inherit (lib.generators) toLua;
 in
 {
-  perSystem =
-    { pkgs, ... }:
-    {
-      packages.hyprland = inputs.wrappers.lib.wrapPackage {
-        inherit pkgs;
-        package = pkgs.hyprland;
-        filesToExclude = [ "share/wayland-sessions/hyprland-uwsm.desktop" ];
-        passthru.providedSessions = [ "hyprland" ];
-      };
+  perSystem = { pkgs, ... }: {
+    packages.hyprland = inputs.wrappers.lib.wrapPackage {
+      inherit pkgs;
+      package = pkgs.hyprland;
+      filesToExclude = [ "share/wayland-sessions/hyprland-uwsm.desktop" ];
+      passthru.providedSessions = [ "hyprland" ];
     };
+  };
 
   flake.modules.nixos.gui =
     {
@@ -115,17 +113,19 @@ in
               kitty
               qs-toggle
               dolphin
+              mpvpaper-send-ipc
               ;
           in
           mkLuaObject {
             browser = getExe inputs.helium.packages.${system}.default;
-            music = getExe kopuz;
             discord = getExe equibop;
             file_manager = getExe' dolphin "dolphin";
             hyprshutdown = getExe pkgs.hyprshutdown;
+            mpvpaper_send_ipc = getExe mpvpaper-send-ipc;
+            music = getExe kopuz;
             playerctl = getExe' pkgs.playerctl "playerctl";
-            terminal = getExe kitty;
             qs_toggle = getExe qs-toggle;
+            terminal = getExe kitty;
             wpctl = getExe' pkgs.wireplumber "wpctl";
           };
         displays = mkLuaObject <| mapAttrsToList createDisplayAttrs config.displays;
