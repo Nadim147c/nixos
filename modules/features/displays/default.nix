@@ -40,6 +40,5 @@ in
           in
           mapAttrsToList createKernelFlag cfg;
       };
-
     };
 }
