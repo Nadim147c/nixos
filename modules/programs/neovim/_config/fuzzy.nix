@@ -4,28 +4,27 @@
       let
         fzf = ''require("fzf-lua")'';
         fff = ''require("fff")'';
-        function = body: "function () ${body} end";
         create = key: body: desc: {
           mode = "n";
           key = "<leader>f${key}";
-          action = body;
+          action = "function () ${body} end";
           lua = true;
           desc = "fzf ${desc}";
         };
       in
       [
-        (create "f" "${fff}.find_files" "search files")
-        (create "w" "${fff}.live_grep" "live grep")
-        (create "u" (function "${fff}.live_grep { grep = {'fuzzy', 'plain'} }") "live grep")
+        (create "f" "${fff}.find_files()" "search files")
+        (create "w" "${fff}.live_grep()" "live grep")
+        (create "u" "${fff}.live_grep { grep = {'fuzzy', 'plain'} }" "live grep")
 
-        (create "a" (function ''${fzf}.files { raw_cmd = "find" }'') "search all files")
-        (create "b" "${fzf}.buffers" "search buffer")
-        (create "g" "${fzf}.git_files" "search git files")
-        (create "l" "${fzf}.git_commits" "search git commits")
-        (create "q" "${fzf}.quickfix" "search quickfix list")
-        (create "s" "${fzf}.grep_curbuf" "current buffer")
-        (create "v" "${fzf}.highlights" "search highlights")
-        (create "h" "${fzf}.help_tags" "search help")
+        (create "a" ''${fzf}.files { raw_cmd = "find" }'' "search all files")
+        (create "b" "${fzf}.buffers()" "search buffer")
+        (create "g" "${fzf}.git_files()" "search git files")
+        (create "l" "${fzf}.git_commits()" "search git commits")
+        (create "q" "${fzf}.quickfix()" "search quickfix list")
+        (create "s" "${fzf}.grep_curbuf()" "current buffer")
+        (create "v" "${fzf}.highlights()" "search highlights")
+        (create "h" "${fzf}.help_tags()" "search help")
       ];
 
     extraPlugins.fff-nvim = {

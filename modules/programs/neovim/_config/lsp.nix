@@ -22,6 +22,7 @@ in
       };
       bash.enable = true;
       html.enable = true;
+      zig.enable = true;
       go = {
         enable = true;
         extensions.gopher-nvim.enable = true;
@@ -69,8 +70,10 @@ in
       presets = {
         tailwindcss-language-server.enable = true;
         typescript-go.enable = true;
+        zls.enable = true;
       };
       otter-nvim.enable = true;
+      servers."v-analyzer".enable = true;
       servers."*" = {
         on_attach = mkLuaInline /* lua */ ''
           function(_, bufnr)
