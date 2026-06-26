@@ -1,5 +1,7 @@
-{ self, ... }:
+{ inputs, lib, ... }:
 let
+  inherit (lib.x) singleton;
+  inherit (lib) makeBinPath;
   name = "qs-screenrecord";
 in
 {
@@ -7,23 +9,20 @@ in
     inherit name;
     script =
       pkgs:
-      let
-        ffmpeg-progress = self.packages.${pkgs.stdenv.hostPlatform.system}.qs-ffmpeg-compress-progress;
-      in
-      pkgs.writeShellApplication {
-        inherit name;
-        runtimeInputs = with pkgs; [
-          coreutils
-          ffmpeg
-          gum
-          jq
-          libnotify
-          slurp
-          wf-recorder
-          ffmpeg-progress
+      inputs.wrappers.lib.wrapPackage {
+        inherit pkgs;
+        package = pkgs.writers.writeGoBin name (builtins.readFile ./qs-screenrecord.go);
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          (makeBinPath [
+            pkgs.pulseaudio
+            pkgs.ffmpeg
+            pkgs.libnotify
+            pkgs.slurp
+            pkgs.wf-recorder
+          ])
         ];
-
-        text = builtins.readFile ./qs-screenrecord.sh;
       };
   };
 }

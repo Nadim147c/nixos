@@ -213,7 +213,7 @@ PanelWindow {
                 PanelIcon {
                     tooltip: "Recrod Screen"
                     icon: "screen_record"
-                    onClicked: Quickshell.execDetached(["qs-screenrecord"])
+                    onClicked: Quickshell.execDetached(["app-launcher", "qs-screenrecord"])
                 }
                 PanelIcon {
                     tooltip: "Clipboard"
