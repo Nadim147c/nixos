@@ -1,36 +1,32 @@
-{ inputs, ... }:
+{ inputs, lib, ... }:
+let
+  inherit (lib) genAttrs getExe const;
+  enabled.enable = true;
+  makeEnabled = l: genAttrs l (const enabled);
+in
 {
-  perSystem =
-    {
-      lib,
-      system,
-      ...
-    }:
-    let
-      enabled.enable = true;
-    in
-    {
-      treefmt = {
-        projectRootFile = "flake.nix";
+  perSystem = { system, ... }: {
+    treefmt = {
+      projectRootFile = "flake.nix";
 
-        programs = lib.genAttrs [
-          "nixfmt"
-          "gofumpt"
-          "shellcheck"
-          "shfmt"
-          "just"
-          "qmlformat"
-          "stylua"
-          "taplo"
-        ] (_: enabled);
+      programs = makeEnabled [
+        "nixfmt"
+        "gofumpt"
+        "shellcheck"
+        "shfmt"
+        "just"
+        "qmlformat"
+        "stylua"
+        "taplo"
+      ];
 
-        settings.formatter = {
-          "topiary-nushell" = {
-            command = lib.getExe inputs.topiary-nushell.packages.${system}.default;
-            options = [ "format" ];
-            includes = [ "*.nu" ];
-          };
+      settings.formatter = {
+        "topiary-nushell" = {
+          command = getExe inputs.topiary-nushell.packages.${system}.default;
+          options = [ "format" ];
+          includes = [ "*.nu" ];
         };
       };
     };
+  };
 }
