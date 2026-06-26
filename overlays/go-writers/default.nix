@@ -7,6 +7,7 @@ let
       trimpath ? true,
       cgo ? false,
       withDependencies ? true,
+      makeWrapperArgs ? [ ],
     }:
     let
       inherit (prev.lib)
@@ -21,6 +22,7 @@ let
       writeWithDependencies (baseNameOf name) args
     else
       prev.writers.makeBinWriter {
+        inherit makeWrapperArgs;
         compileScript = /* bash */ ''
           cp "$contentPath" tmp.go
           export HOME=$NIX_BUILD_TOP/.home
