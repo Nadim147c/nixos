@@ -22,14 +22,24 @@ in
     config = {
       services.flatpak = {
         packages = toList appId;
-        overrides.settings."${appId}".Context.filesystems = [
-          "xdg-config/equibop"
-          "xdg-music"
-        ];
+        overrides.settings = {
+          "${appId}".Context.filesystems = [
+            "xdg-config/equibop"
+            "!xdg-config"
+            "!xdg-data"
+            "!xdg-videos"
+            "!xdg-pictures"
+            "!xdg-music"
+          ];
+        };
       };
 
       programs.rong.settings.links."midnight-discord.css" = [
         "${config.home.xdg.config.directory}/equibop/settings/quickCss.css"
+      ];
+
+      systemd.user.tmpfiles.rules = [
+        "L+ %t/discord-ipc-0 - - - - %t/.flatpak/org.equicord.equibop/xdg-run/discord-ipc-0"
       ];
 
       home.xdg.mime-apps = lib.x.genMimes "equibop.desktop" [ "x-scheme-handler/discord" ];
@@ -41,8 +51,8 @@ in
         # |> builtins.fromJSON
         # |> pkgs.lib.generators.toPretty { }
         value = {
-          autoUpdate = false;
-          autoUpdateNotification = true;
+          autoUpdate = true;
+          autoUpdateNotification = false;
           cloud = {
             authenticated = false;
             settingsSync = false;
@@ -229,17 +239,17 @@ in
               enabled = true;
               removeAudioMenus = true;
               removeAvatarDecoration = false;
+              removeBillingSettings = true;
               removeButtonTooltips = false;
               removeClanTag = false;
-              removeNameplate = false;
-              removeUsernameStyles = true;
-              removeBillingSettings = true;
               removeGiftButton = true;
+              removeNameplate = false;
               removeProfileEffect = true;
               removeQuestsAboveDms = false;
               removeServerBoostInfo = true;
               removeShopAboveDms = false;
               removeUnavailableEmojiPicker = true;
+              removeUsernameStyles = true;
             };
             DecodeBase64.enabled = false;
             Decor.enabled = false;
