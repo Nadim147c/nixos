@@ -11,13 +11,13 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "qt-m3shapes";
-  version = "0-unstable-2026-01-31";
+  version = "0-unstable-2026-06-09";
 
   src = fetchFromGitHub {
     owner = "soramanew";
     repo = "m3shapes";
-    rev = "4665aab97f3fa05e189aea55746d315d54d1ea6d";
-    hash = "sha256-74bB+L1ixQ5S4Wn99a0t8Gd1R65lHzg7keO+kucL9BA=";
+    rev = "bdc327b29f95394a732baf3c9b19658ba23755b6";
+    hash = "sha256-kfHyzZaPHgqZML48OA+5JwBOsLdQJ2ci/aGPShvUB4Y=";
   };
 
   nativeBuildInputs = [
