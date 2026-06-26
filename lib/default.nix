@@ -2,6 +2,7 @@
 final: lib:
 let
   inherit (lib)
+    const
     genAttrs
     getExe
     getExe'
@@ -157,25 +158,21 @@ rec {
   flakePackage = pkgs: flake: flake.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   /*
-      wrapLocal :: package -> package
+    genMimes :: string | [string] -> [string] -> attrset
 
-    /*
-      genMimes :: string | [string] -> [string] -> attrset
+    Generate XDG MIME associations for desktop entries.
 
-      Generate XDG MIME associations for desktop entries.
+    Arguments:
+    - desktops: a desktop file name or a list of desktop file names
+    - types: a list of MIME types
 
-      Arguments:
-      - desktops: a desktop file name or a list of desktop file names
-      - types: a list of MIME types
-
-      For each MIME type, the given desktop entries are:
-      - added to `xdg.mimeApps.associations.added`
-      - set as the default applications
+    For each MIME type, the given desktop entries are:
+    - added to `xdg.mimeApps.associations.added`
+    - set as the default applications
   */
-  genMimes =
-    desktops: types:
+  genMimes = desktops: types:
     let
-      mimes = genAttrs types (_: toList desktops);
+      mimes = genAttrs types (const <| toList desktops);
     in
     {
       added-associations = mimes;
