@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (lib) toList;
+  inherit (lib) toList getExe;
 in
 {
   flake.modules.nixos.base =
@@ -8,11 +8,21 @@ in
     {
       packages = toList pkgs.jujutsu;
 
-      home.xdg.config.files."jj/config.toml".source = pkgs.writers.writeTOML "jj-config.toml" {
+      home.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jj-config.toml";
+      home.xdg.config.files."jj/config.toml".value = {
         user.name = config.fullname;
         user.email = config.email;
-        ui.default-command = "log";
-        ui.editor = "nvim";
+        ui = {
+          editor = "nvim";
+          default-command = "log";
+          diff-formatter = [
+            (getExe pkgs.difftastic)
+            "--color"
+            "always"
+            "$left"
+            "$right"
+          ];
+        };
         signing = {
           behavior = "own";
           backend = "ssh";

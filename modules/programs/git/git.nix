@@ -11,6 +11,7 @@ in
         mkdir -p $out/bin
         ln -s ${getExe pkgs.svu} $out/bin/git-svu
       '';
+
       cmd = pkg: text: "!${getExe pkg} ${text}";
     in
     {
@@ -50,6 +51,10 @@ in
           };
 
           init.defaultBranch = "main";
+
+          diff.external = getExe pkgs.difftastic;
+          diff.tool = "difftastic";
+          difftool.difftastic.cmd = /* bash */ ''${getExe pkgs.difftastic} "$LOCAL" "$REMOTE"'';
 
           core = {
             compression = 9;
