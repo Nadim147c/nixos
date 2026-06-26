@@ -12,8 +12,8 @@ def main [
   let scale_filter = if ($size != null) {
     $size
   } else if ($quality != null) {
-    let r = meta.height / $quality
-    printf "%d:%d" (round_to_even (meta.width * r)) (round_to_even $quality)
+    let r = $meta.height / $quality
+    printf "%d:%d" (round_to_even ($meta.width * $r)) (round_to_even $quality)
   } else if ($scale != null) {
     printf "%d:%d" (round_to_even ($meta.width * $scale)) (round_to_even ($meta.height * $scale))
   } else {
@@ -29,11 +29,11 @@ def main [
   let output_name = if ($output != null) {
     $output
   } else {
-    input
+    $input
     | path expand
     | path parse
-    | update stem { $in.stem + "_" + $scale_filter }
-    | file
+    | upsert stem {|it| $it.stem + "_" + $scale_filter }
+    | path join
   }
 
   ffmpeg -i $input -vf $final_filter $output_name
