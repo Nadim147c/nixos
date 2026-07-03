@@ -40,6 +40,7 @@ in
           "rclone/crypt/pass" = user;
           "rclone/crypt/salt" = user;
           "weather_api" = createConfigKey "weather_api.key";
+          "acoustid_api" = createConfigKey "acoustid_api.key";
           "ssh/aur" = createSSHKey "aur";
           "ssh/github" = createSSHKey "github";
           "ssh/gitlab" = createSSHKey "gitlab";
