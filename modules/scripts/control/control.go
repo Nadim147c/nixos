@@ -2,11 +2,8 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"math/rand"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 
 	"github.com/spf13/pflag"
@@ -16,9 +13,14 @@ func main() {
 	var cpu, mem string
 	pflag.StringVarP(&cpu, "cpu", "c", "", "CPU limit (e.g., 50% or 2)")
 	pflag.StringVarP(&mem, "memory", "m", "", "Memory limit (e.g., 512M or 1G)")
+	pflag.SetInterspersed(false)
 
 	var scope bool
 	pflag.BoolVarP(&scope, "scope", "s", false, "Run in scope mode (foreground)")
+
+	var args []string
+
+	args = append(args, "app")
 
 	pflag.Parse()
 
@@ -28,34 +30,30 @@ func main() {
 		os.Exit(1)
 	}
 
-	cmdName := pflag.Arg(0)
-	cmdBasename := filepath.Base(cmdName)
-	args := []string{"--user"}
-
 	if cpu != "" {
-		args = append(args, "--property", fmt.Sprintf("CPUQuota=%s", cpu))
+		args = append(args, "-p", fmt.Sprintf("CPUQuota=%s", cpu))
 	}
 	if mem != "" {
-		args = append(args, "--property", fmt.Sprintf("MemoryMax=%s", mem))
+		args = append(args, "-p", fmt.Sprintf("MemoryMax=%s", mem))
 	}
-
-	sliceName := fmt.Sprintf("--slice=%s-%d-controlled.slice", cmdBasename, rand.Uint32()%math.MaxUint16)
-	args = append(args, sliceName)
 
 	if scope {
-		args = append(args, "--scope")
+		args = append(args, "-t", "scope")
+	} else {
+		args = append(args, "-t", "service")
 	}
 
-	args = append(args, pflag.Args()...)
+	args = append(args, "--")
 
-	cmd := exec.Command("systemd-run", args...)
+	args = append(args, pflag.Args()...)
+	cmd := exec.Command("uwsm", args...)
 
 	// Connect standard IO so interactive programs work correctly
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	cmd.Stdin = os.Stdin
 
-	fmt.Printf("Running: systemd-run %s\n", strings.Join(args, " "))
+	fmt.Printf("Running: uwsm %s\n", strings.Join(args, " "))
 
 	if err := cmd.Run(); err != nil {
 		fmt.Fprintf(os.Stderr, "Execution failed: %v\n", err)

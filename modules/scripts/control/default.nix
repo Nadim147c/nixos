@@ -1,4 +1,7 @@
+{ inputs, lib, ... }:
 let
+  inherit (lib) makeBinPath;
+  inherit (lib.x) singleton;
   name = "control";
 in
 {
@@ -22,6 +25,16 @@ in
         positionalany = [ "$carapace.bridge.CarapaceBin" ];
       };
     };
-    script = pkgs: pkgs.writers.writeGoBin name (builtins.readFile ./control.go);
+    script =
+      pkgs:
+      inputs.wrappers.lib.wrapPackage {
+        inherit pkgs;
+        package = pkgs.writers.writeGoBin name (builtins.readFile ./control.go);
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          (makeBinPath [ pkgs.uwsm ])
+        ];
+      };
   };
 }
