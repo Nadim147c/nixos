@@ -39,6 +39,8 @@ in
           "rclone/gdrive/secret" = user;
           "rclone/crypt/pass" = user;
           "rclone/crypt/salt" = user;
+          "freeimage_api" = user;
+          "discord_client_id" = user;
           "weather_api" = createConfigKey "weather_api.key";
           "acoustid_api" = createConfigKey "acoustid_api.key";
           "ssh/aur" = createSSHKey "aur";
