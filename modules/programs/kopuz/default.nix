@@ -1,16 +1,8 @@
 {
-  inputs,
-  self,
-  ...
-}:
-{
-  perSystem = { system, ... }: {
-    packages.kopuz = (import inputs.kopuz { inherit system; }).kopuz;
-  };
 
-  flake.modules.nixos.gui = { pkgs, system, ... }: {
+  flake.modules.nixos.gui = { pkgs, ... }: {
     packages = [
-      self.packages.${system}.kopuz
+      pkgs.kopuz
       pkgs.picard
       pkgs.nicotine-plus
       pkgs.lrcget

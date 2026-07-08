@@ -108,7 +108,6 @@ in
         programs =
           let
             inherit (self.packages.${system})
-              kopuz
               equibop
               kitty
               qs-toggle
@@ -122,7 +121,7 @@ in
             file_manager = getExe' dolphin "dolphin";
             hyprshutdown = getExe pkgs.hyprshutdown;
             mpvpaper_send_ipc = getExe mpvpaper-send-ipc;
-            music = getExe kopuz;
+            music = getExe pkgs.kopuz;
             playerctl = getExe' pkgs.playerctl "playerctl";
             qs_toggle = getExe qs-toggle;
             terminal = getExe kitty;

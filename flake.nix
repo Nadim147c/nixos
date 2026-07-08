@@ -19,7 +19,6 @@
     hjem = {
       url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-darwin.follows = "";
     };
     home-manager = {
       url = "github:nix-community/home-manager/master";
@@ -64,8 +63,6 @@
       url = "github:Nadim147c/yankd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    kopuz.url = "github:NixOS/nixpkgs/e33da78d58d221d54809ea02369b6d652a48a04e";
   };
 
   outputs =
