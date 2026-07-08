@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList getExe getExe';
+  inherit (lib) getExe;
   inherit (lib.x) quote;
 in
 {
@@ -31,10 +31,10 @@ in
       audioSettings = {
         color = "always";
         concurrent-fragments = 4;
-        embed-chapters = false;
-        embed-metadata = false;
+        embed-chapters = true;
+        embed-metadata = true;
         embed-subs = false;
-        embed-thumbnail = false;
+        embed-thumbnail = true;
         format = "ba/ba*/b";
         list-formats = true;
         output = "%(title)s-%(id)s.%(ext)s";
