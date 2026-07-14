@@ -113,12 +113,14 @@ in
               qs-toggle
               dolphin
               mpvpaper-send-ipc
+              hyprscreenshot
               ;
           in
           mkLuaObject {
             browser = getExe inputs.helium.packages.${system}.default;
             discord = getExe equibop;
             file_manager = getExe' dolphin "dolphin";
+            hyprscreenshot = getExe hyprscreenshot;
             hyprshutdown = getExe pkgs.hyprshutdown;
             mpvpaper_send_ipc = getExe mpvpaper-send-ipc;
             music = getExe pkgs.kopuz;

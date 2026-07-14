@@ -13,12 +13,10 @@ in
       pkgs:
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = with pkgs; [
-          fd
-          self.packages.${pkgs.stdenv.hostPlatform.system}.xdg-base-dir
-          magika-cli
-          uutils-coreutils-noprefix
-        ];
+        runtimeInputs = builtins.attrValues {
+          inherit (pkgs) fd magika-cli coreutils;
+          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) xdg-base-dir;
+        };
         inheritPath = false;
         source = ./organize-files.nu;
       };

@@ -1,4 +1,7 @@
 { self, lib, ... }:
+let
+  inherit (lib) getExe getExe';
+in
 {
   flake.modules.nixos.base =
     {
@@ -13,16 +16,16 @@
     {
       packages = [
         field
-        pkgs.ffmpeg
-        pkgs.magika-cli
-        pkgs.comma
-        pkgs.uutils-coreutils-noprefix
-        pkgs.uutils-findutils
         pkgs.chafa
+        pkgs.comma
+        pkgs.coreutils
+        pkgs.ffmpeg
         pkgs.file
+        pkgs.findutils
         pkgs.gum
         pkgs.jq
         pkgs.killall
+        pkgs.magika-cli
         pkgs.perf
         pkgs.procps
         pkgs.xxd
@@ -43,17 +46,17 @@
 
         shellAliases =
           let
-            uutils = pkgs.uutils-coreutils-noprefix;
+            inherit (pkgs) coreutils findutils ffmpeg;
             wrap' = binPath: cmdline: "${binPath} ${cmdline}";
-            wrap = binName: cmdline: wrap' (lib.getExe' uutils binName) cmdline;
+            wrap = binName: cmdline: wrap' (getExe' coreutils binName) cmdline;
           in
           {
             # Core utils aliases
             du = wrap "du" "-h";
             grep = wrap "grep" "--color";
             exe = wrap "chmod" "+x";
-            x = lib.getExe' pkgs.uutils-findutils "xargs";
-            ffmpeg = wrap' (lib.getExe pkgs.ffmpeg) "-hide_banner";
+            x = getExe' findutils "xargs";
+            ffmpeg = wrap' (getExe ffmpeg) "-hide_banner";
 
             # Cd aliases
             rd = "cd -";

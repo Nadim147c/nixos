@@ -9,11 +9,9 @@ let
     ;
 in
 {
-  perSystem =
-    { system, ... }:
-    {
-      packages.helium = inputs.helium.packages.${system}.default;
-    };
+  perSystem = { system, ... }: {
+    packages.helium = inputs.helium.packages.${system}.default;
+  };
 
   flake.modules.nixos.gui =
     { system, ... }:
@@ -43,6 +41,8 @@ in
         ExtensionInstallBlocklist = toList "*";
         ExtensionInstallAllowlist = ExtensionInstallForcelist;
         ExtensionInstallForcelist = [
+          "effdbpeggelllpfkjppbokhmmiinhlmg" # BetterLyrics
+          "enamippconapkdmgfgjchkhakpfinmaj" # DeArrow
           "blockjmkbacgjkknlgpkjjiijinjdanf" # Ublock Origin
           "jplgfhpmjnbigmhklmmbgecoobifkmpa" # Proton VPN
           "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass

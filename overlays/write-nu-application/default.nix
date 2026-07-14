@@ -3,7 +3,7 @@ finputs: inal: prev: {
     {
       name,
       runtimeInputs ? [ ],
-      inheritPath ? true,
+      inheritPath ? false,
       text ? "",
       source ? "",
     }:
@@ -13,7 +13,7 @@ finputs: inal: prev: {
       prefix =
         if inheritPath then
           /* nu */ ''
-            $env.PATH = $env.PATH ++ [ ${paths} ]
+            $env.PATH = [ ${paths} ] ++ $env.PATH
           ''
         else
           /* nu */ ''

@@ -115,8 +115,8 @@ PanelWindow {
                         cursorShape: Qt.PointingHandCursor
                         hoverEnabled: true
                         onClicked: {
-                            console.log("wallpaper", `--color=${palette.modelData}`, root.filename);
-                            Quickshell.execDetached(["wallpaper", `--color=${palette.modelData}`, root.filename]);
+                            console.log("app-launcher", "wallpaper", `--color=${palette.modelData}`, root.filename);
+                            Quickshell.execDetached(["app-launcher", "wallpaper", `--color=${palette.modelData}`, root.filename]);
                         }
                     }
                 }
@@ -193,8 +193,8 @@ PanelWindow {
                             cursorShape: Qt.PointingHandCursor
                             onEntered: root.filename = listItem.filename
                             onClicked: {
-                                console.log("wallpaper", listItem.filename);
-                                Quickshell.execDetached(["wallpaper", listItem.filename]);
+                                console.log("app-launcher", "wallpaper", listItem.filename);
+                                Quickshell.execDetached(["app-launcher", "wallpaper", listItem.filename]);
                             }
                         }
                     }

@@ -16,3 +16,6 @@ fmt:
 quickshell-dev:
     systemctl --user stop quickshell.service
     qs -p modules/programs/quickshell/shell.qml
+
+update-discord-settings:
+  go run ./modules/programs/discord/update.go > ./modules/programs/discord/_settings.nix

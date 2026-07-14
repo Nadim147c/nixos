@@ -110,6 +110,7 @@ in
             platform = "phone";
             variant = "tonal_spot";
             version = "2025";
+            auto-monochrome = true;
             custom = {
               blend = 0.5;
               colors = {

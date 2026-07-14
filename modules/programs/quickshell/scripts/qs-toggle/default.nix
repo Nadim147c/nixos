@@ -1,4 +1,3 @@
-{ ... }:
 let
   name = "qs-toggle";
 in

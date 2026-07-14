@@ -39,7 +39,7 @@ func runCommand(ctx context.Context, name string, args ...string) *exec.Cmd {
 }
 
 func qsIPC(ctx context.Context, args ...string) error {
-	out, err := runCommand(ctx, "qs", "list", "--all", "--json").Output()
+	out, err := runCommand(ctx, "quickshell", "list", "--all", "--json").Output()
 	if err != nil {
 		return fmt.Errorf("qs list failed: %w", err)
 	}
@@ -67,8 +67,9 @@ func qsPID(ctx context.Context, pid string) {
 	must("Quickshell Set PID", qsIPC(ctx, "call", "recording", "setPID", pid))
 }
 
-func qsPerc(ctx context.Context, perc int) {
-	must("Quickshell Set Compression Percent", qsIPC(ctx, "call", "recording", "setPerc", strconv.Itoa(perc)))
+func qsPerc(ctx context.Context, perc float64) {
+	ps := fmt.Sprintf("%.5f", perc)
+	must("Quickshell Set Compression Percent", qsIPC(ctx, "call", "recording", "setPerc", ps))
 }
 
 // cleanup resets the quickshell recording status, typically called via defer.
@@ -175,7 +176,7 @@ func compressVideo(ctx context.Context, input, output string) error {
 	}
 	var duration float64
 
-	_, err = fmt.Fscanf(bytes.NewReader(durOut), "%d", &duration)
+	_, err = fmt.Fscanf(bytes.NewReader(durOut), "%f", &duration)
 	if err != nil {
 		return fmt.Errorf("parse duration: %w", err)
 	}
@@ -206,12 +207,12 @@ func compressVideo(ctx context.Context, input, output string) error {
 		line := scanner.Text()
 		if matches := reProgress.FindStringSubmatch(line); matches != nil {
 			var us float64
-			_, err := fmt.Sscanf(matches[1], "%d", &us)
+			_, err := fmt.Sscanf(matches[1], "%f", &us)
 			if err != nil {
 				slog.Error("failed to convert parse progress", "error", err)
 				continue
 			}
-			perc := int(us / (1_000_000 * duration))
+			perc := float64(us / (1_000_000 * duration))
 			perc = min(max(perc, 0), 1)
 			qsPerc(ctx, perc)
 		}
@@ -238,7 +239,7 @@ func notify(ctx context.Context, title, body string, actions ...string) (string,
 	return strings.TrimSpace(string(out)), nil
 }
 
-var exit = func() { panic("bruvv") }
+var exit = func() { os.Exit(1) }
 
 func main() {
 	logHandler := log.New(os.Stdout)

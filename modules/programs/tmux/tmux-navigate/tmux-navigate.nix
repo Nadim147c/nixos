@@ -11,6 +11,11 @@ in
         positional = [ (lib.splitString " " "left right up down h j k l") ];
       };
     };
-    script = pkgs: pkgs.writers.writeGoBin name (builtins.readFile ./tmux-navigate.go);
+    script =
+      pkgs:
+      let
+        args.runtimeInputs = [ pkgs.tmux ];
+      in
+      pkgs.writers.writeGoBin name args (builtins.readFile ./tmux-navigate.go);
   };
 }

@@ -1,35 +1,42 @@
-let name = (date now | format date "%Y-%m-%d_%H:%M:%S")
+let name: string = (date now | format date "%Y-%m-%d_%H:%M:%S")
+
 let temp_file = $"/tmp/screenshot_($name).png"
 let final_path = $"(xdg-base-dir user-picture)/screenshot/($name).png"
+
 mkdir -v ($final_path | path dirname)
 
 def main [] { main region }
 
 def 'main region' [] {
   let colors = get_colors
-  let region = (slurp -d -b $colors.background -c $colors.outline)
+  let region: string = (slurp -d -b $colors.background -c $colors.outline)
+
   print $"Captured a region ($region)"
   grim -g $region $temp_file
 
   open --raw $temp_file | wl-copy
 
-  let action = (
+  let action: string = (
     notify-send "Screenshot Captured" "Saved to clipboard"
     --expire-time="5000"
     --icon $temp_file
     --action="annotate=Annotate"
     --action="delete=Delete"
-    | complete | get stdout
+    | complete
+    | get stdout
+    | str trim
   )
+
+  print $"Actions: ($action)"
 
   if ($action == "annotate") {
     satty --filename $temp_file --output-filename $final_path --early-exit --copy-command wl-copy
   } else if ($action == "delete") {
-    rm -vf $final_path
+    rm -f $final_path
   } else {
     cp --verbose $temp_file $final_path
   }
-  rm -vf $temp_file
+  rm -f $temp_file
 }
 
 def 'main screen' [] {
@@ -37,23 +44,27 @@ def 'main screen' [] {
 
   open --raw $temp_file | wl-copy
 
-  let action = (
+  let action: string = (
     notify-send "Screenshot Captured" "Saved to clipboard"
     --expire-time="5000"
     --icon=$temp_file
     --action="annotate=Annotate"
     --action="delete=Delete"
-    | complete | get stdout
+    | complete
+    | get stdout
+    | str trim
   )
+
+  print $"Actions: ($action)"
 
   if ($action == "annotate") {
     satty --filename $temp_file --output-filename $final_path --early-exit --copy-command wl-copy
   } else if ($action == "delete") {
-    rm -vf $final_path
+    rm -f $final_path
   } else {
     cp --verbose $temp_file $final_path
   }
-  rm -vf $temp_file
+  rm -f $temp_file
 }
 
 def get_colors [] {

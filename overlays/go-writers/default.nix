@@ -1,62 +1,70 @@
 inputs: final: prev:
 let
+  inherit (prev.lib)
+    isBool
+    isAttrs
+    isDerivation
+    cleanSource
+    fileset
+    escapeShellArg
+    makeBinPath
+    ;
+
   goWriter =
-    name:
+    path:
     {
-      strip ? true,
-      trimpath ? true,
-      cgo ? false,
-      withDependencies ? true,
-      makeWrapperArgs ? [ ],
+      runtimeInputs ? [ ],
+      inheritPath ? false,
     }:
+    script:
+    assert (isBool inheritPath);
     let
-      inherit (prev.lib)
-        escapeShellArgs
-        optional
-        getExe
-        ;
+      name = baseNameOf path;
+      env = /* go */ ''
+        package main
 
-      args = optional trimpath "-trimpath" ++ optional strip "-ldflags=-s -w";
-    in
-    if withDependencies then
-      writeWithDependencies (baseNameOf name) args
-    else
-      prev.writers.makeBinWriter {
-        inherit makeWrapperArgs;
-        compileScript = /* bash */ ''
-          cp "$contentPath" tmp.go
-          export HOME=$NIX_BUILD_TOP/.home
-          export CGO_ENABLED=${if cgo then "1" else "0"}
-          ${getExe prev.go} build ${escapeShellArgs args} -o "$out" ./tmp.go
-        '';
-      } name;
+        import (
+        	"os"
+        	"path/filepath"
+        	"slices"
+        	"strings"
+        )
 
-  writeWithDependencies =
-    name: args: script:
-    let
-      fs = prev.lib.fileset;
-      src =
-        prev.runCommand "${name}-go-source"
-          {
-            nativeBuildInputs = [ prev.go ];
-            src = prev.lib.cleanSource (
-              fs.toSource {
-                root = ../../.;
-                fileset = fs.unions [
-                  ../../go.mod
-                  ../../go.sum
-                  ../../gomod2nix.toml
-                ];
-              }
-            );
+        const (
+        	prefixPaths  = "${makeBinPath runtimeInputs}"
+        	inheritPaths = ${builtins.toJSON inheritPath}
+        )
 
-            inherit script;
-          }
-          ''
-            mkdir -p $out/${name}
-            cp $src/* $out/
-            printf "%s" "$script" > $out/${name}/main.go
-          '';
+        func init() {
+        	paths := filepath.SplitList(prefixPaths)
+        	if inheritPaths {
+        		paths = append(paths, filepath.SplitList(os.Getenv("PATH"))...)
+        	}
+        	final := slices.DeleteFunc(paths, func(s string) bool { return s == "" })
+        	err := os.Setenv("PATH", strings.Join(final, string(filepath.ListSeparator)))
+        	if err != nil {
+        		panic(err)
+        	}
+        }
+      '';
+
+      cleanSrc = cleanSource (
+        fileset.toSource {
+          root = ../../.;
+          fileset = fileset.unions [
+            ../../go.mod
+            ../../go.sum
+            ../../gomod2nix.toml
+          ];
+        }
+      );
+
+      src = prev.runCommand "${name}-go-source" { } ''
+        mkdir -p $out/${name}
+        cp ${cleanSrc}/* $out/
+        printf "%s" ${escapeShellArg script} > $out/${name}/main.go
+        printf "%s" ${escapeShellArg env} > $out/${name}/env.go
+      '';
 
       gomod = inputs.gomod2nix.legacyPackages.${prev.stdenv.hostPlatform.system};
     in
@@ -70,7 +78,7 @@ in
   writers = prev.writers // rec {
     writeGo =
       name: argsOrScript:
-      if prev.lib.isAttrs argsOrScript && !prev.lib.isDerivation argsOrScript then
+      if isAttrs argsOrScript && !isDerivation argsOrScript then
         script: goWriter name argsOrScript script
       else
         goWriter name { } argsOrScript;

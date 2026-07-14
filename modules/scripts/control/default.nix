@@ -1,6 +1,5 @@
-{ inputs, lib, ... }:
+{ lib, ... }:
 let
-  inherit (lib) makeBinPath;
   inherit (lib.x) singleton;
   name = "control";
 in
@@ -16,25 +15,18 @@ in
         "-s, --scope" = "Run in terminal scope";
       };
       completion = {
-        positional = [
-          [
-            "$executables"
-            "$files"
-          ]
-        ];
-        positionalany = [ "$carapace.bridge.CarapaceBin" ];
+        positional = singleton [ "$executables" ];
+        positionalany = singleton "$carapace.bridge.CarapaceBin";
       };
     };
     script =
       pkgs:
-      inputs.wrappers.lib.wrapPackage {
-        inherit pkgs;
-        package = pkgs.writers.writeGoBin name (builtins.readFile ./control.go);
-        prefixVar = singleton [
-          "PATH"
-          ":"
-          (makeBinPath [ pkgs.uwsm ])
-        ];
-      };
+      let
+        args = {
+          inheritPath = true;
+          runtimeInputs = [ pkgs.uwsm ];
+        };
+      in
+      pkgs.writers.writeGoBin name args (builtins.readFile ./control.go);
   };
 }

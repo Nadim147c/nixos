@@ -5,7 +5,7 @@
 }:
 stdenvNoCC.mkDerivation {
   pname = "electroharmonix";
-  version = "unstable-2026-04-10"; # date +"unstable-%Y-%m-%d"
+  version = "0-unstable-2026-04-10"; # date +"unstable-%Y-%m-%d"
   src = ./Electroharmonix.otf;
   dontUnpack = true;
 

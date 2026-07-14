@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList getExe getExe';
+  inherit (lib) toList getExe;
   inherit (lib.x) quote;
 in
 {
@@ -18,7 +18,6 @@ in
       } (builtins.readFile ./center_screenshot.py);
 
       xdg-base-dir = getExe self'.packages.xdg-base-dir;
-      date = getExe' pkgs.uutils-coreutils-noprefix "date";
     in
     {
       packages.chroma = inputs.wrappers.lib.wrapPackage {
@@ -34,7 +33,7 @@ in
         inherit pkgs;
         package = pkgs.charm-freeze;
         runShell = toList /* bash */ ''
-          screenshot_file="$(${xdg-base-dir} user-pictures)/freeze/$(${date} +'%Y-%m-%d_%H-%M-%S').png"
+          screenshot_file="$(${xdg-base-dir} user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"
           mkdir -p "$(dirname "$screenshot_file")"
         '';
         flags = {
@@ -50,12 +49,11 @@ in
         name = "termshot";
         runtimeInputs = [
           center-screenshot
-          self'.packages.xdg-base-dir
-          pkgs.uutils-coreutils-noprefix
           pkgs.chafa
           pkgs.charm-freeze
-          pkgs.uutils-coreutils-noprefix
+          pkgs.coreutils
           pkgs.wl-clipboard
+          self'.packages.xdg-base-dir
         ];
         text = ''
           screenshot_file="$(xdg-base-dir user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"

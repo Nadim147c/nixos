@@ -20,6 +20,28 @@
         "type": "github"
       }
     },
+    "fast-nix-gc": {
+      "inputs": {
+        "nix-darwin": [],
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "treefmt-nix": []
+      },
+      "locked": {
+        "lastModified": 1783158862,
+        "narHash": "sha256-8bSrhuD0kGw0HlJqQsDDYidr9QG2aujOqS+46yNhW5Y=",
+        "owner": "Mic92",
+        "repo": "fast-nix-gc",
+        "rev": "aba1902a691f538d7655a8cb1f6c88adc8ced241",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Mic92",
+        "repo": "fast-nix-gc",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -346,6 +368,7 @@
     "root": {
       "inputs": {
         "discord-voice-rpc": "discord-voice-rpc",
+        "fast-nix-gc": "fast-nix-gc",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils",
         "gomod2nix": "gomod2nix",

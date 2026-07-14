@@ -38,7 +38,7 @@ in
       ];
 
       quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
-      extraBinaries = quickshellScripts ++ [
+      runtimeInputs = quickshellScripts ++ [
         self'.packages.hyprscreenshot
         self'.packages.rong-impure
         self'.packages.wallpaper
@@ -47,6 +47,7 @@ in
         self'.packages.control
         self'.packages.app-launcher
         pkgs.hyprshutdown
+        pkgs.pavucontrol
         discord-voice-rpc
       ];
 
@@ -96,7 +97,7 @@ in
         prefixVar = singleton [
           "PATH"
           ":"
-          (makeBinPath extraBinaries)
+          (makeBinPath runtimeInputs)
         ];
         flags."--path" = toString quickshellConfig;
       };

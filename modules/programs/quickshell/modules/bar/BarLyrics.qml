@@ -24,14 +24,10 @@ Rectangle {
     }
 
     Behavior on color {
-        ColorAnimation {
-            duration: Appearance.time.quick
-        }
+        animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
     }
     Behavior on fg {
-        ColorAnimation {
-            duration: Appearance.time.quick
-        }
+        animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
     }
 
     MouseArea {
@@ -69,8 +65,18 @@ Rectangle {
                 iconSize: Appearance.font.pixelSize.large
                 fill: 1
             }
-            Text {
-                text: WaybarLyric.text
+            StyledText {
+                textFormat: Text.RichText
+                property color highlight: {
+                    var color = OkLab.fromColor(root.fg);
+                    color.l *= color.l > 0.5 ? 1.2 : 0.8;
+                    return OkLab.toColor(color);
+                }
+                text: {
+                    const text = WaybarLyric.text;
+                    const out = text.replace(/<b>/g, `<b style="color: ${highlight};">`);
+                    return out;
+                }
                 color: root.fg
                 font {
                     family: Appearance.font.family.main

@@ -105,6 +105,9 @@ func parseHTTPS(raw string) (uri, dir string, err error) {
 		dir = filepath.Join("aur", pkg)
 
 	default:
+		if strings.Count(pathStr, "/") == 1 {
+			return raw, pathStr, nil
+		}
 		return "", "", fmt.Errorf("unsupported host: %s", host)
 	}
 	return uri, dir, nil

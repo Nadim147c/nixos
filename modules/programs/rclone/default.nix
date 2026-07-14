@@ -96,7 +96,7 @@ in
         serviceConfig = {
           # fusermount/fusermount3
           Environment = toList "PATH=/run/wrappers/bin";
-          ExecStartPre = "${getExe' pkgs.uutils-coreutils-noprefix "mkdir"} -p ${mountPath}";
+          ExecStartPre = "${getExe' pkgs.coreutils "mkdir"} -p ${mountPath}";
           ExecStart = pkgs.writeShellScript "rclone-mount" ''
             ${getExe' pkgs.rclone "rclone"} mount ${mountFlags} gdrive-enc:gdrive ${mountPath}
           '';

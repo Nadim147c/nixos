@@ -18,14 +18,17 @@ in
       pkgs:
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = with pkgs; [
-          grim
-          libnotify
-          satty
-          slurp
-          wl-clipboard
-          self.packages.${pkgs.stdenv.hostPlatform.system}.xdg-base-dir
-        ];
+        runtimeInputs = builtins.attrValues {
+          inherit (pkgs)
+            coreutils
+            grim
+            libnotify
+            satty
+            slurp
+            wl-clipboard
+            ;
+          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) xdg-base-dir;
+        };
         source = ./hyprscreenshot.nu;
       };
   };

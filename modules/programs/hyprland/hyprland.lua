@@ -18,6 +18,10 @@ for key, value in pairs(envs) do
   hl.env(key, value)
 end
 
+-- screenshot
+hl.bind(get_binds(main_mod, "Print"), hl.dsp.exec_cmd(programs.hyprscreenshot .. " screen"))
+hl.bind(get_binds("Print"), hl.dsp.exec_cmd(programs.hyprscreenshot .. " region"))
+
 -- Programs
 hl.bind(get_binds(main_mod, "E"), hl.dsp.exec_cmd(programs.file_manager))
 hl.bind(get_binds(main_mod, "Q"), hl.dsp.exec_cmd(programs.terminal))

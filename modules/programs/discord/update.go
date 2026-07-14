@@ -14,16 +14,19 @@ func main() {
 		panic(err)
 	}
 	expr := fmt.Sprintf(`
-    let pkgs = import <nixpkgs> { }; in
+    let
+        pkgs = import <nixpkgs> { };
+        inherit (pkgs.lib) filterAttrsRecursive;
+    in
     builtins.readFile %s/equibop/settings/settings.json
     |> builtins.fromJSON
+    |> filterAttrsRecursive (name: value: value.enabled or true)
     |> pkgs.lib.generators.toPretty { }
 	`, config)
 	pretty, err := exec.Command("nix", "eval", "--impure", "--raw", "--expr", expr).CombinedOutput()
 	if err != nil {
 		panic(err)
 	}
-	res := strings.ReplaceAll(string(pretty), " = {\n      enabled = false;\n    };", ".enabled = false;")
-	res = strings.ReplaceAll(res, " = {\n      enabled = true;\n    };", ".enabled = true;")
+	res := strings.ReplaceAll(string(pretty), " = {\n      enabled = true;\n    };", ".enabled = true;")
 	fmt.Println(res)
 }

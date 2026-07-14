@@ -1,8 +1,20 @@
 { self, lib, ... }:
 let
-  inherit (lib) unique toList;
+  inherit (lib)
+    unique
+    toList
+    mkForce
+    mkBefore
+    ;
 in
 {
+  perSystem = { pkgs, ... }: {
+    packages.fontconfig = pkgs.runCommand "fontconfig" { } ''
+      mkdir -p $out/etc/fonts
+      sed "s|${pkgs.dejavu_fonts.minimal}|${pkgs.noto-fonts}|" \
+        "${pkgs.fontconfig.out}/etc/fonts/fonts.conf" > $out/etc/fonts/fonts.conf
+    '';
+  };
   flake.modules.nixos.gui =
     {
       config,
@@ -15,6 +27,7 @@ in
       inherit (self.packages.${system})
         electroharmonix
         google-fonts
+        fontconfig
         ;
     in
     {
@@ -29,7 +42,8 @@ in
       config = lib.mkIf cfg.enable {
         environment.pathsToLink = toList "/share/fonts";
         fonts = {
-          enableDefaultPackages = false;
+          fontDir.enable = true;
+          enableDefaultPackages = mkForce false;
           packages = with pkgs; [
             electroharmonix
             google-fonts
@@ -51,8 +65,9 @@ in
             antialias = true;
             hinting.enable = true;
             allowBitmaps = true;
-            useEmbeddedBitmaps = false;
+            useEmbeddedBitmaps = true;
             cache32Bit = true;
+            confPackages = mkBefore [ fontconfig ];
             defaultFonts = {
               sansSerif = unique [
                 cfg.sans
@@ -77,9 +92,8 @@ in
               ];
 
               emoji = [
-                "Twitter Color Emoji"
                 "Noto Color Emoji"
-                "Twemoji"
+                "Twitter Color Emoji"
               ];
             };
           };

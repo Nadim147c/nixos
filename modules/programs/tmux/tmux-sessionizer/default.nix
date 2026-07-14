@@ -7,15 +7,12 @@ in
     inherit name;
     script =
       pkgs:
-      let
-        inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) fzf tmux-list-repos;
-      in
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = [
-          fzf
-          tmux-list-repos
-        ];
+        inheritPath = true;
+        runtimeInputs = builtins.attrValues {
+          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) fzf tmux-list-repos;
+        };
         source = ./tmux-sessionizer.nu;
       };
   };

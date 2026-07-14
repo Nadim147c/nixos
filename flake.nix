@@ -34,6 +34,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
+    fast-nix-gc = {
+      url = "github:Mic92/fast-nix-gc";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nix-darwin.follows = "";
+      inputs.treefmt-nix.follows = "";
+    };
     nvf.url = "github:notashelf/nvf";
     quickshell = {
       url = "github:quickshell-mirror/quickshell";
