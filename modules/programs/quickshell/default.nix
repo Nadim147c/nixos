@@ -22,34 +22,34 @@ in
     {
       pkgs,
       self',
-      system,
+      inputs',
       ...
     }:
     let
-      discord-voice-rpc = inputs.discord-voice-rpc.packages.${system}.default;
+      discord-voice-rpc = inputs'.discord-voice-rpc.packages.default;
 
-      buildInputs = with pkgs; [
-        kdePackages.qt5compat
-        kdePackages.qtdeclarative
-        qt6.qtimageformats
-        qt6.qtmultimedia
-        qt6.qtsvg
-        self'.packages.qt-m3shapes
-      ];
+      buildInputs = attrValues {
+        inherit (pkgs.kdePackages) qt5compat qtdeclarative;
+        inherit (pkgs.qt6) qtimageformats qtmultimedia qtsvg;
+        inherit (self'.packages) qt-m3shapes;
+      };
 
       quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
-      runtimeInputs = quickshellScripts ++ [
-        self'.packages.hyprscreenshot
-        self'.packages.rong-impure
-        self'.packages.wallpaper
-        self'.packages.waybar-lyric-impure
-        self'.packages.yankd-impure
-        self'.packages.control
-        self'.packages.app-launcher
-        pkgs.hyprshutdown
-        pkgs.pavucontrol
-        discord-voice-rpc
-      ];
+      runtimeInputs =
+        attrValues {
+          inherit (pkgs) hyprshutdown pavucontrol;
+          inherit (self'.packages)
+            hyprscreenshot
+            rong-impure
+            wallpaper
+            waybar-lyric-impure
+            yankd-impure
+            control
+            app-launcher
+            ;
+          inherit discord-voice-rpc;
+        }
+        ++ quickshellScripts;
 
       quickshellConfig = cleanSource (toSource {
         root = ./.;

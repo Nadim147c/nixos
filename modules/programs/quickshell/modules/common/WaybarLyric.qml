@@ -1,6 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
+import qs.modules.common.models
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -9,38 +10,60 @@ import Quickshell.Services.Mpris
 Singleton {
     id: root
 
-    property list<QtObject> lines: []
-    property int lineIndex: 0
-    property int position: 0
-
     property string playerName: ""
     onPlayerNameChanged: {
-        const p = Mpris.players.values.filter(p => p.dbusName == playerName)[0];
-        if (p !== undefined) {
-            player = p;
+        const mprisPlayer = Mpris.players.values.filter(p => p.dbusName == playerName)[0];
+        if (mprisPlayer) {
+            player = mprisPlayer;
         }
     }
-
     property MprisPlayer player
     Timer {
         running: root.isPlaying
-        interval: 1000
+        interval: 1000 / 6
         repeat: true
         onTriggered: root.player?.positionChanged()
     }
 
-    property bool isPlaying: true
+    property string title: player?.trackTitle ?? "Unknonw Title"
+    property string artist: player?.trackArtist ?? "Unknown Artist"
+    property string album: player?.trackAlbum ?? "Single"
+    property bool isPlaying: player?.isPlaying ?? false
+
+    property double position: player?.position ?? 0
+    onPositionChanged: {
+        if (player && lines.length) {
+            let idx = 0;
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].time > position) {
+                    lineIndex = i - 1;
+                    break;
+                }
+            }
+        }
+    }
+
+    property string mprisCoverURL: player?.trackArtUrl ?? 0
+    onMprisCoverURLChanged: downloadCover.exec(["qs-coverdb", mprisCoverURL])
+
+    property string trackID: ""
+    onTrackIDChanged: {
+        lines = [];
+        importLines.exec(["waybar-lyric", "export", "--format=json", trackID]);
+    }
+    Timer {
+        running: root.isPlaying
+        interval: 1000 * 2
+        repeat: true
+        onTriggered: importLines.exec(["waybar-lyric", "export", "--format=json", root.trackID])
+    }
 
     property string text: ""
-    property string title: ""
-    property string artist: ""
-    property string album: ""
     property string alt: ""
     property string icon: ""
-    property string trackID: ""
 
-    property string coverUrl: ""
-    onCoverUrlChanged: downloadCover.exec(["qs-coverdb", coverUrl])
+    property int lineIndex: 0
+    property list<LyricLine> lines: []
 
     property string cover: ""
     onCoverChanged: coverColors.exec(["rong", "image", "--dry-run", "--json", cover])
@@ -70,6 +93,56 @@ Singleton {
     }
 
     Component {
+        id: lyricLine
+        LyricLine {}
+    }
+    Component {
+        id: lyricWord
+        LyricWord {}
+    }
+
+    Process {
+        id: importLines
+        running: false
+        stdout: SplitParser {
+            onRead: data => {
+                if (!data || data.length === 0)
+                    return;
+                const parsed = JSON.parse(data);
+
+                const lines = [];
+                const SECOND = 1000_000_000;
+
+                for (const lyric of parsed.lyrics) {
+                    const words = [];
+                    for (const word of lyric.words ?? []) {
+                        words.push(lyricWord.createObject(root, {
+                            start: word.start / SECOND,
+                            end: word.end / SECOND,
+                            word: word.word
+                        }));
+                    }
+                    lines.push(lyricLine.createObject(root, {
+                        time: lyric.time / SECOND,
+                        line: lyric.line,
+                        words: words
+                    }));
+                }
+                if (root.lines.length == lines.length) {
+                    for (let i = 0; i < lines.length; i++) {
+                        if (root.lines[i].line !== lines[i].line) {
+                            root.lines = lines;
+                            break;
+                        }
+                    }
+                    return;
+                }
+                root.lines = lines;
+            }
+        }
+    }
+
+    Component {
         id: linesComponent
         QtObject {
             property string line: ""
@@ -86,19 +159,12 @@ Singleton {
         if (player != undefined) {
             root.player = player;
         }
-        // full rebuild of lines only when track changes
-        for (let i = 0; i < root.lines?.length; i++) {
-            if (root.lines[i].time > root.position) {
-                break;
-            }
-            root.lineIndex = i;
-        }
     }
 
     Process {
         id: commandProcess
         running: true
-        command: ["waybar-lyric", "--detailed", "--no-tooltip", "--quiet", "-fpartial"]
+        command: ["waybar-lyric", "--no-tooltip", "--quiet", "-fpartial"]
 
         stdout: SplitParser {
             onRead: data => {
@@ -107,11 +173,12 @@ Singleton {
                         return;
 
                     const jsonText = data.toString();
-                    const parsed = JSON.parse(jsonText);
+                    const waybar = JSON.parse(jsonText);
 
-                    // Fill lyrics object field-by-field
-                    root.text = parsed.text ?? "";
-                    root.alt = parsed.alt ?? "";
+                    root.text = waybar.text ?? "";
+                    root.alt = waybar.alt ?? "";
+                    root.trackID = waybar.id ?? "";
+                    root.playerName = waybar.player ?? "";
 
                     const icons = {
                         playing: "play_arrow",
@@ -121,42 +188,8 @@ Singleton {
                         no_lyric: "mic_off",
                         getting: "downloading"
                     };
-                    root.icon = icons[parsed.alt] ?? "";
-
-                    const oldID = root.trackID;
-
-                    const info = parsed.info ?? {};
-                    root.playerName = info.player ?? "";
-                    root.trackID = info.id ?? "";
-                    root.artist = info.artist ?? "";
-                    root.title = info.title ?? "";
-                    root.album = info.album ?? "";
-                    root.position = info.position ?? 0;
-                    root.coverUrl = info.cover ?? "";
-                    root.isPlaying = (info.status === "Playing");
-
-                    if (oldID !== info.id || !root.lines || root.lines.length != parsed.lines.length) {
-                        const lines = [];
-                        for (const c of parsed.lines ?? []) {
-                            const obj = linesComponent.createObject(root, {
-                                line: c.line ?? "",
-                                time: c.time ?? 0
-                            });
-                            lines.push(obj);
-                        }
-                        root.lines = lines;
-                    }
-
-                    // full rebuild of lines only when track changes
-                    for (let i = 0; i < parsed.lines?.length; i++) {
-                        if (parsed.lines[i].time > info.position) {
-                            break;
-                        }
-                        root.lineIndex = i;
-                    }
-                } catch (e) {
-                    console.error("Failed to parse JSON:", e);
-                }
+                    root.icon = icons[waybar.alt] ?? "";
+                } catch (e) {}
             }
         }
     }

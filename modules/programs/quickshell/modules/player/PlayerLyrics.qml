@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import qs.modules.common
+import qs.modules.end4
 
 import QtQuick
 import QtQuick.Controls
@@ -50,13 +51,30 @@ MouseArea {
                     required property int index
                     required property var modelData
 
-                    Text {
+                    StyledText {
                         id: lyricLineText
                         property bool active: lyricLine.index === WaybarLyric.lineIndex
                         width: parent.width
                         wrapMode: Text.WordWrap
-                        text: lyricLine.modelData.line || "󰎇"
-                        color: active ? Appearance.player.myOnSurface : Appearance.player.myOutline
+                        textFormat: Text.RichText
+
+                        property color highlight: Appearance.player.myOnSurface
+
+                        text: {
+                            if (!active || !lyricLine.modelData.words.length) {
+                                return lyricLine.modelData.line || "󰎇";
+                            }
+                            let text = "";
+                            for (const word of lyricLine.modelData.words) {
+                                if (word.start < WaybarLyric.position) {
+                                    text += `<b style="color: ${highlight};">${word.word}</b>`;
+                                } else {
+                                    text += word.word;
+                                }
+                            }
+                            return text;
+                        }
+                        color: active && !lyricLine.modelData.words.length ? Appearance.player.myOnSurface : Appearance.player.myOutline
                         Behavior on color {
                             animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
                         }

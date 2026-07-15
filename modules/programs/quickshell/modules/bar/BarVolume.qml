@@ -4,6 +4,7 @@ import qs.modules.end4
 import QtQuick
 import QtQuick.Layouts
 import Quickshell.Services.Pipewire
+import Quickshell
 
 Rectangle {
     id: root
@@ -56,7 +57,7 @@ Rectangle {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-
+        onClicked: Quickshell.execDetached(["pavucontrol"])
         onWheel: wheel => {
             try {
                 if (wheel.angleDelta.y > 0) {
