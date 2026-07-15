@@ -3,6 +3,7 @@ def main [
   ...files: string # video files
 ] {
   let image_dir = xdg-base-dir user-picture
+  let gif_dir = $image_dir | path join "gif"
   let video_dir = xdg-base-dir user-videos
   let audio_dir = xdg-base-dir user-music
   let document_dir = xdg-base-dir user-documents
@@ -35,6 +36,7 @@ def main [
         }
 
         let parent = match [$ext $group] {
+          [gif image] => $gif_dir
           [_ image] => $image_dir
           [_ audio] => $audio_dir
           [_ video] => $video_dir
