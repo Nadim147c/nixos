@@ -31,6 +31,8 @@ in
         };
       };
 
+      systemd.services.ModemManager.enable = false;
+
       nixpkgs.hostPlatform = "x86_64-linux";
       networking.hostName = "chronoshift";
       system.stateVersion = "25.11";
