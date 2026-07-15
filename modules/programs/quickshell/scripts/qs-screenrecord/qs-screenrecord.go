@@ -146,8 +146,9 @@ func recordScreen(ctx context.Context, region, outputPath string) (*exec.Cmd, er
 	args := []string{
 		"-y", "-g", region,
 		"-c", "libx264rgb",
-		"-p", "crf=20",
-		"-p", "preset=veryfast",
+		"-p", "crf=0",
+		"-p", "preset=ultrafast",
+		"-p", "pix_fmt=rgb24",
 		"--file=" + outputPath,
 	}
 	ao := findAudioOutputDevice(ctx)
