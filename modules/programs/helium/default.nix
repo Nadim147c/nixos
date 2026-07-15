@@ -41,7 +41,7 @@ in
         ExtensionInstallBlocklist = toList "*";
         ExtensionInstallAllowlist = ExtensionInstallForcelist;
         ExtensionInstallForcelist = [
-          "effdbpeggelllpfkjppbokhmmiinhlmg" # BetterLyrics
+          "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
           "enamippconapkdmgfgjchkhakpfinmaj" # DeArrow
           "blockjmkbacgjkknlgpkjjiijinjdanf" # Ublock Origin
           "jplgfhpmjnbigmhklmmbgecoobifkmpa" # Proton VPN
