@@ -17,10 +17,11 @@ in
       pkgs:
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = with pkgs; [
-          self.packages.${pkgs.stdenv.hostPlatform.system}.xdg-base-dir
-          fd
-        ];
+        inheritPath = true;
+        runtimeInputs = builtins.attrValues {
+          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) rong-impure xdg-base-dir;
+          inherit (pkgs) fd;
+        };
         text = /* nu */ ''
           def main [
               wallpaper?: string,
