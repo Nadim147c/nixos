@@ -5,7 +5,12 @@
   ...
 }:
 let
-  inherit (inputs) nvf import-tree topiary-nushell;
+  inherit (inputs)
+    import-tree
+    nvf
+    topiary-nushell
+    tree-sitter-nu
+    ;
   inherit (lib) toList mkForce;
 
 in
@@ -17,7 +22,9 @@ in
         inherit pkgs;
         extraSpecialArgs = {
           inherit inputs;
-          topiary-nushell = topiary-nushell.packages.${system}.default;
+          topiary-nushell = topiary-nushell.packages.${system}.default.override {
+            inherit tree-sitter-nu;
+          };
         };
         modules = (import-tree ./_config).imports;
       };

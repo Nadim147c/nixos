@@ -3,7 +3,7 @@ let
   inherit (lib) concatMapAttrsStringSep flatten mkAfter;
   inherit (lib.strings) join;
   inherit (lib.filesystem) listFilesRecursive;
-  inherit (lib.x) opt;
+  inherit (lib.x) opt singleton;
 in
 {
   flake.modules.nixos.base =
@@ -29,6 +29,10 @@ in
     {
       options.programs.zsh.init = opt.attrs.block { };
 
+      config = {
+        preserveHome.directories = singleton ".local/share/zsh";
+        environment.pathsToLink = singleton "/share/zsh";
+      };
       config.programs.zsh = {
         enable = true;
         histFile = "${config.home.xdg.data.directory}/zsh/history";

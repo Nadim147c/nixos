@@ -28,7 +28,7 @@ in
               --color (-c): string
           ] {
               let wallpaper_dir = xdg-base-dir user-videos | path join "wallpapers"
-              let state_file = xdg-base-dir state-file "wallpaper.state"
+              let state_file = xdg-base-dir state-file "wallpaper/state"
 
               let input = if $wallpaper != null {
                   $wallpaper

@@ -1,5 +1,6 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
+  inherit (lib.x) singleton;
   inherit (config) fullname email;
 in
 {
@@ -22,6 +23,8 @@ in
         svu
         gh
       ];
+
+      preserveHome.directories = singleton ".config/gh";
 
       programs.git = {
         enable = true;

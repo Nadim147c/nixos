@@ -1,6 +1,7 @@
 { lib, ... }:
 let
-  inherit (lib) toList getExe;
+  inherit (lib.x) singleton;
+  inherit (lib) getExe;
 in
 {
   flake.modules.nixos.base =
@@ -9,7 +10,8 @@ in
       init = "${getExe pkgs.zoxide} init --cmd=cd";
     in
     {
-      packages = toList pkgs.zoxide;
+      preserveHome.directories = singleton ".local/share/zoxide";
+      packages = singleton pkgs.zoxide;
       programs = {
         bash.init.zoxide = ''
           ${init} bash

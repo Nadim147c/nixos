@@ -1,5 +1,6 @@
 { lib, ... }:
 let
+  inherit (lib.x) singleton;
   inherit (lib) getExe toList;
 in
 {
@@ -11,17 +12,18 @@ in
 
   flake.modules.nixos.gui = { pkgs, ... }: {
     packages = with pkgs; [ mpvpaper ];
+    preserveHome.directories = singleton ".local/state/wallpaper";
 
     home.systemd.paths.mpvpaper-watcher = rec {
       enable = true;
-      description = "Watch wallpaper.state for atomic changes";
+      description = "Watch wallpaper-state for atomic changes";
       partOf = toList "graphical-session.target";
       wantedBy = partOf;
       unitConfig = {
         ConditionEnvironment = "XDG_RUNTIME_DIR";
       };
       pathConfig = {
-        PathChanged = "%h/.local/state/wallpaper.state";
+        PathChanged = "%h/.local/state/wallpaper/state";
         Unit = "mpvpaper-watcher.service";
       };
     };
@@ -35,7 +37,7 @@ in
       serviceConfig = {
         Type = "oneshot";
         ExecStart = pkgs.writeShellScript "mpvpaper-send-ipc" ''
-          STATE_FILE="''${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper.state"
+          STATE_FILE="''${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper/state"
           SOCKET="$XDG_RUNTIME_DIR/mpvpaper.sock"
 
           if [ -S "$SOCKET" ] && [ -f "$STATE_FILE" ]; then
@@ -56,7 +58,7 @@ in
       };
       serviceConfig = {
         ExecStart = pkgs.writeShellScript "mpvpaper-start" ''
-          WALLPAPER=$(cat "''${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper.state")
+          WALLPAPER=$(cat "''${XDG_STATE_HOME:-$HOME/.local/state}/wallpaper/state")
           exec ${getExe pkgs.mpvpaper} \
             -o "loop panscan=1.0 background-color='#222222' mute=yes config=no input-ipc-server=$XDG_RUNTIME_DIR/mpvpaper.sock" \
             "*" "$WALLPAPER"

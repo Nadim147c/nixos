@@ -15,6 +15,7 @@ in
         nixos.wireless
       ];
 
+      services.openssh.enable = true;
       # Small ahh display
       cursor.size = 22;
 

@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   inherit (lib) concatMapAttrsStringSep;
-  inherit (lib.x) opt;
+  inherit (lib.x) opt singleton;
 in
 {
 
@@ -14,9 +14,8 @@ in
     {
       options.programs.fish.init = opt.attrs.block { };
       config = {
-        environment.pathsToLink = [
-          "/share/fish/vendor_completions.d"
-        ];
+        preserveHome.directories = singleton ".local/share/fish/vendor_completions.d";
+        environment.pathsToLink = singleton "/share/fish/vendor_completions.d";
 
         programs.fish = {
           enable = true;

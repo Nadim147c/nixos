@@ -5,7 +5,8 @@
   ...
 }:
 let
-  inherit (lib) toList getExe;
+  inherit (lib) toList getExe makeBinPath;
+  inherit (lib.x) singleton;
 in
 {
 
@@ -19,6 +20,11 @@ in
       packages.tmux = inputs.wrappers.wrappers.tmux.wrap {
         inherit pkgs;
         package = pkgs.tmux;
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          (makeBinPath [ pkgs.bash ])
+        ];
         baseIndex = 1;
         historyLimit = 10000;
         modeKeys = "vi";

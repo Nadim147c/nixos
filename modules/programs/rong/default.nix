@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib.x) singleton;
-  inherit (lib) toList makeBinPath;
+  inherit (lib) getExe toList makeBinPath;
 in
 {
 
@@ -14,11 +14,18 @@ in
     packages.rong-impure = inputs.wrappers.lib.wrapPackage {
       inherit pkgs;
       package = pkgs.lib.flakePackage inputs.rong;
-      prefixVar = singleton [
-        "PATH"
-        ":"
-        (makeBinPath [ pkgs.ffmpeg ])
-      ];
+      prefixVar =
+        let
+          runtimeInputs = with pkgs; [
+            ffmpeg
+            bash
+          ];
+        in
+        singleton [
+          "PATH"
+          ":"
+          (makeBinPath runtimeInputs)
+        ];
       runShell = singleton /* bash */ ''
         override="$HOME/.local/bin/rong"
         if [[ -x "$override" ]]; then
@@ -51,7 +58,6 @@ in
         str
         package
         ;
-
       cfg = config.programs.rong;
     in
     {
@@ -95,6 +101,20 @@ in
       ...
     }:
     {
+      preserveHome.directories = singleton ".local/state/rong";
+
+      home.systemd.services.rong-generate = {
+        enable = true;
+        description = "Generate rong colors";
+        before = singleton "graphical-session.target";
+        wantedBy = singleton "graphical-session-pre.target";
+        serviceConfig = {
+          ExecStart = "-${getExe self.packages.${system}.rong-impure} regen";
+          Type = "oneshot";
+          RemainAfterExit = "yes";
+        };
+      };
+
       programs.rong = {
         enable = true;
         package = self.packages.${system}.rong-impure;
@@ -108,9 +128,8 @@ in
           material = {
             contrast = 0.0;
             platform = "phone";
-            variant = "tonal_spot";
+            variant = "content";
             version = "2025";
-            auto-monochrome = true;
             custom = {
               blend = 0.5;
               colors = {

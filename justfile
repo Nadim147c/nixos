@@ -7,6 +7,9 @@ nixos:
 build:
     nh os build .
 
+boot:
+    nh os boot .
+
 check:
     nix flake check
 

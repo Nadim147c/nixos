@@ -1,5 +1,9 @@
 {
   inputs = {
+    disko.url = "github:nix-community/disko";
+    disko.inputs.nixpkgs.follows = "nixpkgs";
+
+    preservation.url = "github:nix-community/preservation";
     discord-voice-rpc = {
       url = "github:Nadim147c/discord-voice-rpc";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -56,6 +60,10 @@
     topiary-nushell = {
       url = "github:blindFS/topiary-nushell";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    tree-sitter-nu = {
+      url = "github:nushell/tree-sitter-nu";
+      flake = false;
     };
     treefmt-nix = {
       url = "github:numtide/treefmt-nix";

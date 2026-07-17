@@ -8,17 +8,15 @@ let
   inherit (lib) toList;
 in
 {
-  perSystem =
-    { pkgs, ... }:
-    {
-      packages.cava = inputs.wrappers.wrappers.cava.wrap {
-        inherit pkgs;
-        package = pkgs.cava;
-        settings = {
-          color.theme = "rong";
-        };
+  perSystem = { pkgs, ... }: {
+    packages.cava = inputs.wrappers.wrappers.cava.wrap {
+      inherit pkgs;
+      package = pkgs.cava;
+      settings = {
+        color.theme = "rong";
       };
     };
+  };
 
   flake.modules.nixos.gui =
     {

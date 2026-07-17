@@ -5,6 +5,7 @@
   ...
 }:
 let
+  inherit (lib.x) singleton;
   inherit (lib) getExe toList;
 in
 {
@@ -24,6 +25,9 @@ in
 
   flake.modules.nixos.gui = { system, ... }: {
     packages = toList self.packages.${system}.yankd-impure;
+
+    preserveHome.directories = singleton ".local/share/yankd";
+
     home.systemd.services.yankd = rec {
       enable = true;
       description = "yankd wayland clipboard daemon";

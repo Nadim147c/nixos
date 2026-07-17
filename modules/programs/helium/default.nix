@@ -1,6 +1,6 @@
 { inputs, lib, ... }:
 let
-  inherit (lib.x) genMimes;
+  inherit (lib.x) genMimes singleton;
   inherit (lib)
     toList
     concatStringsSep
@@ -17,6 +17,7 @@ in
     { system, ... }:
     {
       packages = toList inputs.helium.packages.${system}.default;
+      preserveHome.directories = singleton ".config/net.imput.helium";
 
       home.xdg.mime-apps = genMimes "helium.desktop" [
         # Web Pages & Documents

@@ -1,6 +1,8 @@
 { lib, ... }:
 let
   inherit (lib) toList escapeShellArg;
+  inherit (lib.x) singleton;
+
   appId = "org.equicord.equibop";
   readonly =
     default:
@@ -20,6 +22,8 @@ in
   flake.modules.nixos.gui = {
     options.programs.discord.appId = readonly appId;
     config = {
+      preserveHome.directories = singleton ".config/equibop";
+
       services.flatpak = {
         packages = toList appId;
         overrides.settings = {

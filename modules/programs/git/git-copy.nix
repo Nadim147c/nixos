@@ -13,6 +13,16 @@ in
       ];
     };
     inherit name;
-    script = pkgs: pkgs.writers.writeGoBin name (builtins.readFile ./git-copy.go);
+    script =
+      pkgs:
+      let
+        args.runtimeInputs = with pkgs; [
+          openssh
+          gh
+          git
+          jujutsu
+        ];
+      in
+      pkgs.writers.writeGoBin name args (builtins.readFile ./git-copy.go);
   };
 }

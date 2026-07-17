@@ -1,10 +1,11 @@
 { self, lib, ... }:
 let
+  inherit (lib.x) singleton;
   inherit (lib)
     const
     escapeShellArg
-    toList
     getExe
+    toList
     ;
 in
 {
@@ -33,7 +34,9 @@ in
 
       ExecStartPre = pkgs.writeShellScript "generate-mpris-discord-rpc-config" ''
         freeimage_api_key=$(cat ${config.sops.secrets."freeimage_api".path});
+        [[ -n "$freeimage_api_key" ]]
         discord_client_id=$(cat ${config.sops.secrets."discord_client_id".path});
+        [[ -n "$discord_client_id" ]]
 
         config_dir="''${XDG_CONFIG_HOME:-$HOME/.config}/mpris-discord-rpc"
         config_file="''${config_dir}/config.yaml"
@@ -50,6 +53,8 @@ in
       ExecStart = getExe self.packages.${system}.mpris-discord-rpc;
     in
     {
+      preserveHome.directories = singleton ".local/share/mpris-discord-rpc";
+
       home.systemd.services.mpris-discord-rpc = rec {
         enable = true;
         description = "MPRIS Proxy to Discord Rice Presence";

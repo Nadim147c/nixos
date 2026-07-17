@@ -1,5 +1,6 @@
 { inputs, lib, ... }:
 let
+  inherit (inputs) topiary-nushell tree-sitter-nu;
   inherit (lib) genAttrs getExe const;
   enabled.enable = true;
   makeEnabled = l: genAttrs l (const enabled);
@@ -22,7 +23,7 @@ in
 
       settings.formatter = {
         "topiary-nushell" = {
-          command = getExe inputs.topiary-nushell.packages.${system}.default;
+          command = getExe <| topiary-nushell.packages.${system}.default.override { inherit tree-sitter-nu; };
           options = [ "format" ];
           includes = [ "*.nu" ];
         };

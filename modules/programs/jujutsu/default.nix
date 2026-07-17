@@ -1,17 +1,20 @@
 { config, lib, ... }:
 let
+  inherit (config) fullname email;
   inherit (lib) toList getExe;
 in
 {
   flake.modules.nixos.base =
-    { pkgs, ... }:
+    { config, pkgs, ... }:
     {
       packages = toList pkgs.jujutsu;
+      # Should we???
+      preserveHome.directories = toList ".config/jj/repos";
 
       home.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jj-config.toml";
       home.xdg.config.files."jj/config.toml".value = {
-        user.name = config.fullname;
-        user.email = config.email;
+        user.name = fullname;
+        user.email = email;
         ui = {
           editor = "nvim";
           default-command = "log";
@@ -27,6 +30,13 @@ in
           behavior = "own";
           backend = "ssh";
           key = "~/.ssh/master.pub";
+          backends.ssh.program = pkgs.writeShellScript "jj-ssh-signer" ''
+            if [[ "$1" == "-Y" && "$2" == "sign" ]]; then
+                exec ${pkgs.openssh}/bin/ssh-keygen "$@" -f "${config.sops.secrets."ssh/master".path}"
+            else
+                exec ${pkgs.openssh}/bin/ssh-keygen "$@"
+            fi
+          '';
         };
         templates.draft_commit_description = /* js */ ''
           concat(

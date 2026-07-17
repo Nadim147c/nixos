@@ -108,12 +108,13 @@ in
         programs =
           let
             inherit (self.packages.${system})
-              equibop
-              kitty
-              qs-toggle
               dolphin
-              mpvpaper-send-ipc
+              equibop
               hyprscreenshot
+              kitty
+              kopuz
+              mpvpaper-send-ipc
+              qs-toggle
               ;
           in
           mkLuaObject {
@@ -123,7 +124,7 @@ in
             hyprscreenshot = getExe hyprscreenshot;
             hyprshutdown = getExe pkgs.hyprshutdown;
             mpvpaper_send_ipc = getExe mpvpaper-send-ipc;
-            music = getExe pkgs.kopuz;
+            music = getExe kopuz;
             playerctl = getExe' pkgs.playerctl "playerctl";
             qs_toggle = getExe qs-toggle;
             terminal = getExe kitty;

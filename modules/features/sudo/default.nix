@@ -9,6 +9,9 @@ in
         enable = true;
         wheelNeedsPassword = mkForce true;
         execWheelOnly = mkForce true;
+        extraConfig = ''
+          Defaults lecture="never"
+        '';
       };
     };
   };

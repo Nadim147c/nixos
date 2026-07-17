@@ -1,6 +1,18 @@
-{ inputs, ... }: {
+{ inputs, lib, ... }:
+let
+  inherit (lib.x) singleton;
+in
+{
   flake.modules.nixos.gui = { config, ... }: {
     imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
+
+    preserve.directories = singleton "/var/lib/flatpak";
+    preserveHome.directories = [
+      ".cache/flatpak"
+      ".local/share/flatpak"
+      ".var/app"
+    ];
+
     services.flatpak = {
       enable = true;
       packages = [ "com.github.tchx84.Flatseal" ];

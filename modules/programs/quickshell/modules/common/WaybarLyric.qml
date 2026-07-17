@@ -33,13 +33,13 @@ Singleton {
     property double position: player?.position ?? 0
     onPositionChanged: {
         if (player && lines.length) {
-            let idx = 0;
-            for (let i = 0; i < lines.length; i++) {
+            let i = 0;
+            for (i = 0; i < lines.length; i++) {
                 if (lines[i].time > position) {
-                    lineIndex = i - 1;
                     break;
                 }
             }
+            lineIndex = i - 1;
         }
     }
 
@@ -151,7 +151,7 @@ Singleton {
     }
 
     function setPosition(pos) {
-        return Quickshell.execDetached(["waybar-lyric", "position", `${pos}`]);
+        return Quickshell.execDetached(["waybar-lyric", "position", `${pos}s`]);
     }
 
     Component.onCompleted: {

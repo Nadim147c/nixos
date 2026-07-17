@@ -1,15 +1,24 @@
-{ ... }:
+{ config, lib, ... }:
+let
+  inherit (config) username;
+  inherit (lib) concatMapAttrsStringSep;
+in
 {
   flake.modules.nixos.base =
-    { config, ... }:
+    { config, pkgs, ... }:
     let
-      getKeyPath = name: config.sops.secrets."ssh/${name}".path;
+      keys = {
+        master = config.sops.secrets."ssh/master".path;
+        aur = config.sops.secrets."ssh/aur".path;
+        github = config.sops.secrets."ssh/github".path;
+        codeberg = config.sops.secrets."ssh/codeberg".path;
+        gitlab = config.sops.secrets."ssh/gitlab".path;
+      };
+
+      getKeyPath = name: keys.${name};
+      sshDir = "${config.home.directory}/.ssh";
     in
     {
-      home.files.".ssh/authorized_keys".text = /* bash */ ''
-        ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMijBph7zGeCMaJOC8I3eLqxqM1K4GA7wkKjUIb+SBhB Ephemeral
-      '';
-
       home.files.".ssh/config".text = /* bash */ ''
         Host *
           forwardAgent no
@@ -41,6 +50,32 @@
           identitiesOnly yes
           identityFile ${getKeyPath "gitlab"}
           user git
+      '';
+
+      system.activationScripts.generateSshPublicKeys = {
+        deps = [ "specialfs" ]; # Ensures filesystem is ready
+        text = /* bash */ ''
+          mkdir -p "${sshDir}"
+          chmod 0755 "${sshDir}"
+          chown ${username}:${config.home.group or "users"} "${sshDir}"
+
+          ${concatMapAttrsStringSep "\n" (name: path: /* bash */ ''
+            pubkey=$(${pkgs.openssh}/bin/ssh-keygen -y -f "${path}")
+
+            pubfile="${sshDir}/${name}.pub"
+
+            # Write to temp file first to safely set permissions
+            echo "$pubkey" > "$pubfile"
+
+            # Set world-readable (0444) and assign user ownership
+            chmod 0444 "$pubfile"
+            chown ${username}:${config.home.group or "users"} "$pubfile"
+          '') keys}
+        '';
+      };
+
+      home.files.".ssh/authorized_keys".text = /* bash */ ''
+        ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMijBph7zGeCMaJOC8I3eLqxqM1K4GA7wkKjUIb+SBhB Ephemeral
       '';
 
       programs.ssh = {

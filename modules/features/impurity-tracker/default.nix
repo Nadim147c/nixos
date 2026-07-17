@@ -6,7 +6,9 @@
       makeTracker =
         name: target: exe:
         pkgs.writeShellScript name ''
-          echo "PID $PPID executed ${target}" |& ${config.systemd.package}/bin/systemd-cat --identifier=impurity >/dev/null 2>/dev/null
+          PNAME=$(cat /proc/$PPID/comm 2>/dev/null || echo "unknown")
+
+          echo "Program [$PNAME] (PID $PPID) executed ${target}" |& ${config.systemd.package}/bin/systemd-cat --identifier=impurity >/dev/null 2>/dev/null
           exec -a "$0" '${exe}' "$@"
         '';
     in

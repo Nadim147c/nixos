@@ -1,26 +1,31 @@
 { inputs, ... }:
+let
+  inherit (inputs) gomod2nix topiary-nushell tree-sitter-nu;
+in
 {
   perSystem =
     { pkgs, system, ... }:
     let
-      inherit (inputs.gomod2nix.legacyPackages.${system}) mkGoEnv gomod2nix;
-      goEnv = mkGoEnv { pwd = ../.; };
+      nu-formatter = topiary-nushell.packages.${system}.default.override {
+        inherit tree-sitter-nu;
+      };
     in
     {
       devShells.default = pkgs.mkShell {
         name = "nixos";
-        buildInputs = with pkgs; [
-          goEnv
-          gomod2nix
-          inputs.topiary-nushell.packages.${system}.default
-          lua-language-server
-          nh
-          nix-fast-build
-          nixd
-          nixfmt
-          stylua
-          statix
-        ];
+        buildInputs = builtins.attrValues {
+          inherit (gomod2nix.legacyPackages.${system}) gomod2nix;
+          inherit (pkgs)
+            lua-language-server
+            nh
+            nix-fast-build
+            nixd
+            nixfmt
+            stylua
+            statix
+            ;
+          inherit nu-formatter;
+        };
       };
     };
 }
