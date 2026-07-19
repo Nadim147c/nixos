@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib.x) singleton;
+  inherit (lib) singleton;
 in
 {
   flake.modules.nixos.base = {

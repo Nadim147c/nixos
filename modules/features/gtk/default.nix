@@ -6,10 +6,10 @@
       ".config/nwg-look"
     ];
 
-    packages = [
-      pkgs.adw-gtk3
-      pkgs.adwaita-icon-theme
-      pkgs.nwg-look
+    packages = with pkgs; [
+      adw-gtk3
+      adwaita-icon-theme
+      nwg-look
     ];
     sessionVariables = {
       GTK_THEME = "adw-gtk3-dark";

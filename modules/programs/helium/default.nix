@@ -1,8 +1,8 @@
 { inputs, lib, ... }:
 let
-  inherit (lib.x) genMimes singleton;
+  inherit (lib.x) genMimes;
   inherit (lib)
-    toList
+    singleton
     concatStringsSep
     mapAttrsToList
     escapeURL
@@ -16,7 +16,7 @@ in
   flake.modules.nixos.gui =
     { system, ... }:
     {
-      packages = toList inputs.helium.packages.${system}.default;
+      packages = singleton inputs.helium.packages.${system}.default;
       preserveHome.directories = singleton ".config/net.imput.helium";
 
       home.xdg.mime-apps = genMimes "helium.desktop" [
@@ -39,7 +39,7 @@ in
       # Copied from https://github.com/RGBCube/ncc/blob/fd1860d09aaca345badff5f48b38c124b729fdf8/modules/web-browser.mod.nix
       environment.etc."chromium/policies/managed/policies.json".text = builtins.toJSON rec {
         # EXTENSIONS
-        ExtensionInstallBlocklist = toList "*";
+        ExtensionInstallBlocklist = singleton "*";
         ExtensionInstallAllowlist = ExtensionInstallForcelist;
         ExtensionInstallForcelist = [
           "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
@@ -53,11 +53,11 @@ in
           "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
           "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader
         ];
-        ExtensionInstallSources = toList "https://services.helium.imput.net/*";
+        ExtensionInstallSources = singleton "https://services.helium.imput.net/*";
         DefaultBrowserSettingEnabled = false;
         DeveloperToolsAvailability = 1;
 
-        # BOOKMARKS
+        # Bookmarks
         ManagedBookmarks =
           let
             createFolder = name: children: { inherit name children; };

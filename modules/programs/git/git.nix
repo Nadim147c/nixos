@@ -1,6 +1,6 @@
 { config, lib, ... }:
 let
-  inherit (lib.x) singleton;
+  inherit (lib) singleton;
   inherit (config) fullname email;
 in
 {

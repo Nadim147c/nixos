@@ -1,6 +1,6 @@
 { self, lib, ... }:
 let
-  inherit (lib) getExe getExe';
+  inherit (lib) attrValues getExe getExe';
 in
 {
   flake.modules.nixos.base =
@@ -10,27 +10,28 @@ in
       ...
     }:
     let
-      inherit (self.packages.${system}) field;
       less = "${pkgs.less}/bin/less -r -F";
     in
     {
-      packages = [
-        field
-        pkgs.chafa
-        pkgs.comma
-        pkgs.coreutils
-        pkgs.ffmpeg
-        pkgs.file
-        pkgs.findutils
-        pkgs.gum
-        pkgs.jq
-        pkgs.killall
-        pkgs.magika-cli
-        pkgs.perf
-        pkgs.procps
-        pkgs.xxd
-        pkgs.yq
-      ];
+      packages = attrValues {
+        inherit (self.packages.${system}) field;
+        inherit (pkgs)
+          chafa
+          comma
+          coreutils
+          ffmpeg
+          file
+          findutils
+          gum
+          jq
+          killall
+          magika-cli
+          perf
+          procps
+          xxd
+          yq
+          ;
+      };
 
       environment = {
         sessionVariables = {

@@ -43,7 +43,7 @@
 { lib, ... }:
 let
   inherit (lib)
-    toList
+    singleton
     getExe'
     mapAttrsToList
     optionalString
@@ -88,14 +88,14 @@ in
         userAllowOther = true;
       };
 
-      packages = toList pkgs.rclone;
+      packages = singleton pkgs.rclone;
       home.systemd.services.rclone = {
         enable = true;
         description = "rclone gdrive FUSE mount";
-        wantedBy = toList "default.target";
+        wantedBy = singleton "default.target";
         serviceConfig = {
           # fusermount/fusermount3
-          Environment = toList "PATH=/run/wrappers/bin";
+          Environment = singleton "PATH=/run/wrappers/bin";
           ExecStartPre = "${getExe' pkgs.coreutils "mkdir"} -p ${mountPath}";
           ExecStart = pkgs.writeShellScript "rclone-mount" ''
             ${getExe' pkgs.rclone "rclone"} mount ${mountFlags} gdrive-enc:gdrive ${mountPath}

@@ -6,10 +6,10 @@
 }:
 let
   inherit (config) username;
-  inherit (lib) const genAttrs;
+  inherit (lib) genAttrs' nameValuePair;
 in
 {
-  flake.modules.nixos.base = {
+  flake.modules.nixos.base = { config, ... }: {
     imports = [ inputs.preservation.nixosModules.default ];
 
     preservation = {
@@ -70,16 +70,16 @@ in
     systemd.tmpfiles.settings.preservation =
       let
         mode.d = {
-          user = config.username;
+          user = username;
           group = "users";
           mode = "0755";
         };
       in
-      genAttrs [
-        "/home/${username}/.config"
-        "/home/${username}/.local"
-        "/home/${username}/.local/share"
-        "/home/${username}/.local/state"
-      ] (const mode);
+      genAttrs' [
+        ".config"
+        ".local"
+        ".local/share"
+        ".local/state"
+      ] (name: nameValuePair "${config.home.directory}/${name}" mode);
   };
 }

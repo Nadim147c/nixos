@@ -1,4 +1,6 @@
+{ lib, ... }:
 let
+  inherit (lib) singleton;
   name = "hyprlock-player-info";
 in
 {
@@ -15,7 +17,7 @@ in
       pkgs:
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = with pkgs; [ playerctl ];
+        runtimeInputs = singleton pkgs.playerctl;
         source = ./hyprlock-player-info.nu;
       };
   };

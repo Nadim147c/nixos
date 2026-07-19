@@ -8,24 +8,22 @@ let
   inherit (inputs)
     import-tree
     nvf
-    topiary-nushell
     tree-sitter-nu
     ;
-  inherit (lib) toList mkForce;
+  inherit (lib) singleton mkForce;
+  inherit (nvf.lib) neovimConfiguration;
 
 in
 {
   perSystem =
-    { pkgs, system, ... }:
+    { pkgs, ... }:
     let
-      nvfConfig = nvf.lib.neovimConfiguration {
+      topiary-nushell = inputs.topiary-nushell.packages.${pkgs.system}.default.override {
+        inherit tree-sitter-nu;
+      };
+      nvfConfig = neovimConfiguration {
         inherit pkgs;
-        extraSpecialArgs = {
-          inherit inputs;
-          topiary-nushell = topiary-nushell.packages.${system}.default.override {
-            inherit tree-sitter-nu;
-          };
-        };
+        extraSpecialArgs = { inherit inputs topiary-nushell; };
         modules = (import-tree ./_config).imports;
       };
     in
@@ -38,7 +36,7 @@ in
     {
       programs.nano.enable = mkForce false;
       sessionVariables.EDITOR = "nvim";
-      packages = toList self.packages.${system}.neovim;
+      packages = singleton self.packages.${system}.neovim;
     };
 
 }

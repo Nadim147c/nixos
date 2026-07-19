@@ -5,32 +5,28 @@
   ...
 }:
 let
-  inherit (lib) toList getExe;
-  inherit (lib.x) quote;
+  inherit (lib) getExe singleton;
+  inherit (lib.x) makeEnvFlag;
 in
 {
   perSystem =
     { pkgs, self', ... }:
     let
-      createEnvFlag = name: {
-        data = "\$${name}";
-        esc-fn = quote;
-      };
       xdg-base-dir = getExe self'.packages.xdg-base-dir;
     in
     {
       packages.aria2 = inputs.wrappers.wrappers.aria2.wrap {
         inherit pkgs;
         package = pkgs.aria2;
-        runShell = toList /* bash */ ''
+        runShell = singleton /* bash */ ''
           export download_dir=$(${xdg-base-dir} user-download)
           export session_file="$(${xdg-base-dir} state-home)/aria2/aria2.session"
           mkdir -p "$download_dir"
           mkdir -p "$(dirname "$session_file")"
         '';
         flags = {
-          "--dir" = createEnvFlag "download_dir";
-          "--save-session" = createEnvFlag "session_file";
+          "--dir" = makeEnvFlag "download_dir";
+          "--save-session" = makeEnvFlag "session_file";
         };
         settings = {
           allow-overwrite = true;
@@ -55,9 +51,7 @@ in
       };
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    {
-      packages = toList self.packages.${system}.aria2;
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = singleton self.packages.${system}.aria2;
+  };
 }

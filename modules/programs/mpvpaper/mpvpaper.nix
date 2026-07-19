@@ -1,7 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib.x) singleton;
-  inherit (lib) getExe toList;
+  inherit (lib) fix getExe singleton;
 in
 {
   perSystem = { pkgs, ... }: {
@@ -14,11 +13,11 @@ in
     packages = with pkgs; [ mpvpaper ];
     preserveHome.directories = singleton ".local/state/wallpaper";
 
-    home.systemd.paths.mpvpaper-watcher = rec {
+    home.systemd.paths.mpvpaper-watcher = fix (final: {
       enable = true;
       description = "Watch wallpaper-state for atomic changes";
-      partOf = toList "graphical-session.target";
-      wantedBy = partOf;
+      partOf = singleton "graphical-session.target";
+      wantedBy = final.partOf;
       unitConfig = {
         ConditionEnvironment = "XDG_RUNTIME_DIR";
       };
@@ -26,7 +25,7 @@ in
         PathChanged = "%h/.local/state/wallpaper/state";
         Unit = "mpvpaper-watcher.service";
       };
-    };
+    });
 
     home.systemd.services.mpvpaper-watcher = {
       enable = true;
@@ -47,12 +46,12 @@ in
       };
     };
 
-    home.systemd.services.mpvpaper = rec {
+    home.systemd.services.mpvpaper = fix (final: {
       enable = true;
       description = "Mpvpaper daemon";
-      partOf = toList "graphical-session.target";
-      after = partOf;
-      wantedBy = partOf;
+      partOf = singleton "graphical-session.target";
+      after = final.partOf;
+      wantedBy = final.partOf;
       unitConfig = {
         ConditionEnvironment = "XDG_RUNTIME_DIR";
       };
@@ -66,6 +65,6 @@ in
         Restrart = "always";
         RestartSec = 10;
       };
-    };
+    });
   };
 }

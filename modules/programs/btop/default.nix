@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList;
+  inherit (lib) singleton;
 in
 {
   perSystem = { pkgs, ... }: {
@@ -21,6 +21,6 @@ in
   };
 
   flake.modules.nixos.base = { system, ... }: {
-    home.packages = toList self.packages.${system}.btop;
+    packages = singleton self.packages.${system}.btop;
   };
 }

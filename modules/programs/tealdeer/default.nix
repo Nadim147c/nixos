@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList;
+  inherit (lib) singleton;
 in
 {
   perSystem =
@@ -22,9 +22,7 @@ in
       };
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    {
-      packages = toList self.packages.${system}.tealdeer;
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = singleton self.packages.${system}.tealdeer;
+  };
 }

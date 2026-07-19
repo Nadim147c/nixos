@@ -4,10 +4,11 @@ let
 in
 {
   flake.modules.nixos.gui = { pkgs, system, ... }: {
-    # stupid app doesn't work without cache
-    preserveHome.directories = map (p: ".${p}/kopuz") [
-      "config"
-      "local/share"
+    # app doesn't work without cache
+    preserveHome.directories = [
+      ".config/kopuz"
+      ".cache/kopuz"
+      ".local/share/kopuz"
     ];
 
     packages = attrValues {

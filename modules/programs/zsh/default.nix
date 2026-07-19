@@ -1,9 +1,14 @@
 { lib, ... }:
 let
-  inherit (lib) concatMapAttrsStringSep flatten mkAfter;
+  inherit (lib)
+    concatMapAttrsStringSep
+    flatten
+    mkAfter
+    singleton
+    ;
   inherit (lib.strings) join;
   inherit (lib.filesystem) listFilesRecursive;
-  inherit (lib.x) opt singleton;
+  inherit (lib.x) opt;
 in
 {
   flake.modules.nixos.base =

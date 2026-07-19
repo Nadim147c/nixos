@@ -68,15 +68,10 @@ in
       };
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    let
-      inherit (self.packages.${system}) yt-dlp yt-dlm;
-    in
-    {
-      packages = [
-        yt-dlp
-        yt-dlm
-      ];
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = with self.packages.${system}; [
+      yt-dlp
+      yt-dlm
+    ];
+  };
 }

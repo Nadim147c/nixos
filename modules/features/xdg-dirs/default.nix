@@ -2,7 +2,7 @@
 let
   inherit (builtins) attrValues;
   inherit (config) username;
-  inherit (lib) mapAttrs;
+  inherit (lib) const mapAttrs;
   inherit (lib.generators) toKeyValue;
   inherit (lib.x) quote;
 in
@@ -41,12 +41,12 @@ in
     {
       preserveHome.directories = [
         "files"
-        "music"
-        projects
+        "media"
+        "git"
       ];
 
       # Create directories automatically using systemd-tmpfiles on rebuild/boot
-      systemd.tmpfiles.rules = allDirs |> map (dir: "d ${dir} 0755 ${username} users -");
+      systemd.tmpfiles.rules = map (dir: "d ${dir} 0755 ${username} users -") allDirs;
 
       home.xdg.data.files."user-places.xbel".value.bookmarks = [
         {
@@ -104,7 +104,7 @@ in
       ];
 
       home.xdg.config.files."user-dirs.dirs" = {
-        generator = value: toKeyValue { } (mapAttrs (_: quote) value);
+        generator = value: toKeyValue { } (mapAttrs (const quote) value);
         value = dirs;
       };
 

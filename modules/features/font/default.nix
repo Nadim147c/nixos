@@ -1,11 +1,14 @@
 { self, lib, ... }:
 let
   inherit (lib)
+    attrValues
     unique
-    toList
+    singleton
     mkForce
     mkBefore
+    mkIf
     ;
+  inherit (lib.x) opt;
 in
 {
   perSystem = { pkgs, ... }: {
@@ -15,7 +18,12 @@ in
         "${pkgs.fontconfig.out}/etc/fonts/fonts.conf" > $out/etc/fonts/fonts.conf
     '';
   };
-  flake.modules.nixos.gui =
+
+  flake.modules.nixos.gui = {
+    custom.font.enable = true;
+  };
+
+  flake.modules.nixos.base =
     {
       config,
       pkgs,
@@ -25,41 +33,40 @@ in
     let
       cfg = config.custom.font;
       inherit (self.packages.${system})
-        electroharmonix
-        google-fonts
         fontconfig
         ;
     in
     {
       options.custom.font = {
-        enable = lib.x.opt.bool true;
-        sans = lib.x.opt.line "Roboto Flex";
-        serif = lib.x.opt.line "Roboto Serif";
-        mono = lib.x.opt.line "JetBrainsMono Nerd Font";
-        size = lib.x.opt.num 10;
+        enable = opt.bool true;
+        sans = opt.line "Rubik";
+        serif = opt.line "Roboto Serif";
+        mono = opt.line "JetBrainsMono Nerd Font";
+        size = opt.num 10;
       };
 
-      config = lib.mkIf cfg.enable {
-        environment.pathsToLink = toList "/share/fonts";
+      config = mkIf cfg.enable {
+        environment.pathsToLink = singleton "/share/fonts";
         fonts = {
           fontDir.enable = true;
           enableDefaultPackages = mkForce false;
-          packages = with pkgs; [
-            electroharmonix
-            google-fonts
-            material-symbols
-            nerd-fonts.jetbrains-mono
-            noto-fonts
-            noto-fonts-cjk-sans
-            noto-fonts-cjk-serif
-            noto-fonts-color-emoji
-            roboto
-            roboto-flex
-            roboto-mono
-            roboto-serif
-            roboto-slab
-            twemoji-color-font
-          ];
+          packages = attrValues {
+            inherit (pkgs)
+              material-symbols
+              noto-fonts
+              noto-fonts-cjk-sans
+              noto-fonts-cjk-serif
+              noto-fonts-color-emoji
+              roboto
+              roboto-flex
+              roboto-mono
+              roboto-serif
+              roboto-slab
+              twemoji-color-font
+              ;
+            inherit (pkgs.nerd-fonts) jetbrains-mono;
+            inherit (self.packages.${system}) electroharmonix google-fonts;
+          };
           fontconfig = {
             inherit (cfg) enable;
             antialias = true;
@@ -67,7 +74,7 @@ in
             allowBitmaps = true;
             useEmbeddedBitmaps = true;
             cache32Bit = true;
-            confPackages = mkBefore [ fontconfig ];
+            confPackages = mkBefore <| singleton fontconfig;
             defaultFonts = {
               sansSerif = unique [
                 cfg.sans

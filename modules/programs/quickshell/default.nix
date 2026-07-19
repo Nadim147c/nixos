@@ -6,16 +6,16 @@
 }:
 let
   inherit (lib)
-    toList
     attrValues
     cleanSource
     filterAttrs
+    fix
     getExe
     hasPrefix
     makeBinPath
+    singleton
     ;
   inherit (lib.fileset) toSource unions;
-  inherit (lib.x) singleton;
 in
 {
   perSystem =
@@ -104,11 +104,7 @@ in
     };
 
   flake.modules.nixos.gui =
-    {
-      config,
-      system,
-      ...
-    }:
+    { config, system, ... }:
     {
       packages = [
         self.packages.${system}.quickshell
@@ -119,18 +115,20 @@ in
         "quickshell.json" = "${config.home.xdg.state.directory}/quickshell/colors.json";
       };
 
-      home.systemd.services.quickshell = rec {
+      home.systemd.services.quickshell = fix (final: {
         enable = true;
         description = "mpvpaper control daemon";
-        partOf = toList "graphical-session.target";
-        after = partOf;
-        wantedBy = partOf;
-        reloadTriggers = toList self.packages."${system}".quickshell;
+        partOf = singleton "graphical-session.target";
+        wants = singleton "tray.target";
+        before = final.partOf;
+        after = final.partOf;
+        wantedBy = final.partOf;
+        reloadTriggers = singleton self.packages."${system}".quickshell;
         serviceConfig = {
           ExecStart = getExe self.packages."${system}".quickshell;
           Restart = "on-failure";
           RestartSec = 10;
         };
-      };
+      });
     };
 }

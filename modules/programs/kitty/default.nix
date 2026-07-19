@@ -1,10 +1,11 @@
 {
   self,
-  inputs, lib,
+  inputs,
+  lib,
   ...
 }:
 let
-  inherit (lib) getExe toList;
+  inherit (lib) attrValues getExe singleton;
 in
 {
   perSystem =
@@ -47,7 +48,7 @@ in
       ...
     }:
     {
-      programs.rong.settings.themes = toList {
+      programs.rong.settings.themes = singleton {
         target = "kitty-full.conf";
         links = "${config.home.xdg.config.directory}/kitty/colors.conf";
         cmds = pkgs.writers.writeNu "reload-kitty" /* nu */ ''
@@ -58,9 +59,9 @@ in
         '';
       };
 
-      packages = [
-        pkgs.nerd-fonts.jetbrains-mono
-        self.packages.${system}.kitty
-      ];
+      packages = attrValues {
+        inherit (pkgs.nerd-fonts) jetbrains-mono;
+        inherit (self.packages.${system}) kitty;
+      };
     };
 }

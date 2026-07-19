@@ -1,7 +1,7 @@
 { lib, ... }:
 let
-  inherit (lib) mkAfter concatMapAttrsStringSep;
-  inherit (lib.x) opt singleton;
+  inherit (lib) singleton mkAfter concatMapAttrsStringSep;
+  inherit (lib.x) opt;
 in
 {
   flake.modules.nixos.base =
@@ -16,10 +16,10 @@ in
       config = {
         preserveHome.directories = singleton ".local/share/bash-completions";
         environment.pathsToLink = singleton "/share/bash-completions";
-      };
-      config.programs.bash = {
-        enable = true;
-        interactiveShellInit = mkAfter extraInit;
+        programs.bash = {
+          enable = true;
+          interactiveShellInit = mkAfter extraInit;
+        };
       };
     };
 }

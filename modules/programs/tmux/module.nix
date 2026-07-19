@@ -5,26 +5,21 @@
   ...
 }:
 let
-  inherit (lib) toList getExe makeBinPath;
-  inherit (lib.x) singleton;
+  inherit (lib) getExe makeBinPath singleton;
 in
 {
 
   perSystem =
     { pkgs, self', ... }:
     let
-      navigate = lib.getExe self'.packages.tmux-navigate;
-      session = lib.getExe self'.packages.tmux-sessionizer;
+      inherit (self'.packages) tmux-navigate tmux-sessionizer;
+      navigate = getExe tmux-navigate;
+      session = getExe tmux-sessionizer;
     in
     {
       packages.tmux = inputs.wrappers.wrappers.tmux.wrap {
         inherit pkgs;
         package = pkgs.tmux;
-        prefixVar = singleton [
-          "PATH"
-          ":"
-          (makeBinPath [ pkgs.bash ])
-        ];
         baseIndex = 1;
         historyLimit = 10000;
         modeKeys = "vi";
@@ -32,7 +27,7 @@ in
         prefix = "C-o";
         sourceSensible = true;
         terminal = "xterm-256color";
-        plugins = [ pkgs.tmuxPlugins.better-mouse-mode ];
+        plugins = singleton pkgs.tmuxPlugins.better-mouse-mode;
         disableConfirmationPrompt = true;
         configAfter = /* tmux */ ''
           # Smart Alt+h/l navigation
@@ -63,17 +58,12 @@ in
       };
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    let
-      sessionizer = getExe self.packages.${system}.tmux-sessionizer;
-    in
-    {
-      packages = toList self.packages.${system}.tmux;
-      programs.fish.interactiveShellInit = /* fish */ ''
-        for mode in default insert visual normal
-            bind -M $mode \ep ${sessionizer}
-        end
-      '';
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = singleton self.packages.${system}.tmux;
+    programs.fish.interactiveShellInit = /* fish */ ''
+      for mode in default insert visual normal
+          bind -M $mode \ep ${getExe self.packages.${system}.tmux-sessionizer}
+      end
+    '';
+  };
 }

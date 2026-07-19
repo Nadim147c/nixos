@@ -1,15 +1,15 @@
 { config, lib, ... }:
 let
   inherit (config) fullname email;
-  inherit (lib) toList getExe;
+  inherit (lib) getExe singleton;
 in
 {
   flake.modules.nixos.base =
     { config, pkgs, ... }:
     {
-      packages = toList pkgs.jujutsu;
+      packages = singleton pkgs.jujutsu;
       # Should we???
-      preserveHome.directories = toList ".config/jj/repos";
+      preserveHome.directories = singleton ".config/jj/repos";
 
       home.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jj-config.toml";
       home.xdg.config.files."jj/config.toml".value = {
@@ -30,6 +30,7 @@ in
           behavior = "own";
           backend = "ssh";
           key = "~/.ssh/master.pub";
+          # Use private key from non standard location!
           backends.ssh.program = pkgs.writeShellScript "jj-ssh-signer" ''
             if [[ "$1" == "-Y" && "$2" == "sign" ]]; then
                 exec ${pkgs.openssh}/bin/ssh-keygen "$@" -f "${config.sops.secrets."ssh/master".path}"

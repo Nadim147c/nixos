@@ -10,6 +10,7 @@ let
     flatten
     genAttrs'
     optional
+    singleton
     ;
 in
 {
@@ -76,7 +77,11 @@ in
     { pkgs, ... }:
     let
       createMimesList =
-        prefix: mimes: mimes |> builtins.split "[[:space:]]+" |> flatten |> map (mime: "${prefix}/${mime}");
+        prefix: mimes:
+        mimes
+        |> builtins.split "[[:space:]]+"
+        |> flatten
+        |> map (mime: "${prefix}/${mime}");
 
       audioMimes = createMimesList "audio" ''
         aac mp4 mpeg mpegurl ogg vnd.rn-realaudio
@@ -95,7 +100,7 @@ in
 
     in
     {
-      packages = [ self.packages.${pkgs.stdenv.hostPlatform.system}.mpv ];
+      packages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.mpv;
       home.xdg.mime-apps = lib.x.genMimes "mpv.desktop" (audioMimes ++ videoMimes);
     };
 }

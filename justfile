@@ -21,4 +21,4 @@ quickshell-dev:
     qs -p modules/programs/quickshell/shell.qml
 
 update-discord-settings:
-  go run ./modules/programs/discord/update.go > ./modules/programs/discord/_settings.nix
+    go run ./modules/programs/discord/update.go > ./modules/programs/discord/_settings.nix

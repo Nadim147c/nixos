@@ -5,15 +5,14 @@
   ...
 }:
 let
-  inherit (lib.x) singleton;
-  inherit (lib) getExe toList;
+  inherit (lib) fix getExe singleton;
 in
 {
   perSystem = { pkgs, ... }: {
     packages.yankd-impure = inputs.wrappers.lib.wrapPackage {
       inherit pkgs;
       package = pkgs.lib.flakePackage inputs.yankd;
-      runShell = toList /* bash */ ''
+      runShell = singleton /* bash */ ''
         override="$HOME/.local/bin/yankd"
         if [ -x "$override" ]; then
           exec -a "$0" "$override" "$@"
@@ -24,19 +23,19 @@ in
   };
 
   flake.modules.nixos.gui = { system, ... }: {
-    packages = toList self.packages.${system}.yankd-impure;
+    packages = singleton self.packages.${system}.yankd-impure;
 
     preserveHome.directories = singleton ".local/share/yankd";
 
-    home.systemd.services.yankd = rec {
+    home.systemd.services.yankd = fix (final: {
       enable = true;
       description = "yankd wayland clipboard daemon";
-      partOf = toList "graphical-session.target";
-      after = partOf;
-      wantedBy = partOf;
+      partOf = singleton "graphical-session.target";
+      after = final.partOf;
+      wantedBy = final.partOf;
       serviceConfig = {
         ExecStart = "${getExe self.packages.${system}.yankd-impure} daemon";
       };
-    };
+    });
   };
 }

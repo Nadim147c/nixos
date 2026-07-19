@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib) toList;
+  inherit (lib) singleton;
   inherit (lib.x) genMimes;
 in
 {
@@ -8,7 +8,7 @@ in
   flake.modules.nixos.gui =
     { pkgs, ... }:
     {
-      home.packages = toList pkgs.loupe;
+      home.packages = singleton pkgs.loupe;
       home.xdg.mime-apps = genMimes "org.gnome.Loupe.desktop" [
         "image/avif"
         "image/bmp"

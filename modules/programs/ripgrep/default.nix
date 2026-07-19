@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList;
+  inherit (lib) singleton;
 in
 {
   perSystem =
@@ -16,7 +16,7 @@ in
         {
           inherit pkgs;
           package = pkgs.ripgrep;
-          addFlag = [ "--hidden" ];
+          addFlag = singleton "--hidden";
           flags."--ignore-file" = config.constructFiles.renderedSettings.path;
           flagSeparator = "=";
           constructFiles.renderedSettings = {
@@ -31,9 +31,7 @@ in
       );
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    {
-      packages = toList self.packages.${system}.ripgrep;
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = singleton self.packages.${system}.ripgrep;
+  };
 }

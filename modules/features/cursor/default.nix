@@ -2,9 +2,10 @@
 let
   inherit (lib)
     escapeShellArg
+    fix
     getExe'
     mkIf
-    toList
+    singleton
     ;
   inherit (lib.x) opt;
 in
@@ -28,7 +29,7 @@ in
       };
 
       config = mkIf cfg.enable {
-        packages = mkIf (cfg.package != null) [ cfg.package ];
+        packages = mkIf (cfg.package != null) <| singleton cfg.package;
         sessionVariables = {
           XCURSOR_SIZE = cfg.size;
           XCURSOR_THEME = cfg.name;
@@ -36,12 +37,12 @@ in
           HYPRCURSOR_THEME = cfg.name;
         };
 
-        home.systemd.services.hyprland-set-cursor = mkIf config.programs.hyprland.enable rec {
-          enable = true;
+        home.systemd.services.hyprland-set-cursor = fix (final: {
+          enable = config.programs.hyprland.enable;
           description = "Hyprland set cursor";
-          partOf = toList "graphical-session.target";
-          after = partOf;
-          wantedBy = partOf;
+          partOf = singleton "graphical-session.target";
+          after = final.partOf;
+          wantedBy = final.partOf;
           serviceConfig = {
             Type = "oneshot";
             ExecStart =
@@ -50,7 +51,7 @@ in
               in
               "${hyprctl} setcursor ${escapeShellArg cfg.name} ${toString cfg.size}";
           };
-        };
+        });
       };
     };
 }

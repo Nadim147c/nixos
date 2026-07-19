@@ -5,8 +5,12 @@
   ...
 }:
 let
-  inherit (lib.x) singleton;
-  inherit (lib) getExe toList makeBinPath;
+  inherit (lib)
+    getExe
+    makeBinPath
+    singleton
+    toList
+    ;
 in
 {
 

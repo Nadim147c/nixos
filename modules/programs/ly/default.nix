@@ -10,14 +10,14 @@ in
     { config, ... }:
     {
       services.displayManager = {
-        autoLogin.user = username;
+        # Don't use autologin
+        # autoLogin.user = username;
         defaultSession = "hyprland";
         ly = {
           enable = true;
           settings = {
             bigclock = "en";
-            save = false; # don't use previous successful session
-            session_log = "${config.home.xdg.data.directory}/ly-session.log";
+            save = true;
           };
         };
       };

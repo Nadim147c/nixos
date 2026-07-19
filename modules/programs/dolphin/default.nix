@@ -5,32 +5,34 @@
   ...
 }:
 let
-  inherit (lib) const concatMapStringsSep optionalString;
-  inherit (lib.x) singleton;
+  inherit (lib) concatMapStringsSep optionalString singleton;
 in
 {
   perSystem =
     { pkgs, ... }:
     let
-      makePrefix = name: paths: const [ name ":" paths ] 67;
+      makePrefix = name: paths: [
+        name
+        ":"
+        paths
+      ];
       makeQtPluginPath = concatMapStringsSep ":" (p: "${p}/${pkgs.kdePackages.qtbase.qtPluginPrefix}");
       makeQtPluginPrefix = packages: makePrefix "QT_PLUGIN_PATH" (makeQtPluginPath packages);
+
+      dependencies = with pkgs.kdePackages; [
+        ffmpegthumbs
+        kdegraphics-thumbnailers
+        qtsvg
+      ];
     in
     {
       packages.dolphin = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.kdePackages.dolphin;
-        # runShell = singleton /* bash */ ''
-        #   ${pkgs.kdePackages.kservice}/bin/kbuildsycoca6
-        # '';
         prefixVar = [
           (makePrefix "PATH" "/run/wrappers:/run/current-system/sw/bin")
           (makePrefix "XDG_CONFIG_DIRS" "${pkgs.kdePackages.plasma-workspace}/etc/xdg")
-          (makeQtPluginPrefix [
-            pkgs.kdePackages.ffmpegthumbs
-            pkgs.kdePackages.kdegraphics-thumbnailers
-            pkgs.kdePackages.qtsvg
-          ])
+          (makeQtPluginPrefix dependencies)
         ];
       };
     };
@@ -38,12 +40,9 @@ in
   flake.modules.nixos.base =
     { pkgs, system, ... }:
     {
-      packages = [ self.packages.${system}.dolphin ];
+      packages = singleton self.packages.${system}.dolphin;
 
       preserveHome.files = singleton ".local/state/dolphinstaterc";
-
-      environment.etc."xdg/menus/applications.menu".source =
-        "${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu";
 
       home.xdg.config.files."dolphinrc".text = ''
         [UiSettings]

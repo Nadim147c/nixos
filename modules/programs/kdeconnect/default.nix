@@ -1,24 +1,24 @@
 { lib, ... }:
 let
-  inherit (lib) toList getExe';
+  inherit (lib) fix getExe' singleton;
 in
 {
-  flake.modules.nixos.pc = { pkgs, ... }: {
+  flake.modules.nixos.gui = { pkgs, ... }: {
     programs.kdeconnect.enable = true;
 
-    home.systemd.services.kdeconnect = rec {
+    home.systemd.services.kdeconnect-indicator = fix (final: {
       enable = true;
       description = "Kdeconnect Indicator";
-      requires = toList "tray.target";
-      partOf = toList "graphical-session.target";
+      requires = singleton "tray.target";
+      partOf = singleton "graphical-session.target";
       after = [
         "graphical-session.target"
         "tray.target"
       ];
-      wantedBy = partOf;
+      wantedBy = singleton "graphical-session.target";
       serviceConfig = {
         ExecStart = getExe' pkgs.kdePackages.kdeconnect-kde "kdeconnect-indicator";
       };
-    };
+    });
   };
 }

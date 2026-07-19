@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList;
+  inherit (lib) singleton;
 in
 {
   perSystem = { pkgs, ... }: {
@@ -26,7 +26,7 @@ in
       ...
     }:
     {
-      programs.rong.settings.themes = toList {
+      programs.rong.settings.themes = singleton {
         target = "cava.ini";
         links = "${config.home.xdg.config.directory}/cava/themes/rong";
         cmds = pkgs.writers.writeNu "reload-cava" /* nu */ ''
@@ -37,6 +37,6 @@ in
         '';
       };
 
-      packages = [ self.packages.${system}.cava ];
+      packages = singleton self.packages.${system}.cava;
     };
 }

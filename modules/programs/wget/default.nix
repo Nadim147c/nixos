@@ -5,8 +5,7 @@
   ...
 }:
 let
-  inherit (lib.x) singleton;
-  inherit (lib) toList;
+  inherit (lib) singleton;
 in
 {
   perSystem =
@@ -37,7 +36,7 @@ in
       ...
     }:
     {
-      home.packages = toList self.packages.${system}.wget;
+      home.packages = singleton self.packages.${system}.wget;
       sessionVariables.WGETRC = pkgs.writeText "wgetrc" /* ini */ ''
         hsts-file = ${config.home.xdg.cache.directory}/wget-hsts
       '';

@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList getExe;
+  inherit (lib) singleton getExe;
 in
 {
   perSystem = { pkgs, ... }: {
@@ -124,26 +124,27 @@ in
     }:
     let
       bin = getExe self.packages.${system}.starship;
+      init = "${bin} init";
       pathFix = "sd '/nix/store/([^\\s])+/starship' ${bin}";
     in
     {
       sessionVariables.STARSHIP_CACHE = "${config.home.xdg.cache.directory}/starship";
-      packages = toList self.packages.${system}.starship;
+      packages = singleton self.packages.${system}.starship;
       programs = {
         bash.init.starship = ''
-          ${bin} init bash --print-full-init | ${pathFix}
+          ${init} bash --print-full-init | ${pathFix}
         '';
 
         zsh.init.starship = ''
-          ${bin} init zsh --print-full-init | ${pathFix}
+          ${init} zsh --print-full-init | ${pathFix}
         '';
 
         fish.init.starship = ''
-          ${bin} init fish --print-full-init | ${pathFix}
+          ${init} fish --print-full-init | ${pathFix}
         '';
 
         nushell.init.starship = ''
-          ${bin} init nu | ${pathFix}
+          ${init} nu | ${pathFix}
         '';
       };
     };

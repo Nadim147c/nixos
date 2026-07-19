@@ -5,15 +5,11 @@
   ...
 }:
 let
-  inherit (lib) toList getExe;
+  inherit (lib) singleton getExe;
 in
 {
   perSystem =
-    {
-      self',
-      pkgs,
-      ...
-    }:
+    { self', pkgs, ... }:
     {
       packages.fzf = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
@@ -29,9 +25,7 @@ in
       };
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    {
-      packages = toList self.packages.${system}.fzf;
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = singleton self.packages.${system}.fzf;
+  };
 }

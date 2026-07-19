@@ -5,15 +5,15 @@
   ...
 }:
 let
-  inherit (lib) toList getExe;
-  inherit (lib.x) quote;
+  inherit (lib) singleton attrValues getExe;
+  inherit (lib.x) makeEnvFlag;
 in
 {
   perSystem =
     { pkgs, self', ... }:
     let
       center-screenshot = pkgs.writers.writePython3Bin "center-screenshot" {
-        libraries = [ pkgs.python3Packages.wand ];
+        libraries = singleton pkgs.python3Packages.wand;
         makeWrapperArgs = [ "--prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.imagemagick ]}" ];
       } (builtins.readFile ./center_screenshot.py);
 
@@ -32,29 +32,28 @@ in
       packages.freeze = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.charm-freeze;
-        runShell = toList /* bash */ ''
+        runShell = singleton /* bash */ ''
           screenshot_file="$(${xdg-base-dir} user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"
           mkdir -p "$(dirname "$screenshot_file")"
         '';
         flags = {
           "--theme" = "tokionight-moon";
-          "--output" = {
-            data = "$screenshot_file";
-            esc-fn = quote;
-          };
+          "--output" = makeEnvFlag "screenshot_file";
         };
       };
 
       packages.termshot = pkgs.writeShellApplication {
         name = "termshot";
-        runtimeInputs = [
-          center-screenshot
-          pkgs.chafa
-          pkgs.charm-freeze
-          pkgs.coreutils
-          pkgs.wl-clipboard
-          self'.packages.xdg-base-dir
-        ];
+        runtimeInputs = attrValues {
+          inherit center-screenshot;
+          inherit (pkgs)
+            chafa
+            charm-freeze
+            coreutils
+            wl-clipboard
+            ;
+          inherit (self'.packages) xdg-base-dir;
+        };
         text = ''
           screenshot_file="$(xdg-base-dir user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"
           mkdir -p "$(dirname "$screenshot_file")"
@@ -80,16 +79,11 @@ in
 
     };
 
-  flake.modules.nixos.base =
-    { system, ... }:
-    let
-      inherit (self.packages.${system}) freeze termshot chroma;
-    in
-    {
-      packages = [
-        chroma
-        freeze
-        termshot
-      ];
-    };
+  flake.modules.nixos.base = { system, ... }: {
+    packages = with self.packages.${system}; [
+      chroma
+      freeze
+      termshot
+    ];
+  };
 }

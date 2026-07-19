@@ -1,3 +1,7 @@
+{ lib, ... }:
+let
+  inherit (lib) attrValues;
+in
 {
   flake.modules.nixos.gui =
     { pkgs, ... }:
@@ -9,10 +13,10 @@
       xdg.portal = {
         enable = true;
         xdgOpenUsePortal = false;
-        extraPortals = [
-          pkgs.kdePackages.xdg-desktop-portal-kde
-          pkgs.xdg-desktop-portal-gtk
-        ];
+        extraPortals = attrValues {
+          inherit (pkgs.kdePackages) xdg-desktop-portal-kde;
+          inherit (pkgs) xdg-desktop-portal-gtk;
+        };
         config.common = {
           "org.freedesktop.impl.portal.FileChooser" = [ "kde" ];
           default = [

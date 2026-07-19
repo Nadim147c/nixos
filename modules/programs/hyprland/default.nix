@@ -11,6 +11,7 @@ let
     mapAttrs'
     mapAttrsToList
     nameValuePair
+    singleton
     ;
   inherit (lib.generators) toLua;
 in
@@ -19,8 +20,8 @@ in
     packages.hyprland = inputs.wrappers.lib.wrapPackage {
       inherit pkgs;
       package = pkgs.hyprland;
-      filesToExclude = [ "share/wayland-sessions/hyprland-uwsm.desktop" ];
-      passthru.providedSessions = [ "hyprland" ];
+      filesToExclude = singleton "share/wayland-sessions/hyprland-uwsm.desktop";
+      passthru.providedSessions = singleton "hyprland";
     };
   };
 
@@ -51,10 +52,19 @@ in
 
       createActiveDisplay =
         output: display:
+        let
+          inherit (display)
+            width
+            height
+            refreshRate
+            x
+            y
+            ;
+        in
         {
           inherit output;
-          mode = "${toString display.width}x${toString display.height}@${toString display.refreshRate}";
-          position = "${toString display.x}x${toString display.y}";
+          mode = "${toString width}x${toString height}@${toString refreshRate}";
+          position = "${toString x}x${toString y}";
         }
         // display.extra;
 
@@ -68,17 +78,13 @@ in
         if value.enable then createActiveDisplay name value else createDisabledDisplay name value;
     in
     {
-      systemd.user = {
-        # ly -> hyprland-start -> exec-once hyprland-session.service -> startupServices
-        # so the environment will be properly set
-        targets.hyprland-session = {
-          unitConfig = {
-            Description = "Hyprland compositor session";
-            BindsTo = [ "graphical-session.target" ];
-            # start the other services here after the WM has already started (push vs pull)
-            Wants = [ "graphical-session-pre.target" ];
-            After = [ "graphical-session-pre.target" ];
-          };
+      systemd.user.targets.hyprland-session = {
+        unitConfig = {
+          Description = "Hyprland compositor session";
+          BindsTo = singleton "graphical-session.target";
+          # start the other services here after the WM has already started (push vs pull)
+          Wants = singleton "graphical-session-pre.target";
+          After = singleton "graphical-session-pre.target";
         };
       };
       programs.hyprland = {

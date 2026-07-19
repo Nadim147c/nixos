@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib.x) singleton;
+  inherit (lib) singleton;
   name = "control";
 in
 {

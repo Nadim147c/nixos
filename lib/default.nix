@@ -26,7 +26,10 @@ rec {
 
   quote = x: ''"${x}"'';
 
-  singleton = elem: [ elem ];
+  makeEnvFlag = name: {
+    data = "\${name}";
+    esc-fn = quote;
+  };
 
   # Check if input is a number
   isNumber = v: isInt v || isFloat v;
@@ -170,7 +173,8 @@ rec {
     - added to `xdg.mimeApps.associations.added`
     - set as the default applications
   */
-  genMimes = desktops: types:
+  genMimes =
+    desktops: types:
     let
       mimes = genAttrs types (const <| toList desktops);
     in

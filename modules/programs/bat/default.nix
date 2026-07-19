@@ -5,8 +5,11 @@
   ...
 }:
 let
-  inherit (lib) getExe makeBinPath;
-  inherit (lib.x) singleton;
+  inherit (lib)
+    getExe
+    makeBinPath
+    singleton
+    ;
 in
 {
   perSystem = { self', pkgs, ... }: {
@@ -72,12 +75,9 @@ in
 
   flake.modules.nixos.base =
     { system, ... }:
-    let
-      inherit (self.packages.${system}) bat batman bat_plus;
-    in
     {
-      environment.shellAliases.cat = getExe bat;
-      packages = [
+      environment.shellAliases.cat = getExe self.packages.${system}.bat;
+      packages = with self.packages.${system}; [
         bat
         bat_plus
         batman

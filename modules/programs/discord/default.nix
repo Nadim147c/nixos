@@ -1,14 +1,14 @@
 { lib, ... }:
 let
-  inherit (lib) toList escapeShellArg;
-  inherit (lib.x) singleton;
+  inherit (lib) singleton escapeShellArg;
+  inherit (lib.modules) mkOption types;
 
   appId = "org.equicord.equibop";
   readonly =
     default:
-    lib.mkOption {
+    mkOption {
       inherit default;
-      type = lib.types.singleLineStr;
+      type = types.singleLineStr;
       readOnly = true;
     };
 in
@@ -25,7 +25,7 @@ in
       preserveHome.directories = singleton ".config/equibop";
 
       services.flatpak = {
-        packages = toList appId;
+        packages = singleton appId;
         overrides.settings = {
           "${appId}".Context.filesystems = [
             "xdg-config/equibop"

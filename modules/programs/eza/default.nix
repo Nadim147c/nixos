@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) toList getExe;
+  inherit (lib) singleton getExe;
 in
 {
 
@@ -26,13 +26,14 @@ in
   flake.modules.nixos.base =
     { system, ... }:
     let
-      bin = getExe self.packages.${system}.eza;
+      inherit (self.packages.${system}) eza;
+      bin = getExe eza;
     in
     {
-      packages = toList self.packages.${system}.eza;
+      packages = singleton eza;
       environment.shellAliases = {
         l = "${bin} -alh";
-        ls = "${bin}";
+        ls = bin;
         ll = "${bin} -l";
         la = "${bin} -a";
         lt = "${bin} --tree";

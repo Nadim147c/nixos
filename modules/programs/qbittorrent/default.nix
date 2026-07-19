@@ -1,7 +1,7 @@
 { lib, ... }:
 let
   inherit (lib)
-    toList
+    singleton
     collect
     escape
     getExe
@@ -78,7 +78,7 @@ in
     { pkgs, ... }:
     {
       packages =
-        toList
+        singleton
         <| pkgs.makeDesktopItem {
           name = "qbittorrent-nox";
           desktopName = "qBittorrent Web UI";
