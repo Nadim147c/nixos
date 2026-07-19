@@ -14,8 +14,8 @@ in
     {
       options.programs.fish.init = opt.attrs.block { };
       config = {
-        preserveHome.directories = singleton ".local/share/fish/vendor_completions.d";
-        environment.pathsToLink = singleton "/share/fish/vendor_completions.d";
+        preserveHome.directories = singleton ".local/share/fish";
+        environment.pathsToLink = singleton "/share/fish";
 
         programs.fish = {
           enable = true;
