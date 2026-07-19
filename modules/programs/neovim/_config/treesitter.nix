@@ -1,6 +1,7 @@
 { pkgs, ... }:
 {
   vim = {
+    treesitter.indent.enable = false;
     treesitter.grammars = pkgs.vimPlugins.nvim-treesitter.allGrammars;
     treesitter.autotagHtml = true;
     treesitter.textobjects = {

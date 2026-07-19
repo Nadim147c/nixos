@@ -9,6 +9,7 @@ in
       inherit name;
       completion.positionalany = [ "$files" ];
     };
+    cond = pkgs: pkgs.stdenv.hostPlatform.isLinux;
     script =
       pkgs:
       pkgs.writeNuApplication {

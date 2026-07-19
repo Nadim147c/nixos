@@ -53,6 +53,7 @@
     utility = {
       undotree.enable = true;
       motion.leap.enable = true;
+      sleuth.enable = true;
     };
     visuals.nvim-web-devicons.enable = true;
   };

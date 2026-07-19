@@ -15,7 +15,8 @@ in
         nixos.wireless
       ];
 
-      services.openssh.enable = true;
+      services.git-sync.enable = true;
+
       # Small ahh display
       cursor.size = 22;
 

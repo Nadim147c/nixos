@@ -1,6 +1,7 @@
 { config, lib, ... }:
 let
   inherit (lib)
+    const
     filterAttrs
     flatten
     mapAttrsToList
@@ -9,8 +10,8 @@ let
     mkOption
     optional
     types
-    x
     ;
+  inherit (lib.x) opt;
   inherit (types)
     attrs
     attrsOf
@@ -22,10 +23,10 @@ in
   options.scripts = mkOption {
     type = attrsOf (submodule {
       options = {
-        name = x.opt.line "";
-        cond = x.opt.bool true;
-        completion = x.opt.createOption attrs { };
-        script = x.opt.createOption (functionTo types.package) (_: null);
+        name = opt.line "";
+        cond = opt.createOption (functionTo types.bool) (const true);
+        completion = opt.createOption attrs { };
+        script = opt.createOption (functionTo types.package) (const null);
       };
     });
   };
@@ -35,7 +36,9 @@ in
       { pkgs, ... }:
       {
         packages =
-          config.scripts |> mapAttrsToList (name: value: optional value.cond (value.script pkgs)) |> flatten;
+          config.scripts
+          |> mapAttrsToList (name: value: optional (value.cond pkgs) (value.script pkgs))
+          |> flatten;
 
         home.xdg.config.files =
           config.scripts
@@ -74,7 +77,7 @@ in
       {
         packages =
           config.scripts
-          |> mapAttrsToList (name: value: { "${name}" = mkIf value.cond (value.script pkgs); })
+          |> mapAttrsToList (name: value: { "${name}" = mkIf (value.cond pkgs) (value.script pkgs); })
           |> mkMerge;
 
         checks =

@@ -16,14 +16,17 @@ let
 in
 {
   perSystem =
-    { pkgs, ... }:
+    { pkgs, self', ... }:
     let
       topiary-nushell = inputs.topiary-nushell.packages.${pkgs.system}.default.override {
         inherit tree-sitter-nu;
       };
       nvfConfig = neovimConfiguration {
         inherit pkgs;
-        extraSpecialArgs = { inherit inputs topiary-nushell; };
+        extraSpecialArgs = {
+          inherit (self'.packages) better-iferr;
+          inherit inputs topiary-nushell;
+        };
         modules = (import-tree ./_config).imports;
       };
     in

@@ -5,7 +5,8 @@
   ...
 }:
 let
-  inherit (lib) concatMapStringsSep optionalString singleton;
+  inherit (lib) mkIf concatMapStringsSep singleton;
+  inherit (builtins) isBool;
 in
 {
   perSystem =
@@ -24,32 +25,45 @@ in
         kdegraphics-thumbnailers
         qtsvg
       ];
+
+      application-menu = pkgs.runCommand "application-menu" { } ''
+        mkdir -p $out/etc/xdg/menus/
+        cp ${pkgs.kdePackages.plasma-workspace}/etc/xdg/menus/plasma-applications.menu $out/etc/xdg/menus/applications.menu
+      '';
     in
     {
-      packages.dolphin = inputs.wrappers.lib.wrapPackage {
-        inherit pkgs;
-        package = pkgs.kdePackages.dolphin;
-        prefixVar = [
-          (makePrefix "PATH" "/run/wrappers:/run/current-system/sw/bin")
-          (makePrefix "XDG_CONFIG_DIRS" "${pkgs.kdePackages.plasma-workspace}/etc/xdg")
-          (makeQtPluginPrefix dependencies)
-        ];
-      };
+      packages.dolphin =
+        mkIf pkgs.stdenv.hostPlatform.isLinux
+        <| inputs.wrappers.lib.wrapPackage {
+          inherit pkgs;
+          package = pkgs.kdePackages.dolphin;
+          runShell = singleton /* bash */ ''
+            rm -vrf ~/.cache/ksycoca6*
+            ${pkgs.kdePackages.kservice}/bin/kbuildsycoca6
+          '';
+          prefixVar = [
+            (makePrefix "PATH" "/run/wrappers:/run/current-system/sw/bin")
+            (makePrefix "XDG_CONFIG_DIRS" "${application-menu}/etc/xdg")
+            (makeQtPluginPrefix dependencies)
+          ];
+        };
     };
 
   flake.modules.nixos.base =
-    { pkgs, system, ... }:
+    { system, ... }:
     {
       packages = singleton self.packages.${system}.dolphin;
-
-      preserveHome.files = singleton ".local/state/dolphinstaterc";
 
       home.xdg.config.files."dolphinrc".text = ''
         [UiSettings]
         ColorScheme=Rong
       '';
 
+      home.xdg.mime-apps = lib.x.genMimes "org.kde.dolphin.desktop" [ "inode/directory" ];
+
       home.xdg.data.files."user-places.xbel" = {
+        type = "copy";
+        permissions = "644";
         generator =
           { bookmarks }:
           let
@@ -57,6 +71,7 @@ in
               {
                 name,
                 icon ? "inode-directory",
+                hidden ? false,
                 path ? null,
                 url ?
                   if (path != null) then
@@ -64,12 +79,14 @@ in
                   else
                     throw "makeUserPlaces: Either 'url' or 'path' must be specified for bookmark '${name}'",
               }:
+              assert (isBool hidden);
               ''
                 <bookmark href="${url}">
                   <title>${name}</title>
                   <info>
                     <metadata owner="http://freedesktop.org">
                       <bookmark:icon name="${icon}"/>
+                    <IsHidden>${builtins.toJSON hidden}</IsHidden>
                     </metadata>
                   </info>
                 </bookmark>

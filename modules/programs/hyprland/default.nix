@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib)
+    fix
     getExe
     getExe'
     mapAttrs'
@@ -78,15 +79,43 @@ in
         if value.enable then createActiveDisplay name value else createDisabledDisplay name value;
     in
     {
-      systemd.user.targets.hyprland-session = {
-        unitConfig = {
-          Description = "Hyprland compositor session";
-          BindsTo = singleton "graphical-session.target";
-          # start the other services here after the WM has already started (push vs pull)
-          Wants = singleton "graphical-session-pre.target";
-          After = singleton "graphical-session-pre.target";
+      systemd.user.targets = {
+        hyprland-session = {
+          unitConfig = {
+            Description = "Hyprland compositor session";
+            BindsTo = singleton "graphical-session.target";
+            Wants = singleton "graphical-session-pre.target";
+            After = singleton "graphical-session-pre.target";
+          };
+        };
+        tray = {
+          unitConfig = {
+            Description = "System tray target";
+            Requires = singleton "graphical-session-pre.target";
+          };
         };
       };
+
+      home.systemd.paths.hyprland-reload-config = fix (final: {
+        enable = true;
+        description = "Watch for hyprland config change";
+        partOf = singleton "graphical-session.target";
+        wantedBy = final.partOf;
+        pathConfig = {
+          PathChanged = "%E/hypr";
+          Unit = "hyprland-reload-config.service";
+        };
+      });
+
+      home.systemd.services.hyprland-reload-config = {
+        enable = true;
+        description = "Reload hyprland on config change";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart = "${getExe' config.programs.hyprland.package "hyprctl"} reload";
+        };
+      };
+
       programs.hyprland = {
         enable = true;
         package = self.packages.${system}.hyprland;
@@ -94,10 +123,10 @@ in
         withUWSM = false;
       };
 
-      packages = [
-        pkgs.hyprshutdown
-        pkgs.playerctl
-        pkgs.wl-clipboard
+      packages = with pkgs; [
+        hyprshutdown
+        playerctl
+        wl-clipboard
       ];
 
       home.xdg.config.files = createConfig {
@@ -110,6 +139,17 @@ in
           XDG_SESSION_DESKTOP = "Hyprland";
           XDG_SESSION_TYPE = "wayland";
           GDK_BACKEND = "wayland,x11,*";
+          inherit (config.environment.sessionVariables)
+            XCURSOR_SIZE
+            XCURSOR_THEME
+            HYPRCURSOR_SIZE
+            HYPRCURSOR_THEME
+            GTK_THEME
+            QT_QPA_PLATFORM
+            QT_AUTO_SCREEN_SCALE_FACTOR
+            QT_WAYLAND_DISABLE_WINDOWDECORATION
+            QT_QPA_PLATFORMTHEME
+            ;
         };
         programs =
           let
@@ -121,11 +161,18 @@ in
               kopuz
               mpvpaper-send-ipc
               qs-toggle
+              control
               ;
+            launcher = getExe control;
           in
           mkLuaObject {
-            browser = getExe inputs.helium.packages.${system}.default;
-            discord = getExe equibop;
+            browser = pkgs.writeShellScript "helium" ''
+              ${launcher} --memory=2G ${getExe inputs.helium.packages.${system}.default}
+            '';
+            discord = pkgs.writeShellScript "equibop" ''
+              ${launcher} --memory=2G ${getExe equibop}
+            '';
+            control = getExe control;
             file_manager = getExe' dolphin "dolphin";
             hyprscreenshot = getExe hyprscreenshot;
             hyprshutdown = getExe pkgs.hyprshutdown;

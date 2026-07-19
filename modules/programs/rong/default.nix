@@ -9,7 +9,6 @@ let
     getExe
     makeBinPath
     singleton
-    toList
     ;
 in
 {
@@ -99,11 +98,7 @@ in
     };
 
   flake.modules.nixos.gui =
-    {
-      config,
-      system,
-      ...
-    }:
+    { system, ... }:
     {
       preserveHome.directories = singleton ".local/state/rong";
 
@@ -144,23 +139,7 @@ in
               };
             };
           };
-          links =
-            let
-              createPath = prefix: list: toList list |> map (x: "${prefix}/${x}");
-            in
-            {
-              "qtct.colors" = "${config.home.xdg.data.directory}/color-schemes/Rong.colors";
-              "qtct.conf" = createPath config.home.xdg.config.directory [
-                "qt5ct/colors/rong.conf"
-                "qt6ct/colors/rong.conf"
-              ];
-              "gtk.css" = createPath config.home.xdg.config.directory [
-                "gtk-3.0/gtk.css"
-                "gtk-4.0/gtk.css"
-              ];
-            };
         };
       };
-
     };
 }

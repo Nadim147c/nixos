@@ -10,6 +10,8 @@ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ
 github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
 github.com/Nadim147c/fang v1.1.1 h1:jb9BftogTzyn5wQ9oaeQfKQxkhpvSXYGxqfo1GYdA1s=
 github.com/Nadim147c/fang v1.1.1/go.mod h1:0ho2UFy6bz+MPC5ox1BoMgemd6KJ5LJljFMz4PxoEf0=
+github.com/Nadim147c/go-chroma v0.1.0 h1:UZ0ymPOY1vDJcfB3jT/OqGynSlkHLt+l2H1yrhdtLdk=
+github.com/Nadim147c/go-chroma v0.1.0/go.mod h1:sgq1rEPn0JUqiJjAvUaN6NJ9Rz6NdL1uygD8hJJHdqo=
 github.com/Nadim147c/real-go v0.0.0-20260320162608-66134fbe4e77 h1:j2CON+cpW0kIzGnqouEN8ADTvSoRUjExstlw0M3YcCA=
 github.com/Nadim147c/real-go v0.0.0-20260320162608-66134fbe4e77/go.mod h1:1XdFoZE25gVGvLWaqxK01Yq1IVeIRNq/gRweYIwwek8=
 github.com/adrg/xdg v0.5.3 h1:xRnxJXne7+oWDatRhR1JLnvuccuIeCoBu2rtuLqQB78=

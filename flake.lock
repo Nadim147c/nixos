@@ -228,26 +228,6 @@
         "type": "github"
       }
     },
-    "ncro": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1782831121,
-        "narHash": "sha256-x6AIpkQI2Vzz0xZRxAjtzItmPlao7O198EH+hs7Zz0E=",
-        "owner": "feel-co",
-        "repo": "ncro",
-        "rev": "6a20f496c472a31c0cc5c8935893844267f82c1d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "feel-co",
-        "repo": "ncro",
-        "type": "github"
-      }
-    },
     "nix-flatpak": {
       "locked": {
         "lastModified": 1783368811,
@@ -312,24 +292,33 @@
         "type": "github"
       }
     },
-    "nixpkgs_2": {
+    "noctalia-greeter": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
       "locked": {
-        "lastModified": 1783148766,
-        "narHash": "sha256-H9+N+GFtsbVC8ZniHliChM7ndizxtqVZs6bnGOLM3WQ=",
-        "rev": "a50de1b7d8a586adc18d2395c19de7d6058e6030",
-        "type": "tarball",
-        "url": "https://releases.nixos.org/nixos/26.05/nixos-26.05.4193.a50de1b7d8a5/nixexprs.tar.xz?lastModified=1783148766&rev=a50de1b7d8a586adc18d2395c19de7d6058e6030"
+        "lastModified": 1784707224,
+        "narHash": "sha256-K8yyxX/sShhVznU/3ejZgriayg8Fyac+bR4dCTB1864=",
+        "owner": "noctalia-dev",
+        "repo": "noctalia-greeter",
+        "rev": "8e53bb30f1d1179c0bd2275b02915258827d62eb",
+        "type": "github"
       },
       "original": {
-        "type": "tarball",
-        "url": "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz"
+        "owner": "noctalia-dev",
+        "repo": "noctalia-greeter",
+        "type": "github"
       }
     },
     "nvf": {
       "inputs": {
         "flake-compat": "flake-compat",
         "mnw": "mnw",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": [
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1783282377,
@@ -412,10 +401,10 @@
         "hjem": "hjem",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
-        "ncro": "ncro",
         "nix-flatpak": "nix-flatpak",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
+        "noctalia-greeter": "noctalia-greeter",
         "nvf": "nvf",
         "preservation": "preservation",
         "quickshell": "quickshell",

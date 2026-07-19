@@ -11,6 +11,7 @@
 # to ensure tmux compatibility.
 def main [] {
   let selected_repo = tmux-list-repos ~/git | fzf --ansi
+  tmux-list-repos add (echo ~/git | path join $selected_repo | path expand)
 
   let fullpath = echo ~/git | path join $selected_repo | path expand
   let session_name = $selected_repo | str replace --all ":" "-"

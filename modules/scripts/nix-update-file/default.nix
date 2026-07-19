@@ -14,7 +14,10 @@ in
       pkgs:
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = with pkgs; [ nix-update ];
+        runtimeInputs = with pkgs; [
+          git
+          nix-update
+        ];
         source = ./nix-update-file.nu;
       };
   };

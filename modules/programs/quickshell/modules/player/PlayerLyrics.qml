@@ -11,7 +11,6 @@ MouseArea {
     implicitWidth: parent.width
     implicitHeight: 200
     hoverEnabled: true
-
     ScrollView {
         id: view
         width: parent.width
@@ -54,6 +53,7 @@ MouseArea {
                     StyledText {
                         id: lyricLineText
                         property bool active: lyricLine.index === WaybarLyric.lineIndex
+
                         width: parent.width
                         wrapMode: Text.WordWrap
                         textFormat: Text.RichText
@@ -78,9 +78,16 @@ MouseArea {
                         Behavior on color {
                             animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
                         }
-                        onActiveChanged: {
-                            if (!active || root.containsMouse)
+                        Timer {
+                            running: true
+                            interval: 100
+                            onTriggered: parent.updatePosition()
+                        }
+                        onActiveChanged: updatePosition()
+                        function updatePosition() {
+                            if (!active || root.containsMouse) {
                                 return;
+                            }
                             const linePos = lyricLine.y + lyricLine.height - (view.height / 2);
                             let pos;
                             if (lyricColumn.height - linePos < view.height) {

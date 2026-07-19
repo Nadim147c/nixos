@@ -1,12 +1,32 @@
 { lib, ... }:
 let
-  inherit (lib) attrValues;
+  inherit (lib) getExe' attrValues;
 in
 {
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.modules.nixos.gui = { config, pkgs, ... }: {
     preserveHome.directories = [
       ".config/qt5ct"
       ".config/qt6ct"
+    ];
+
+    programs.rong.settings.themes = [
+      {
+        target = "qt6ct.conf";
+        links = [
+          "${config.home.xdg.config.directory}/qt5ct/colors/rong.conf"
+          "${config.home.xdg.config.directory}/qt6ct/colors/rong.conf"
+        ];
+        cmds = ''
+          ${getExe' pkgs.coreutils "touch"} ~/.config/qt5ct/qt5ct.conf ~/.config/qt6ct/qt6ct.conf
+        '';
+      }
+      {
+        target = "qtct.colors";
+        links = "${config.home.xdg.data.directory}/color-schemes/Rong.colors";
+        cmds = ''
+          ${getExe' pkgs.coreutils "touch"} ~/.config/dolphinrc
+        '';
+      }
     ];
 
     sessionVariables = {
@@ -15,10 +35,11 @@ in
       QT_WAYLAND_DISABLE_WINDOWDECORATION = "1";
       QT_QPA_PLATFORMTHEME = "qt6ct";
     };
+
     packages = attrValues {
-      qt5ct = pkgs.libsForQt5.qt5ct;
-      qt6ct = pkgs.qt6Packages.qt6ct;
-      breeze-icons = pkgs.kdePackages.breeze-icons;
+      inherit (pkgs.libsForQt5) qt5ct;
+      inherit (pkgs.qt6Packages) qt6ct;
+      inherit (pkgs.kdePackages) breeze-icons;
     };
   };
 }

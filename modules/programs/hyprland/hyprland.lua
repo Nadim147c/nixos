@@ -35,7 +35,7 @@ hl.window_rule({
 })
 hl.window_rule({
   name = "browser workspace 2",
-  match = { class = "^(zen-(beta|browser)|helium)$" },
+  match = { class = "^(zen-(beta|browser)|[hH]elium)$" },
   workspace = "2 silent",
 })
 hl.window_rule({
@@ -50,8 +50,16 @@ hl.window_rule({
 })
 
 hl.on("hyprland.start", function()
-  hl.dispatch(hl.dsp.exec_cmd("systemctl --user start hyprland-session.target"))
   hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY"))
+  local keys = {}
+  for k, _ in pairs(envs) do
+    table.insert(keys, k)
+  end
+  local env_keys_str = table.concat(keys, " ")
+  hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment " .. env_keys_str))
+  hl.dispatch(hl.dsp.exec_cmd("dbus-update-activation-environment --systemd " .. env_keys_str))
+  hl.dispatch(hl.dsp.exec_cmd("systemctl --user start hyprland-session.target"))
+
   hl.dispatch(hl.dsp.exec_cmd(programs.terminal))
   hl.dispatch(hl.dsp.exec_cmd(programs.browser))
   hl.dispatch(hl.dsp.exec_cmd(programs.discord))

@@ -27,7 +27,10 @@ in
         enable = true;
         extensions.gopher-nvim.enable = true;
       };
-      lua.enable = true;
+      lua = {
+        enable = true;
+        format.enable = true;
+      };
       markdown = {
         enable = true;
         extensions.render-markdown-nvim.enable = true;
@@ -73,7 +76,6 @@ in
         zls.enable = true;
       };
       otter-nvim.enable = true;
-      servers."v-analyzer".enable = true;
       servers."*" = {
         on_attach = mkLuaInline /* lua */ ''
           function(_, bufnr)

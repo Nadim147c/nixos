@@ -10,6 +10,7 @@ in
     autocomplete.blink-cmp = {
       enable = true;
       setupOpts = {
+        completion.documentation.auto_show = true;
         keymap = {
           "<C-k>" = [
             "show"
@@ -26,11 +27,15 @@ in
           "<S-Tab>" = fallback "snippet_backward";
         };
 
-        cmdline.keymap = {
-          "<Up>" = fallback <| (mkLuaInline "function() ${cmp}.select_prev { auto_insert = true } end");
-          "<C-p>" = fallback <| (mkLuaInline "function() ${cmp}.select_prev { auto_insert = true } end");
-          "<Down>" = fallback <| (mkLuaInline "function() ${cmp}.select_next { auto_insert = true } end");
-          "<C-n>" = fallback <| (mkLuaInline "function() ${cmp}.select_next { auto_insert = true } end");
+        cmdline = {
+          menu.auto_show = true;
+          keymap = {
+            "<Up>" = fallback <| (mkLuaInline "function() ${cmp}.select_prev { auto_insert = false } end");
+            "<C-p>" = fallback <| (mkLuaInline "function() ${cmp}.select_prev { auto_insert = false } end");
+            "<Down>" = fallback <| (mkLuaInline "function() ${cmp}.select_next { auto_insert = false } end");
+            "<C-n>" = fallback <| (mkLuaInline "function() ${cmp}.select_next { auto_insert = false } end");
+            "<CR>" = fallback "select_and_accept";
+          };
         };
       };
     };

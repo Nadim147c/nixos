@@ -101,6 +101,11 @@ in
           name = "desktop";
           path = dirs.XDG_DESKTOP_DIR;
         }
+        {
+          name = "documents";
+          hidden = true;
+          path = dirs.XDG_DOCUMENTS_DIR;
+        }
       ];
 
       home.xdg.config.files."user-dirs.dirs" = {

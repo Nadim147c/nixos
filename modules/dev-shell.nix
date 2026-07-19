@@ -9,6 +9,7 @@ in
       nu-formatter = topiary-nushell.packages.${system}.default.override {
         inherit tree-sitter-nu;
       };
+      goEnv = gomod2nix.legacyPackages.${system}.mkGoEnv { pwd = ../.; };
     in
     {
       devShells.default = pkgs.mkShell {
@@ -24,7 +25,7 @@ in
             stylua
             statix
             ;
-          inherit nu-formatter;
+          inherit goEnv nu-formatter;
         };
       };
     };

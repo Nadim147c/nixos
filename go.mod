@@ -8,6 +8,7 @@ require (
 	charm.land/huh/v2 v2.0.3
 	charm.land/lipgloss/v2 v2.0.4
 	github.com/Nadim147c/fang v1.1.1
+	github.com/Nadim147c/go-chroma v0.1.0
 	github.com/Nadim147c/real-go v0.0.0-20260320162608-66134fbe4e77
 	github.com/adrg/xdg v0.5.3
 	github.com/charmbracelet/bubbles v1.0.0

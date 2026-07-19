@@ -15,8 +15,9 @@ in
       pkgs.writeNuApplication {
         inherit name;
         runtimeInputs = with pkgs; [
-          magika-cli
+          fd
           ffmpeg
+          magika-cli
         ];
         source = ./convert-to-opus.nu;
       };

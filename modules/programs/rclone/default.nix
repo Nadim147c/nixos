@@ -88,6 +88,8 @@ in
         userAllowOther = true;
       };
 
+      preserveHome.directories = singleton ".config/rclone";
+
       packages = singleton pkgs.rclone;
       home.systemd.services.rclone = {
         enable = true;

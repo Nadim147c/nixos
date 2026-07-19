@@ -6,6 +6,7 @@
 }:
 let
   inherit (lib)
+    mkIf
     attrValues
     cleanSource
     filterAttrs
@@ -83,7 +84,7 @@ in
         ];
       };
     in
-    {
+    mkIf pkgs.stdenv.hostPlatform.isLinux {
       packages.app-launcher = pkgs.runCommand "app-launcher" { } ''
         mkdir -p $out/bin
         ln -s ${app-launcher}/bin/app-launcher $out/bin/app-launcher
@@ -120,7 +121,6 @@ in
         description = "mpvpaper control daemon";
         partOf = singleton "graphical-session.target";
         wants = singleton "tray.target";
-        before = final.partOf;
         after = final.partOf;
         wantedBy = final.partOf;
         reloadTriggers = singleton self.packages."${system}".quickshell;

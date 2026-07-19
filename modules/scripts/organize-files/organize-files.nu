@@ -13,10 +13,13 @@ def main [
   let archive_dir = $document_dir | path join "../archives" | path expand
   let torrent_dir = $document_dir | path join "../torrents" | path expand
 
-  mkdir $image_dir $video_dir $audio_dir $document_dir $apk_dir $script_dir $binary_dir $archive_dir
+  mkdir $image_dir $gif_dir $video_dir $audio_dir $document_dir $apk_dir $script_dir $binary_dir $archive_dir $torrent_dir
 
-  fd --type file . ...$files | lines | each {|it|
-    let new_path = $it
+  let files = fd --type file . ...$files | lines | collect
+  let total = $files | length
+  $files | enumerate | each {|x|
+    let old_path = $x.item
+    let new_path = $old_path
       | path parse
       | upsert stem {|i|
         $i.stem
@@ -25,7 +28,7 @@ def main [
         | str trim --char "-"
       }
       | each {|i|
-        let magic = magika --json $it | from json | get result | first
+        let magic = magika --json $old_path | from json | get result | first
 
         let ext = if $magic.status == "ok" {
           $magic | get value.output.extensions | first
@@ -54,9 +57,9 @@ def main [
       }
       | path join
 
-    if $it != $new_path {
-      printf "%q -> %q\n" $it $new_path
-      mv --progress $it $new_path
+    if $old_path != $new_path {
+      printf "[%d/%d] %q -> %q\n" ($x.index + 1) $total $old_path $new_path
+      mv --progress $old_path $new_path
     }
   } | ignore
 }
