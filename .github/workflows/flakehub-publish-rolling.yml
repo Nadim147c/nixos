@@ -14,6 +14,9 @@ jobs:
         with:
           persist-credentials: false
       - uses: "DeterminateSystems/determinate-nix-action@v3"
+        with:
+          extra-conf: |
+            experimental-features = nix-command flakes pipe-operators
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
           name: "Nadim147c/nixos"
