@@ -81,6 +81,7 @@ PanelWindow {
                             }
                         }
                     }
+                    BarCava {}
                     BarLyrics {}
                 }
             }

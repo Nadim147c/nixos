@@ -90,6 +90,25 @@ in
         ln -s ${app-launcher}/bin/app-launcher $out/bin/app-launcher
       '';
 
+      packages.qs-cava = inputs.wrappers.wrappers.cava.wrap {
+        inherit pkgs;
+        binName = "qs-cava";
+        settings = {
+          general = {
+            framerate = 30;
+            bars = 16;
+          };
+          output = {
+            method = "raw";
+            raw_target = "/dev/stdout";
+            data_format = "ascii";
+            ascii_max_range = 1000;
+            bar_delimiter = 59;
+            frame_delimiter = 10;
+          };
+        };
+      };
+
       packages.quickshell = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = (pkgs.lib.flakePackage inputs.quickshell).overrideAttrs (oldAttrs: {
