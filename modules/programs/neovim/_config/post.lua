@@ -40,7 +40,6 @@ vim.api.nvim_create_autocmd("InsertLeave", {
 })
 
 local function expand_go_err()
-  -- 1. Search forward on current line for 'err' if not already under cursor
   local cword = vim.fn.expand("<cword>")
   if cword ~= "err" then
     local found = vim.fn.search([[\<err\>]], "c", vim.fn.line("."))
@@ -50,10 +49,8 @@ local function expand_go_err()
     end
   end
 
-  -- 2. Use native Neovim Treesitter API to get enclosing function/method
   local method_prefix = ""
 
-  -- vim.treesitter.get_node() is built directly into Neovim core
   local node = vim.treesitter.get_node()
 
   while node do
@@ -64,7 +61,6 @@ local function expand_go_err()
       local name_node = node:field("name")[1]
       local method_name = name_node and vim.treesitter.get_node_text(name_node, 0) or "Func"
 
-      -- Get receiver struct type (if it's a method, e.g. func (d *DB) Search)
       local receiver_node = node:field("receiver")[1]
       local type_name = ""
       if receiver_node then
@@ -86,11 +82,9 @@ local function expand_go_err()
     method_prefix = method_prefix .. ":"
   end
 
-  -- 3. Replace 'err' under cursor with fmt.Errorf(...) template
   local replacement = string.format('fmt.Errorf("%s : %%w", err)', method_prefix)
   vim.cmd("normal! ciw" .. replacement)
 
-  -- 4. Move cursor right after the colon slot and enter Insert mode
   local search_pattern = method_prefix .. " "
   vim.fn.search(search_pattern, "b", vim.fn.line("."))
   vim.cmd("normal! " .. #search_pattern .. "l")
