@@ -131,6 +131,12 @@ PanelWindow {
                                 highlightColor: Appearance.player.myPrimary
                                 handleColor: Appearance.player.myPrimary
                                 trackColor: Appearance.player.myOnPrimaryFixedVariant
+                                tooltipContent: {
+                                    const pos = WaybarLyric.player?.length * value;
+                                    const mm = (pos / 60).toFixed(0).padStart(2, "0");
+                                    const ss = (pos % 60).toFixed(0).padStart(2, "0");
+                                    return `${mm}:${ss}`;
+                                }
                                 value: WaybarLyric.player?.position / WaybarLyric.player?.length
                                 onMoved: {
                                     WaybarLyric.player.position = value * WaybarLyric.player.length;
