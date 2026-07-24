@@ -3,8 +3,8 @@ let
   inherit (lib) escapeShellArg singleton;
   inherit (builtins) attrValues;
   appId = "com.temidaradev.kopuz";
-  sha256 = "sha256-EvUZ5j8kXQP62DT1opY4mu3Ev2reXTcGPy9fUAbFKyE=";
-  url = "https://github.com/Kopuz-org/kopuz/releases/download/v0.11.0/kopuz.flatpak";
+  sha256 = "sha256-fioHNFJJnUsHjG7RIKaqajc10WGynfmfDxfnkX3Mz4A=";
+  url = "https://github.com/Kopuz-org/kopuz/releases/download/v0.12.0/kopuz.flatpak";
 in
 {
   perSystem = { pkgs, ... }: {
@@ -17,6 +17,7 @@ in
     # app doesn't work without cache
     preserveHome.directories = [
       ".config/nicotine"
+      ".local/share/nicotine"
       ".config/MusicBrainz"
       ".config/kopuz"
       ".cache/kopuz"
