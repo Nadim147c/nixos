@@ -40,6 +40,7 @@ in
     in
     {
       preserveHome.directories = [
+        "downloads"
         "files"
         "media"
         "git"
