@@ -155,7 +155,7 @@ in
           let
             inherit (self.packages.${system})
               dolphin
-              equibop
+              discord
               hyprscreenshot
               kitty
               kopuz
@@ -169,8 +169,8 @@ in
             browser = pkgs.writeShellScript "helium" ''
               ${launcher} --memory=2G ${getExe inputs.helium.packages.${system}.default}
             '';
-            discord = pkgs.writeShellScript "equibop" ''
-              ${launcher} --memory=2G ${getExe equibop}
+            discord = pkgs.writeShellScript "discord" ''
+              ${launcher} --memory=1G --cpu=100% ${getExe discord}
             '';
             control = getExe control;
             file_manager = getExe' dolphin "dolphin";

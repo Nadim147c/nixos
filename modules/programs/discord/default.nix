@@ -14,7 +14,7 @@ let
 in
 {
   perSystem = { pkgs, ... }: {
-    packages.equibop = pkgs.writeShellScriptBin "equibop" /* bash */ ''
+    packages.discord = pkgs.writeShellScriptBin "discord" /* bash */ ''
       exec -a "equibop" flatpak run -- ${escapeShellArg appId} "$@"
     '';
   };
@@ -23,7 +23,6 @@ in
     options.programs.discord.appId = readonly appId;
     config = {
       preserveHome.directories = singleton ".config/equibop";
-
       services.flatpak = {
         packages = singleton appId;
         overrides.settings = {
