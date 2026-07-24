@@ -114,6 +114,7 @@ in
         package = (pkgs.lib.flakePackage inputs.quickshell).overrideAttrs (oldAttrs: {
           buildInputs = buildInputs ++ oldAttrs.buildInputs;
         });
+        env.FONTCONFIG_FILE = "${self'.packages.systemFonts}";
         prefixVar = singleton [
           "PATH"
           ":"

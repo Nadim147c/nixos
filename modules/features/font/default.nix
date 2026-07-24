@@ -11,12 +11,47 @@ let
   inherit (lib.x) opt;
 in
 {
-  perSystem = { pkgs, ... }: {
+  perSystem = { pkgs, self', ... }: {
     packages.fontconfig = pkgs.runCommand "fontconfig" { } ''
       mkdir -p $out/etc/fonts
       sed "s|${pkgs.dejavu_fonts.minimal}|${pkgs.noto-fonts}|" \
         "${pkgs.fontconfig.out}/etc/fonts/fonts.conf" > $out/etc/fonts/fonts.conf
     '';
+    packages.systemFonts =
+      let
+        fonts = pkgs.makeFontsConf {
+          fontDirectories = attrValues {
+            inherit (pkgs)
+              material-symbols
+              noto-fonts
+              noto-fonts-cjk-sans
+              noto-fonts-cjk-serif
+              noto-fonts-color-emoji
+              roboto
+              roboto-flex
+              roboto-mono
+              roboto-serif
+              roboto-slab
+              twemoji-color-font
+              ;
+            inherit (pkgs.nerd-fonts) jetbrains-mono;
+            inherit (self'.packages) electroharmonix google-fonts;
+          };
+        };
+        bangla = pkgs.writeText "bangla.conf" /* html */ ''
+          <match target="pattern">
+                <test name="lang" compare="contains">
+                  <string>bn</string>
+                </test>
+                <edit name="weight" mode="assign">
+                  <int>180</int> <!-- 100 = Medium, 180 = SemiBold, 200 = Bold -->
+                </edit>
+              </match>
+        '';
+      in
+      pkgs.runCommand "font.conf" { } ''
+        cat ${fonts} ${bangla} > $out
+      '';
   };
 
   flake.modules.nixos.gui = {
