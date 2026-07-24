@@ -17,6 +17,7 @@ jobs:
         with:
           extra-conf: |
             experimental-features = nix-command flakes pipe-operators
+            allow-import-from-derivation = true
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
           name: "Nadim147c/nixos"
