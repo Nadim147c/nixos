@@ -42,6 +42,7 @@ in
         ExtensionInstallBlocklist = singleton "*";
         ExtensionInstallAllowlist = ExtensionInstallForcelist;
         ExtensionInstallForcelist = [
+          "lodbfhdipoipcjmlebjbgmmgekckhpfb" # Harper
           "effdbpeggelllpfkjppbokhmmiinhlmg" # BetterLyrics
           "dbepggeogbaibhgnhhndojpepiihcmeb" # Vimium
           "enamippconapkdmgfgjchkhakpfinmaj" # DeArrow
@@ -49,7 +50,6 @@ in
           "jplgfhpmjnbigmhklmmbgecoobifkmpa" # Proton VPN
           "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
           "kekjfbackdeiabghhcdklcdoekaanoel" # MalSync
-          "oldceeleldhonbafppcapldpdifcinji" # LanguageTools
           "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock
           "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
           "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader

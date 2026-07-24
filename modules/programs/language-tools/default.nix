@@ -1,5 +1,5 @@
 {
   flake.modules.nixos.base = {
-    services.languagetool.enable = true;
+    services.languagetool.enable = false;
   };
 }
