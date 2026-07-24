@@ -5,10 +5,9 @@
   ...
 }:
 let
-  inherit (lib) getExe makeBinPath singleton;
+  inherit (lib) getExe singleton;
 in
 {
-
   perSystem =
     { pkgs, self', ... }:
     let
@@ -59,7 +58,10 @@ in
     };
 
   flake.modules.nixos.base = { system, ... }: {
+    preserveHome.directories = singleton ".local/share/tmux-list-repo";
+
     packages = singleton self.packages.${system}.tmux;
+
     programs.fish.interactiveShellInit = /* fish */ ''
       for mode in default insert visual normal
           bind -M $mode \ep ${getExe self.packages.${system}.tmux-sessionizer}
