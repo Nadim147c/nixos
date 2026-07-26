@@ -2,9 +2,17 @@
 let
   inherit (builtins) attrValues;
   inherit (config) username;
-  inherit (lib) const mapAttrs;
-  inherit (lib.generators) toKeyValue;
   inherit (lib.x) quote;
+  inherit (lib.options) mkOption;
+  inherit (lib)
+    types
+    const
+    mapAttrs
+    mapAttrs'
+    nameValuePair
+    ;
+  inherit (lib.generators) toKeyValue;
+  inherit (lib.strings) toUpper;
 in
 {
   flake.modules.nixos.base =
@@ -15,16 +23,18 @@ in
       media = category: "${config.home.directory}/media/${category}";
       files = category: "${config.home.directory}/files/${category}";
       dirs = {
-        XDG_DESKTOP_DIR = files "desktop";
-        XDG_DOCUMENTS_DIR = files "documents";
-        XDG_DOWNLOAD_DIR = download;
-        XDG_MUSIC_DIR = media "music";
-        XDG_PICTURES_DIR = media "pictures";
-        XDG_PROJECTS_DIR = projects;
-        XDG_PUBLICSHARE_DIR = files "public-share";
-        XDG_TEMPLATES_DIR = files "templates";
-        XDG_VIDEOS_DIR = media "videos";
+        desktop = files "desktop";
+        documents = files "documents";
+        download = download;
+        music = media "music";
+        pictures = media "pictures";
+        projects = projects;
+        publicshare = files "public-share";
+        templates = files "templates";
+        videos = media "videos";
       };
+
+      xdg = mapAttrs' (name: value: nameValuePair "XDG_${toUpper name}_DIR" value) dirs;
 
       # Even though flatpak supposed to be a sandbox. Most of it software
       # Default to xdg-pictures/video readonly. Which means potentially
@@ -39,86 +49,94 @@ in
       allDirs = attrValues (dirs // extra);
     in
     {
-      preserveHome.directories = [
-        "downloads"
-        "files"
-        "media"
-        "git"
-      ];
-
-      # Create directories automatically using systemd-tmpfiles on rebuild/boot
-      systemd.tmpfiles.rules = map (dir: "d ${dir} 0755 ${username} users -") allDirs;
-
-      home.xdg.data.files."user-places.xbel".value.bookmarks = [
-        {
-          name = "home";
-          icon = "folder-home";
-          path = config.home.directory;
-        }
-        {
-          name = "downloads";
-          icon = "folder-downloads";
-          path = dirs.XDG_DOWNLOAD_DIR;
-        }
-        {
-          name = "projects";
-          path = dirs.XDG_PROJECTS_DIR;
-        }
-        {
-          name = "torrents";
-          path = extra.torrents;
-        }
-        {
-          name = "audios";
-          icon = "folder-music";
-          path = dirs.XDG_MUSIC_DIR;
-        }
-        {
-          name = "private-audios";
-          icon = "folder-music";
-          path = extra.private-audios;
-        }
-        {
-          name = "videos";
-          icon = "folder-videos";
-          path = dirs.XDG_VIDEOS_DIR;
-        }
-        {
-          name = "private-videos";
-          icon = "folder-videos";
-          path = extra.private-videos;
-        }
-        {
-          name = "pictures";
-          icon = "folder-pictures";
-          path = dirs.XDG_PICTURES_DIR;
-        }
-        {
-          name = "private-pictures";
-          icon = "folder-pictures";
-          path = extra.private-pictures;
-        }
-        {
-          name = "desktop";
-          path = dirs.XDG_DESKTOP_DIR;
-        }
-        {
-          name = "documents";
-          hidden = true;
-          path = dirs.XDG_DOCUMENTS_DIR;
-        }
-      ];
-
-      home.xdg.config.files."user-dirs.dirs" = {
-        generator = value: toKeyValue { } (mapAttrs (const quote) value);
-        value = dirs;
+      options.xdg-dirs = mkOption {
+        type = types.attrs;
+        default = dirs // extra;
+        readOnly = true;
       };
 
-      sessionVariables = dirs // {
-        XDG_CONFIG_HOME = config.home.xdg.config.directory;
-        XDG_DATA_HOME = config.home.xdg.data.directory;
-        XDG_CACHE_HOME = config.home.xdg.cache.directory;
-        XDG_STATE_HOME = config.home.xdg.state.directory;
+      config = {
+        preserveHome.directories = [
+          "downloads"
+          "files"
+          "media"
+          "git"
+        ];
+
+        # Create directories automatically using systemd-tmpfiles on rebuild/boot
+        systemd.tmpfiles.rules = map (dir: "d ${dir} 0755 ${username} users -") allDirs;
+
+        home.xdg.data.files."user-places.xbel".value.bookmarks = [
+          {
+            name = "home";
+            icon = "folder-home";
+            path = config.home.directory;
+          }
+          {
+            name = "downloads";
+            icon = "folder-downloads";
+            path = dirs.download;
+          }
+          {
+            name = "projects";
+            path = dirs.projects;
+          }
+          {
+            name = "torrents";
+            path = extra.torrents;
+          }
+          {
+            name = "audios";
+            icon = "folder-music";
+            path = dirs.music;
+          }
+          {
+            name = "private-audios";
+            icon = "folder-music";
+            path = extra.private-audios;
+          }
+          {
+            name = "videos";
+            icon = "folder-videos";
+            path = dirs.videos;
+          }
+          {
+            name = "private-videos";
+            icon = "folder-videos";
+            path = extra.private-videos;
+          }
+          {
+            name = "pictures";
+            icon = "folder-pictures";
+            path = dirs.pictures;
+          }
+          {
+            name = "private-pictures";
+            icon = "folder-pictures";
+            path = extra.private-pictures;
+          }
+          {
+            name = "desktop";
+            path = dirs.desktop;
+          }
+          {
+            name = "documents";
+            hidden = true;
+            path = dirs.documents;
+          }
+        ];
+
+        home.xdg.config.files."user-dirs.dirs" = {
+          generator = value: toKeyValue { } (mapAttrs (const quote) value);
+          value = xdg;
+        };
+
+        sessionVariables = xdg // {
+          XDG_CONFIG_HOME = config.home.xdg.config.directory;
+          XDG_DATA_HOME = config.home.xdg.data.directory;
+          XDG_CACHE_HOME = config.home.xdg.cache.directory;
+          XDG_STATE_HOME = config.home.xdg.state.directory;
+        };
       };
     };
 }

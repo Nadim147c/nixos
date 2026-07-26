@@ -32,6 +32,7 @@ in
         age.keyFile = "/var/sops/age.txt";
         secrets = {
           password = { };
+          slskd = { };
           "discord_client_id" = user;
           "freeimage_api" = user;
           "rclone/crypt/pass" = user;
