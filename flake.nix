@@ -2,7 +2,6 @@
   inputs = {
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
-
     preservation.url = "github:nix-community/preservation";
     discord-voice-rpc = {
       url = "github:Nadim147c/discord-voice-rpc";
