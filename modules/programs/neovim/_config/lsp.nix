@@ -1,14 +1,32 @@
-{ lib, ... }:
+{
+  lib,
+  ...
+}:
 let
+  inherit (lib) singleton;
   inherit (lib.generators) mkLuaInline;
 in
 {
   vim = {
-    diagnostics.enable = true;
-    diagnostics.config = {
-      underline = false;
-      virtual_text = true;
-      float.border = "rounded";
+    diagnostics = {
+      enable = true;
+      config = {
+        underline = false;
+        virtual_text = true;
+        float.border = "rounded";
+      };
+      nvim-lint.enable = true;
+
+      nvim-lint.linters_by_ft = {
+        go = singleton "golangci-lint";
+      };
+      presets.golangci-lint.enable = true;
+      nvim-lint.linters.golangci-lint.required_files = [
+        ".golangci.yml"
+        ".golangci.yaml"
+        ".golangci.toml"
+        ".golangci.json"
+      ];
     };
 
     languages = {
@@ -76,6 +94,18 @@ in
         zls.enable = true;
       };
       otter-nvim.enable = true;
+      servers.nixd = {
+        settings.options = {
+          nixos.expr = /* nix */ ''
+            let
+              pkgs = import <nixpkgs> {};
+              hostname =pkgs.lib.trim <| builtins.readFile /etc/hostname;
+            in
+              (builtins.getFlake .).nixosConfigurations.''${hostname}.options"
+          '';
+          nixpkgs.expr = /* nix */ "import <nixpkgs> {}";
+        };
+      };
       servers."*" = {
         on_attach = mkLuaInline /* lua */ ''
           function(_, bufnr)
