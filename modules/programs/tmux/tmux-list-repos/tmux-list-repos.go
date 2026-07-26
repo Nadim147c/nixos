@@ -145,26 +145,31 @@ func GetReposCached(path string, dirCache DirCache, depth int) []string {
 	if err != nil {
 		return nil
 	}
+
 	currentMtime, err := GetMtime(absPath)
 	if err != nil {
 		return nil
 	}
-	slog.Info("mtime", "dir", absPath, "time", currentMtime)
-	if entry, ok := dirCache[absPath]; ok && entry.Mtime.Sub(currentMtime).Abs() < time.Minute {
-		slog.Debug("cache found", "dir", absPath, "result", entry.Repos)
+
+	slog.Info("modified-time", "directory", absPath, "time", currentMtime)
+	entry, ok := dirCache[absPath]
+	if ok && entry.Mtime.Sub(currentMtime).Abs() < 2*time.Second {
+		slog.Debug("cache found", "time", currentMtime, "directory", absPath, "result", entry.Repos)
 		return entry.Repos
 	}
 
-	var repos []string
 	entries, err := os.ReadDir(absPath)
 	if err != nil {
 		return nil
 	}
 
 	if slices.ContainsFunc(entries, isRepoIndex) {
-		return append(repos, absPath)
+		repos := []string{absPath}
+		dirCache[absPath] = DirCacheEntry{Mtime: currentMtime, Repos: repos}
+		return repos
 	}
 
+	var repos []string
 	if depth > 0 {
 		for _, e := range entries {
 			subPath := filepath.Join(absPath, e.Name())
