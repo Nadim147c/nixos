@@ -35,7 +35,7 @@ Rectangle {
                     radius: Appearance.round.medium
                     color: OkLab.toColor(OkLab.blend(root.from, root.to, bar.modelData))
                     implicitWidth: bar.implicitWidth
-                    implicitHeight: root.height * bar.modelData
+                    implicitHeight: Cava.total === 0 ? 0 : Math.max(root.height * bar.modelData, 1)
                 }
             }
         }
