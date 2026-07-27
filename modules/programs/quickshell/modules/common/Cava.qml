@@ -7,8 +7,22 @@ import Quickshell.Io
 
 Singleton {
     id: root
-    property list<double> bars: []
+    property list<double> bars: [0]
     property double total: 0
+    onTotalChanged: {
+        if (total === 0) {
+            muteTimer.start();
+        } else {
+            mute = false;
+        }
+    }
+    property bool mute: true
+
+    Timer {
+        id: muteTimer
+        interval: 2_000 // 2 second
+        onTriggered: root.mute = !root.total
+    }
 
     Process {
         id: process

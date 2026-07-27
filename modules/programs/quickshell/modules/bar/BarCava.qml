@@ -9,7 +9,7 @@ Rectangle {
     id: root
 
     Layout.fillHeight: true
-    implicitWidth: Cava.total === 0 ? 0 : body.width + (Appearance.space.small * 2)
+    implicitWidth: Cava.mute ? 0 : body.width + (Appearance.space.small * 2)
     Behavior on implicitWidth {
         animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
     }
@@ -35,7 +35,7 @@ Rectangle {
                     radius: Appearance.round.medium
                     color: OkLab.toColor(OkLab.blend(root.from, root.to, bar.modelData))
                     implicitWidth: bar.implicitWidth
-                    implicitHeight: Cava.total === 0 ? 0 : Math.max(root.height * bar.modelData, 1)
+                    implicitHeight: Cava.mute ? 0 : Math.max(root.height * bar.modelData, 1)
                 }
             }
         }

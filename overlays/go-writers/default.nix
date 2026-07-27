@@ -54,23 +54,22 @@ let
           fileset = fileset.unions [
             ../../go.mod
             ../../go.sum
-            ../../gomod2nix.toml
+            ../../vendor
           ];
         }
       );
 
       src = prev.runCommand "${name}-go-source" { } ''
         mkdir -p $out/${name}
-        cp ${cleanSrc}/* $out/
+        cp -r ${cleanSrc}/* $out/
         printf "%s" ${escapeShellArg script} > $out/${name}/main.go
         printf "%s" ${escapeShellArg env} > $out/${name}/env.go
       '';
 
-      gomod = inputs.gomod2nix.legacyPackages.${prev.stdenv.hostPlatform.system};
     in
-    gomod.buildGoApplication {
+    prev.buildGoModule {
       inherit name src;
-      modules = ../../gomod2nix.toml;
+      vendorHash = null;
       meta.mainProgram = name;
     };
 in

@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation {
   meta = with lib; {
     description = "Fancy enlish font which looks like japanse";
     homepage = "https://www.dafont.com/electroharmonix.font";
-    license = licenses.publicDomain;
+    license = licenses.ofl;
     platforms = platforms.all;
   };
 }

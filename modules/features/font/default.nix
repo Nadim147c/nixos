@@ -38,19 +38,25 @@ in
             inherit (self'.packages) electroharmonix google-fonts;
           };
         };
-        bangla = pkgs.writeText "bangla.conf" /* html */ ''
-          <match target="pattern">
-                <test name="lang" compare="contains">
-                  <string>bn</string>
-                </test>
-                <edit name="weight" mode="assign">
-                  <int>180</int> <!-- 100 = Medium, 180 = SemiBold, 200 = Bold -->
-                </edit>
-              </match>
+        bangla = /* xml */ ''
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
+          <fontconfig>
+            <match target="pattern">
+              <test name="lang" compare="contains">
+                <string>bn</string>
+              </test>
+              <edit name="weight" mode="assign" binding="same">
+                <const>bold</const>
+              </edit>
+            </match>
+          </fontconfig>
         '';
       in
-      pkgs.runCommand "font.conf" { } ''
-        cat ${fonts} ${bangla} > $out
+      pkgs.runCommand "font.conf" { inherit bangla; } ''
+        mkdir -p $out
+        cp ${fonts} $out/fonts.conf
+        echo "$bangla" > $out/bangla.conf
       '';
   };
 

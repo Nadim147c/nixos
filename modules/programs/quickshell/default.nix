@@ -114,7 +114,7 @@ in
         package = (pkgs.lib.flakePackage inputs.quickshell).overrideAttrs (oldAttrs: {
           buildInputs = buildInputs ++ oldAttrs.buildInputs;
         });
-        env.FONTCONFIG_FILE = "${self'.packages.systemFonts}";
+        env.FONTCONFIG_DIR = "${self'.packages.systemFonts}";
         prefixVar = singleton [
           "PATH"
           ":"
@@ -140,9 +140,13 @@ in
         enable = true;
         description = "mpvpaper control daemon";
         partOf = singleton "graphical-session.target";
-        wants = singleton "tray.target";
-        after = final.partOf;
         wantedBy = final.partOf;
+        wants = [
+          "tray.target"
+          "pipewire.service"
+          "wireplumber.service"
+        ];
+        after = final.wants;
         reloadTriggers = singleton self.packages."${system}".quickshell;
         serviceConfig = {
           ExecStart = getExe self.packages."${system}".quickshell;
