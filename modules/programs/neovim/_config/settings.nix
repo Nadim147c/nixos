@@ -1,7 +1,7 @@
-{
-  pkgs,
-  ...
-}:
+{ pkgs, lib, ... }:
+let
+  inherit (lib.generators) mkLuaInline;
+in
 {
   vim = {
     viAlias = true;
@@ -26,13 +26,6 @@
     # autocmds
     luaConfigPost = builtins.readFile ./post.lua;
 
-    dashboard = {
-      startify = {
-        enable = true;
-        changeToVCRoot = true;
-      };
-    };
-
     autopairs.nvim-autopairs.enable = true;
     binds.whichKey.enable = true;
     mini = {
@@ -54,6 +47,25 @@
       undotree.enable = true;
       motion.leap.enable = true;
       sleuth.enable = true;
+      snacks-nvim = {
+        enable = true;
+        setupOpts = {
+          image = {
+            enabled = true;
+            inline = true;
+          };
+          picker.enabled = false;
+          dashboard.enabled = false;
+          bigfile.enabled = true;
+          indent.enabled = true;
+          input.enabled = true;
+          notifier.enabled = true;
+          quickfile.enabled = true;
+          scroll.enabled = true;
+          statuscolumn.enabled = true;
+          words.enabled = true;
+        };
+      };
     };
     visuals.nvim-web-devicons.enable = true;
   };
