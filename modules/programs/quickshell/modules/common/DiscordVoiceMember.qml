@@ -3,7 +3,9 @@ import QtQuick
 // This component is used to store the data of a voice member.
 
 QtObject {
-    property string id: ""
+    id: root
+
+    property string userID: ""
     property string username: ""
     property string nickname: ""
     property string serverName: ""

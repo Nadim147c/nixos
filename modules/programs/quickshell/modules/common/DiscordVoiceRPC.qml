@@ -46,7 +46,7 @@ Singleton {
             for (let i = 0; i < data.members.length; ++i) {
                 const m = data.members[i];
                 objs.push(discordVoiceMember.createObject(discordVoiceRPC, {
-                    id: m.id,
+                    userID: m.id,
                     username: m.username,
                     nickname: m.nickname,
                     serverName: m.serverName,
