@@ -101,3 +101,6 @@ vim.api.nvim_create_autocmd("FileType", {
     })
   end,
 })
+
+-- Register fzf UI select
+require("fzf-lua.providers.ui_select").register()
