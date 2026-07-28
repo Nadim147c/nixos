@@ -91,7 +91,7 @@ in
       presets = {
         tailwindcss-language-server.enable = true;
         typescript-go.enable = true;
-        zls.enable = true;
+        harper.enable = true;
       };
       otter-nvim.enable = true;
       servers.nixd = {
