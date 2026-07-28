@@ -1,12 +1,12 @@
-{ inputs, lib, ... }:
+{ lib, ... }:
 let
-  inherit (inputs) topiary-nushell tree-sitter-nu;
   inherit (lib) genAttrs getExe const;
+
   enabled.enable = true;
-  makeEnabled = l: genAttrs l (const enabled);
+  makeEnabled = names: genAttrs names (const enabled);
 in
 {
-  perSystem = { system, ... }: {
+  perSystem = { self', ... }: {
     treefmt = {
       projectRootFile = "flake.nix";
 
@@ -21,11 +21,14 @@ in
         "taplo"
       ];
 
-      settings.formatter = {
-        "topiary-nushell" = {
-          command = getExe <| topiary-nushell.packages.${system}.default.override { inherit tree-sitter-nu; };
-          options = [ "format" ];
-          includes = [ "*.nu" ];
+      settings = {
+        excludes = [ "vendor/*" ];
+        formatter = {
+          "topiary-nushell" = {
+            command = getExe self'.packages.nu-formatter;
+            options = [ "format" ];
+            includes = [ "*.nu" ];
+          };
         };
       };
     };

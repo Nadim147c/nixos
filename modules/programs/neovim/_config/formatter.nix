@@ -1,5 +1,5 @@
 {
-  topiary-nushell,
+  nu-formatter,
   pkgs,
   lib,
   ...
@@ -24,7 +24,7 @@ in
           goimports.command = getExe' pkgs.gotools "goimports";
           sql_formatter.command = getExe pkgs.sql-formatter;
           topiary_nushell = {
-            command = getExe topiary-nushell;
+            command = getExe nu-formatter;
             args = [
               "format"
               "--language"

@@ -1,15 +1,6 @@
-{ inputs, ... }:
-let
-  inherit (inputs) topiary-nushell tree-sitter-nu;
-in
 {
   perSystem =
-    { pkgs, system, ... }:
-    let
-      nu-formatter = topiary-nushell.packages.${system}.default.override {
-        inherit tree-sitter-nu;
-      };
-    in
+    { pkgs, self', ... }:
     {
       devShells.default = pkgs.mkShell {
         name = "nixos";
@@ -23,7 +14,7 @@ in
             stylua
             statix
             ;
-          inherit nu-formatter;
+          inherit (self'.packages) nu-formatter;
         };
       };
     };
