@@ -1,6 +1,6 @@
 { self, lib, ... }:
 let
-  inherit (lib) escapeShellArg singleton;
+  inherit (lib) getExe escapeShellArg singleton;
   inherit (builtins) attrValues;
   appId = "com.temidaradev.kopuz";
   sha256 = "sha256-fioHNFJJnUsHjG7RIKaqajc10WGynfmfDxfnkX3Mz4A=";
@@ -11,6 +11,18 @@ in
     packages.kopuz = pkgs.writeShellScriptBin "kopuz" /* bash */ ''
       exec -a "kopuz" flatpak run -- ${escapeShellArg appId} "$@"
     '';
+    packages.fix-kopuz-artists =
+      let
+        query = escapeShellArg /* sql */ ''
+          UPDATE tracks
+          SET artist = json_extract(artists_json, '$[0]')
+          WHERE artists_json IS NOT NULL
+            AND json_valid(artists_json);
+        '';
+      in
+      pkgs.writeShellScriptBin "fix-kopuz-artists" /* bash */ ''
+        ${getExe pkgs.sqlite} ~/.config/kopuz/kopuz.db ${query}
+      '';
   };
 
   flake.modules.nixos.gui = { pkgs, system, ... }: {
