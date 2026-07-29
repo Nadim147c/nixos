@@ -3,7 +3,7 @@ let
   createHighlight = pattern: group: { inherit pattern group; };
 in
 {
-  vim = {
+  flake.modules.neovim.base.vim = {
     mini.hipatterns = {
       enable = true;
       setupOpts = {

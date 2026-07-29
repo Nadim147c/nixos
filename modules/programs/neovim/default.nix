@@ -1,25 +1,31 @@
 {
+  config,
   inputs,
   self,
   lib,
   ...
 }:
 let
-  inherit (inputs) import-tree nvf;
+  inherit (builtins) attrValues;
   inherit (lib) singleton mkForce;
-  inherit (nvf.lib) neovimConfiguration;
+  inherit (inputs.nvf.lib) neovimConfiguration;
 in
 {
   perSystem =
-    { pkgs, self', ... }:
+    {
+      pkgs,
+      system,
+      self',
+      ...
+    }:
     let
       nvfConfig = neovimConfiguration {
         inherit pkgs;
         extraSpecialArgs = {
           inherit (self'.packages) better-iferr nu-formatter;
-          inherit inputs;
+          inherit inputs system;
         };
-        modules = (import-tree ./_config).imports;
+        modules = attrValues config.flake.modules.neovim;
       };
     in
     {

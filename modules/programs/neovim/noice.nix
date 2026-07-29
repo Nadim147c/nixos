@@ -1,5 +1,5 @@
 {
-  vim = {
+  flake.modules.neovim.base.vim = {
     ui.noice = {
       enable = true;
       setupOpts = {

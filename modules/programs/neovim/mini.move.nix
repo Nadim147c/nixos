@@ -1,5 +1,5 @@
-_: {
-  vim = {
+{
+  flake.modules.neovim.base.vim = {
     mini.move = {
       enable = true;
       setupOpts = {

@@ -6,7 +6,7 @@ let
   cmp = ''require("blink.cmp")'';
 in
 {
-  vim = {
+  flake.modules.neovim.base.vim = {
     autocomplete.blink-cmp = {
       enable = true;
       setupOpts = {

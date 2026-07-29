@@ -1,7 +1,6 @@
-{ createKeymapDesc, ... }:
 {
-  vim = {
-    keymaps = [
+  flake.modules.neovim.base = { createKeymapDesc, ... }: {
+    vim.keymaps = [
       # Save the current buffer
       (createKeymapDesc "n" "<C-s>" "<CMD>w<CR>" "Save the current buffer")
       (createKeymapDesc "i" "<C-BS>" "<C-W>" "word delete")

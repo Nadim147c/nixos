@@ -1,13 +1,10 @@
-{
-  lib,
-  ...
-}:
+{ lib, ... }:
 let
   inherit (lib) singleton;
   inherit (lib.generators) mkLuaInline;
 in
 {
-  vim = {
+  flake.modules.neovim.base.vim = {
     diagnostics = {
       enable = true;
       config = {

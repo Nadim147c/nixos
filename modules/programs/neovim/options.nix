@@ -1,5 +1,5 @@
-_: {
-  vim = {
+{
+  flake.modules.neovim.base.vim = {
     clipboard = {
       enable = true;
       registers = "unnamed,unnamedplus";
