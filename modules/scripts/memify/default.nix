@@ -33,6 +33,14 @@ in
         positionalany = singleton [ "files" ];
       };
     };
-    script = pkgs: pkgs.writers.writeGoBin name (builtins.readFile ./memify.go);
+    script =
+      pkgs:
+      let
+        args.runtimeInputs = with pkgs; [
+          ffmpeg
+          imagemagick
+        ];
+      in
+      pkgs.writers.writeGoBin name args (builtins.readFile ./memify.go);
   };
 }
