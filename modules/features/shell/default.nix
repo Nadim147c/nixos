@@ -17,7 +17,6 @@ in
         inherit (self.packages.${system}) field;
         inherit (pkgs)
           chafa
-          comma
           coreutils
           ffmpeg
           file
