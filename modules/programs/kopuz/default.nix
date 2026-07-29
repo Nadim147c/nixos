@@ -28,8 +28,6 @@ in
   flake.modules.nixos.gui = { pkgs, system, ... }: {
     # app doesn't work without cache
     preserveHome.directories = [
-      ".config/nicotine"
-      ".local/share/nicotine"
       ".config/MusicBrainz"
       ".config/kopuz"
       ".cache/kopuz"
@@ -50,7 +48,7 @@ in
     };
 
     packages = attrValues {
-      inherit (pkgs) picard nicotine-plus lrcget;
+      inherit (pkgs) picard lrcget;
       inherit (self.packages.${system}) kopuz;
     };
   };
