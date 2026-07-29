@@ -58,8 +58,10 @@ hl.on("hyprland.start", function()
   local env_keys_str = table.concat(keys, " ")
   hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment " .. env_keys_str))
   hl.dispatch(hl.dsp.exec_cmd("dbus-update-activation-environment --systemd " .. env_keys_str))
-  hl.dispatch(hl.dsp.exec_cmd("systemctl --user start hyprland-session.target"))
-
+  hl.dispatch(hl.dsp.exec_cmd([[
+  systemctl --user stop hyprland-session.target
+  systemctl --user start hyprland-session.target
+  ]]))
   hl.dispatch(hl.dsp.exec_cmd(programs.terminal))
   hl.dispatch(hl.dsp.exec_cmd(programs.browser))
   hl.dispatch(hl.dsp.exec_cmd(programs.discord))
