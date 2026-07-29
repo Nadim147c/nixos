@@ -4,7 +4,7 @@
   cloud = {
     authenticated = false;
     settingsSync = false;
-    settingsSyncVersion = 1782267898572;
+    settingsSyncVersion = 1785426054477;
     url = "https://cloud.equicord.org/";
   };
   disableMinSize = false;
@@ -70,6 +70,7 @@
     ClearURLs.enabled = true;
     CommandsAPI.enabled = true;
     ConcatenatedComponentExtractor.enabled = true;
+    ContextMenuAPI.enabled = true;
     CopyFileContents.enabled = true;
     CopyUserURLs.enabled = true;
     CrashHandler.enabled = true;
@@ -81,7 +82,9 @@
       removeBillingSettings = true;
       removeButtonTooltips = false;
       removeClanTag = false;
+      removeFamilyCenterAboveDms = false;
       removeGiftButton = true;
+      removeLibraryAboveDms = false;
       removeNameplate = false;
       removeProfileEffect = true;
       removeQuestsAboveDms = false;
@@ -127,7 +130,7 @@
     FontLoader = {
       applyOnCodeBlocks = true;
       enabled = true;
-      selectedFont = "JetBrains Mono";
+      selectedFont = "Roboto Flex";
     };
     ForceOwnerCrown.enabled = true;
     FriendTags.enabled = true;
@@ -188,6 +191,7 @@
       disableAnalytics = true;
       enabled = true;
     };
+    NoticesAPI.enabled = true;
     OpenInApp = {
       enabled = true;
       epic = true;
@@ -227,7 +231,11 @@
       includeVencordInfoWhenCopying = true;
       settingsLocation = "aboveNitro";
     };
-    ShikiCodeblocks.enabled = true;
+    ShikiCodeblocks = {
+      enabled = true;
+      theme = "https://cdn.jsdelivr.net/gh/shikijs/textmate-grammars-themes@bc5436518111d87ea58eb56d97b3f9bec30e6b83/packages/tm-themes/themes/dark-plus.json";
+      useDevIcon = "GREYSCALE";
+    };
     ShowAllMessageButtons = {
       enabled = true;
       noQuickReacts = true;
