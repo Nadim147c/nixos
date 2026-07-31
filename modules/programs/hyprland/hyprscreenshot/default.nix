@@ -26,8 +26,9 @@ in
             satty
             slurp
             wl-clipboard
+            hyprland
             ;
-          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) xdg-base-dir;
+          inherit (self.packages.${pkgs.stdenv.hostPlatform.system}) yankd-impure xdg-base-dir;
         };
         source = ./hyprscreenshot.nu;
       };
