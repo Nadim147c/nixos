@@ -37,6 +37,7 @@ in
     ];
     sessionVariables = {
       GTK_THEME = "adw-gtk3-dark";
+      GTK_CSD = "0";
     };
   };
 }
