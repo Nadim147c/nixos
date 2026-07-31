@@ -55,10 +55,6 @@ in
 
           init.defaultBranch = "main";
 
-          diff.external = getExe pkgs.difftastic;
-          diff.tool = "difftastic";
-          difftool.difftastic.cmd = /* bash */ ''${getExe pkgs.difftastic} "$LOCAL" "$REMOTE"'';
-
           core = {
             compression = 9;
             fsync = "none";
