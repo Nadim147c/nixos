@@ -50,6 +50,7 @@ in
         enable = true;
         extensions.render-markdown-nvim.enable = true;
       };
+      nim.enable = true;
       nix = {
         enable = true;
         format = {
