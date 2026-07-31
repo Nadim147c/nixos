@@ -15,7 +15,7 @@ in
         xdgOpenUsePortal = false;
         extraPortals = attrValues {
           inherit (pkgs.kdePackages) xdg-desktop-portal-kde;
-          inherit (pkgs) xdg-desktop-portal-gtk;
+          inherit (pkgs) xdg-desktop-portal-gtk xdg-desktop-portal-gnome;
         };
         config.common = {
           "org.freedesktop.impl.portal.FileChooser" = [ "kde" ];
