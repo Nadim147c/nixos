@@ -13,7 +13,7 @@ in
   };
 
   flake.modules.nixos.gui = { pkgs, ... }: {
-    home.systemd.services.blueman-applet = rec {
+    hj.systemd.services.blueman-applet = rec {
       enable = true;
       description = "Blueman applet";
       requires = singleton "tray.target";

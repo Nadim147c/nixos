@@ -13,8 +13,8 @@ in
     programs.rong.settings.themes = singleton {
       target = "gtk.css";
       links = [
-        "${config.home.xdg.config.directory}/gtk-3.0/gtk.css"
-        "${config.home.xdg.config.directory}/gtk-4.0/gtk.css"
+        "${config.hj.xdg.config.directory}/gtk-3.0/gtk.css"
+        "${config.hj.xdg.config.directory}/gtk-4.0/gtk.css"
       ];
       cmds = pkgs.writers.writeNu "reload-gtk" /* nu */ ''
         $env.PATH = $env.PATH | append "${pkgs.glib.bin}/bin"

@@ -52,7 +52,7 @@ in
 
       config = mkIf cfg.enable {
         packages = mkIf (cfg.package != null) [ cfg.package ];
-        home.xdg.config.files."nushell/config.nu".text = mkMerge [
+        hj.xdg.config.files."nushell/config.nu".text = mkMerge [
           (mkIf (cfg.settings != { }) "$env.config = ${toNushell { } cfg.settings}")
           (mkIf (shellAliases != { }) alias)
           (mkIf (cfg.init != { }) extraInit)

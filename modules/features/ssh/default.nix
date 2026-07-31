@@ -16,10 +16,10 @@ in
       };
 
       getKeyPath = name: keys.${name};
-      sshDir = "${config.home.directory}/.ssh";
+      sshDir = "${config.hj.directory}/.ssh";
     in
     {
-      home.files.".ssh/config".text = /* bash */ ''
+      hj.files.".ssh/config".text = /* bash */ ''
         Host *
           forwardAgent no
           identityFile ${getKeyPath "master"}
@@ -57,7 +57,7 @@ in
         text = /* bash */ ''
           mkdir -p "${sshDir}"
           chmod 0755 "${sshDir}"
-          chown ${username}:${config.home.group or "users"} "${sshDir}"
+          chown ${username}:${config.hj.group or "users"} "${sshDir}"
 
           ${concatMapAttrsStringSep "\n" (name: path: /* bash */ ''
             pubkey=$(${pkgs.openssh}/bin/ssh-keygen -y -f "${path}")
@@ -69,12 +69,12 @@ in
 
             # Set world-readable (0444) and assign user ownership
             chmod 0444 "$pubfile"
-            chown ${username}:${config.home.group or "users"} "$pubfile"
+            chown ${username}:${config.hj.group or "users"} "$pubfile"
           '') keys}
         '';
       };
 
-      home.files.".ssh/authorized_keys".text = /* bash */ ''
+      hj.files.".ssh/authorized_keys".text = /* bash */ ''
         ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMijBph7zGeCMaJOC8I3eLqxqM1K4GA7wkKjUIb+SBhB Ephemeral
       '';
 

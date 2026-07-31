@@ -19,7 +19,7 @@ jj desc -m "your commit message" <rev>
 jj new
 ```
 
-- **Resetting:** Do not reset, create new change set from the parent revision:
+- **Resetting:** Do not reset, create a new change set from the parent revision:
   `jj new @-`.
 - **Constraint:** Stick strictly to these core commands; avoid other `jj`
   utilities unless absolutely necessary.
@@ -36,8 +36,8 @@ jj new
   - _Bad:_ `NIXPKGS=/nix/store/... rg $NIXPKGS`
   - _Good:_ `rg /nix/store/abc-specific-path...`
 
-- **Nix CLI Version:** Always use modern Nix3 CLI commands (e.g., `nix build`),
-  never legacy ones (e.g., `nix-build`).
+- **Nix CLI Version:** Always use modern `Nix3` CLI commands (e.g.,
+  `nix build`), never legacy ones (e.g., `nix-build`).
 
 ### Scripting & JSON
 
@@ -74,7 +74,8 @@ pkgs.writeGo "hello" { runtimeInputs = [pkgs.ffmpeg]; } /* bash */ ''
   `flake-parts`).
 - **Imports:** Handled recursively via `vic/import-tree`. Prefix ignored files
   with an underscore (e.g., `_settings.nix`).
-- **Home Directory:** Managed via `hjem`. Modules are aliased to `home.*`.
+- **Home Directory:** Managed via `hjem`. Modules are aliased to `hj.*` for
+  current user.
 - **Persistence:** Ephemeral data persistence is handled via
   `nix-community/preservation`. Module aliases are structured as `preserve.*`
   and `preserveHome.*`.
@@ -84,7 +85,7 @@ pkgs.writeGo "hello" { runtimeInputs = [pkgs.ffmpeg]; } /* bash */ ''
   1. Prefer package wrappers over system configurations when modifying apps.
      Wrap packages using
      `perSystem.packages.x = inputs.wrappers.wrappers.x.wrap { ... };`.
-  2. When a wrapper is impossible, fallback to `home.config.files.<name>.*`.
+  2. When a wrapper is impossible, fallback to `hj.config.files.<name>.*`.
 
 ---
 

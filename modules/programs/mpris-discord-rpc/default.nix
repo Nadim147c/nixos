@@ -33,7 +33,7 @@ in
     {
       preserveHome.directories = singleton ".local/share/mpris-discord-rpc";
 
-      home.systemd.services.mpris-discord-rpc = fix (final: {
+      hj.systemd.services.mpris-discord-rpc = fix (final: {
         enable = false;
         description = "MPRIS Proxy to Discord Rice Presence";
         partOf = singleton "graphical-session.target";

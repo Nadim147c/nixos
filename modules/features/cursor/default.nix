@@ -37,7 +37,7 @@ in
           HYPRCURSOR_THEME = cfg.name;
         };
 
-        home.systemd.services.hyprland-set-cursor = fix (final: {
+        hj.systemd.services.hyprland-set-cursor = fix (final: {
           enable = config.programs.hyprland.enable;
           description = "Hyprland set cursor";
           partOf = singleton "graphical-session.target";

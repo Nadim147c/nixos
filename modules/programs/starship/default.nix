@@ -128,7 +128,7 @@ in
       pathFix = "sd '/nix/store/([^\\s])+/starship' ${bin}";
     in
     {
-      sessionVariables.STARSHIP_CACHE = "${config.home.xdg.cache.directory}/starship";
+      sessionVariables.STARSHIP_CACHE = "${config.hj.xdg.cache.directory}/starship";
       packages = singleton self.packages.${system}.starship;
       programs = {
         bash.init.starship = ''

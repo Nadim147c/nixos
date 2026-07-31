@@ -13,7 +13,7 @@ in
     packages = with pkgs; [ mpvpaper ];
     preserveHome.directories = singleton ".local/state/wallpaper";
 
-    home.systemd.paths.mpvpaper-watcher = fix (final: {
+    hj.systemd.paths.mpvpaper-watcher = fix (final: {
       enable = true;
       description = "Watch wallpaper-state for atomic changes";
       partOf = singleton "graphical-session.target";
@@ -27,7 +27,7 @@ in
       };
     });
 
-    home.systemd.services.mpvpaper-watcher = {
+    hj.systemd.services.mpvpaper-watcher = {
       enable = true;
       description = "Send new wallpaper path to mpvpaper IPC socket";
       unitConfig = {
@@ -46,7 +46,7 @@ in
       };
     };
 
-    home.systemd.services.mpvpaper = fix (final: {
+    hj.systemd.services.mpvpaper = fix (final: {
       enable = true;
       description = "Mpvpaper daemon";
       partOf = singleton "graphical-session.target";

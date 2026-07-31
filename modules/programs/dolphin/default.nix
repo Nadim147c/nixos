@@ -54,14 +54,14 @@ in
     {
       packages = singleton self.packages.${system}.dolphin;
 
-      home.xdg.config.files."dolphinrc".text = ''
+      hj.xdg.config.files."dolphinrc".text = ''
         [UiSettings]
         ColorScheme=Rong
       '';
 
-      home.xdg.mime-apps = lib.x.genMimes "org.kde.dolphin.desktop" [ "inode/directory" ];
+      hj.xdg.mime-apps = lib.x.genMimes "org.kde.dolphin.desktop" [ "inode/directory" ];
 
-      home.xdg.data.files."user-places.xbel" = {
+      hj.xdg.data.files."user-places.xbel" = {
         type = "copy";
         permissions = "644";
         generator =

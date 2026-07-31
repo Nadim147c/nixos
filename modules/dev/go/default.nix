@@ -21,8 +21,8 @@
 
         sessionVariables =
           let
-            data = config.home.xdg.data.directory;
-            cache = config.home.xdg.cache.directory;
+            data = config.hj.xdg.data.directory;
+            cache = config.hj.xdg.cache.directory;
           in
           {
             GOMODCACHE = "${cache}/go/mod";
@@ -31,7 +31,7 @@
             CGO_ENABLED = "0";
           };
 
-        home.xdg.config.files."go/telemetry/mode".text = "off 2026-06-01";
+        hj.xdg.config.files."go/telemetry/mode".text = "off 2026-06-01";
       };
     };
 }

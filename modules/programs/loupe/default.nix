@@ -8,8 +8,8 @@ in
   flake.modules.nixos.gui =
     { pkgs, ... }:
     {
-      home.packages = singleton pkgs.loupe;
-      home.xdg.mime-apps = genMimes "org.gnome.Loupe.desktop" [
+      hj.packages = singleton pkgs.loupe;
+      hj.xdg.mime-apps = genMimes "org.gnome.Loupe.desktop" [
         "image/avif"
         "image/bmp"
         "image/gif"

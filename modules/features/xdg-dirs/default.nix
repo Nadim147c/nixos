@@ -18,10 +18,10 @@ in
   flake.modules.nixos.base =
     { config, ... }:
     let
-      download = "${config.home.directory}/downloads";
-      projects = "${config.home.directory}/git";
-      media = category: "${config.home.directory}/media/${category}";
-      files = category: "${config.home.directory}/files/${category}";
+      download = "${config.hj.directory}/downloads";
+      projects = "${config.hj.directory}/git";
+      media = category: "${config.hj.directory}/media/${category}";
+      files = category: "${config.hj.directory}/files/${category}";
       dirs = {
         desktop = files "desktop";
         documents = files "documents";
@@ -66,11 +66,11 @@ in
         # Create directories automatically using systemd-tmpfiles on rebuild/boot
         systemd.tmpfiles.rules = map (dir: "d ${dir} 0755 ${username} users -") allDirs;
 
-        home.xdg.data.files."user-places.xbel".value.bookmarks = [
+        hj.xdg.data.files."user-places.xbel".value.bookmarks = [
           {
             name = "home";
             icon = "folder-home";
-            path = config.home.directory;
+            path = config.hj.directory;
           }
           {
             name = "downloads";
@@ -126,16 +126,16 @@ in
           }
         ];
 
-        home.xdg.config.files."user-dirs.dirs" = {
+        hj.xdg.config.files."user-dirs.dirs" = {
           generator = value: toKeyValue { } (mapAttrs (const quote) value);
           value = xdg;
         };
 
         sessionVariables = xdg // {
-          XDG_CONFIG_HOME = config.home.xdg.config.directory;
-          XDG_DATA_HOME = config.home.xdg.data.directory;
-          XDG_CACHE_HOME = config.home.xdg.cache.directory;
-          XDG_STATE_HOME = config.home.xdg.state.directory;
+          XDG_CONFIG_HOME = config.hj.xdg.config.directory;
+          XDG_DATA_HOME = config.hj.xdg.data.directory;
+          XDG_CACHE_HOME = config.hj.xdg.cache.directory;
+          XDG_STATE_HOME = config.hj.xdg.state.directory;
         };
       };
     };

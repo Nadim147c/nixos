@@ -46,7 +46,7 @@ in
       };
 
       config = mkIf cfg.enable {
-        home.systemd = {
+        hj.systemd = {
           timers.git-sync = {
             wantedBy = [ "timers.target" ];
             timerConfig = {

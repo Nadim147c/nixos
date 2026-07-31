@@ -7,7 +7,7 @@ in
     imports = [
       (mkAliasOptionModule [ "packages" ] [ "environment" "systemPackages" ])
       (mkAliasOptionModule [ "sessionVariables" ] [ "environment" "sessionVariables" ])
-      (mkAliasOptionModule [ "home" ] [ "hjem" "users" config.username ])
+      (mkAliasOptionModule [ "hj" ] [ "hjem" "users" config.username ])
       (mkAliasOptionModule [ "preserve" ] [ "preservation" "preserveAt" "/persistent" ])
       (mkAliasOptionModule
         [ "preserveHome" ]

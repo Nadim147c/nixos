@@ -36,9 +36,9 @@ in
       ...
     }:
     {
-      home.packages = singleton self.packages.${system}.wget;
+      hj.packages = singleton self.packages.${system}.wget;
       sessionVariables.WGETRC = pkgs.writeText "wgetrc" /* ini */ ''
-        hsts-file = ${config.home.xdg.cache.directory}/wget-hsts
+        hsts-file = ${config.hj.xdg.cache.directory}/wget-hsts
       '';
     };
 }

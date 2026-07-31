@@ -11,8 +11,8 @@ in
       # Should we???
       preserveHome.directories = singleton ".config/jj/repos";
 
-      home.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jj-config.toml";
-      home.xdg.config.files."jj/config.toml".value = {
+      hj.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jj-config.toml";
+      hj.xdg.config.files."jj/config.toml".value = {
         user.name = fullname;
         user.email = email;
         ui = {

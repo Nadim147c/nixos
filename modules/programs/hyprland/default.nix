@@ -96,7 +96,7 @@ in
         };
       };
 
-      home.systemd.paths.hyprland-reload-config = fix (final: {
+      hj.systemd.paths.hyprland-reload-config = fix (final: {
         enable = true;
         description = "Watch for hyprland config change";
         partOf = singleton "graphical-session.target";
@@ -107,7 +107,7 @@ in
         };
       });
 
-      home.systemd.services.hyprland-reload-config = {
+      hj.systemd.services.hyprland-reload-config = {
         enable = true;
         description = "Reload hyprland on config change";
         serviceConfig = {
@@ -129,7 +129,7 @@ in
         wl-clipboard
       ];
 
-      home.xdg.config.files = createConfig {
+      hj.xdg.config.files = createConfig {
         animations = mkImport ./animations.lua;
         hyprland = mkImport ./hyprland.lua;
         envs = mkLuaObject {

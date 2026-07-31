@@ -80,7 +80,7 @@ in
       };
 
       mountFlags = mapAttrsToList makeFlag mountOptions |> escapeShellArgs;
-      mountPath = escapeShellArg "${config.home.directory}/gdrive";
+      mountPath = escapeShellArg "${config.hj.directory}/gdrive";
     in
     {
       programs.fuse = {
@@ -91,7 +91,7 @@ in
       preserveHome.directories = singleton ".config/rclone";
 
       packages = singleton pkgs.rclone;
-      home.systemd.services.rclone = {
+      hj.systemd.services.rclone = {
         enable = true;
         description = "rclone gdrive FUSE mount";
         wantedBy = singleton "default.target";

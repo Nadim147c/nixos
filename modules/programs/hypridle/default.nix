@@ -41,7 +41,7 @@ in
     {
       packages = toList self.packages.${system}.hyprlock-restore;
 
-      home.systemd.services.hypridle = rec {
+      hj.systemd.services.hypridle = rec {
         enable = true;
         description = "Hypridle daemon";
         partOf = toList "graphical-session.target";
@@ -57,7 +57,7 @@ in
         };
       };
 
-      home.xdg.config.files."hypr/hypridle.conf" = {
+      hj.xdg.config.files."hypr/hypridle.conf" = {
         generator = attrs: toHyprconf { inherit attrs; };
         value = {
           general = {

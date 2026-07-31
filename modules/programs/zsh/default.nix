@@ -40,7 +40,7 @@ in
       };
       config.programs.zsh = {
         enable = true;
-        histFile = "${config.home.xdg.data.directory}/zsh/history";
+        histFile = "${config.hj.xdg.data.directory}/zsh/history";
         enableCompletion = true;
         histSize = 100000;
         interactiveShellInit = mkAfter /* bash */ ''

@@ -19,7 +19,7 @@ in
       packages = singleton inputs.helium.packages.${system}.default;
       preserveHome.directories = singleton ".config/net.imput.helium";
 
-      home.xdg.mime-apps = genMimes "helium.desktop" [
+      hj.xdg.mime-apps = genMimes "helium.desktop" [
         # Web Pages & Documents
         "text/html"
         "text/xml"

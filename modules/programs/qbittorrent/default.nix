@@ -36,12 +36,12 @@ in
       };
 
       port = 1616;
-      profileDir = config.home.xdg.state.directory;
+      profileDir = config.hj.xdg.state.directory;
       configFile = pkgs.writeText "qBittorrent.conf" <| generateDeepINI settings;
       settings = {
         LegalNotice.Accepted = true;
         Preferences = {
-          Downloads.SavePath = "${config.home.directory}/files/torrents";
+          Downloads.SavePath = "${config.hj.directory}/files/torrents";
           WebUI = {
             AlternativeUIEnabled = true;
             RootFolder = "${pkgs.vuetorrent}/share/vuetorrent";
@@ -59,7 +59,7 @@ in
         "L+ ${profileDir}/qBittorrent/config/qBittorrent.conf - - - - ${configFile}"
       ];
 
-      home.systemd.services.qbittorrent = {
+      hj.systemd.services.qbittorrent = {
         enable = true;
         description = "qBittorrent user";
         after = [ "network-online.target" ];

@@ -101,6 +101,6 @@ in
     in
     {
       packages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.mpv;
-      home.xdg.mime-apps = lib.x.genMimes "mpv.desktop" (audioMimes ++ videoMimes);
+      hj.xdg.mime-apps = lib.x.genMimes "mpv.desktop" (audioMimes ++ videoMimes);
     };
 }

@@ -50,7 +50,7 @@ in
     {
       programs.rong.settings.themes = singleton {
         target = "kitty-full.conf";
-        links = "${config.home.xdg.config.directory}/kitty/colors.conf";
+        links = "${config.hj.xdg.config.directory}/kitty/colors.conf";
         cmds = pkgs.writers.writeNu "reload-kitty" /* nu */ ''
           let pids = ps | find kitty | get pid
           if ($pids | is-not-empty) {

@@ -27,7 +27,7 @@ in
 
     preserveHome.directories = singleton ".local/share/yankd";
 
-    home.systemd.services.yankd = fix (final: {
+    hj.systemd.services.yankd = fix (final: {
       enable = true;
       description = "yankd wayland clipboard daemon";
       partOf = singleton "graphical-session.target";

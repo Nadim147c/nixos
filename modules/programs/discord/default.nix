@@ -41,8 +41,8 @@ in
         "L+ %t/discord-ipc-0 - - - - %t/.flatpak/org.equicord.equibop/xdg-run/discord-ipc-0"
       ];
 
-      home.xdg.mime-apps = lib.x.genMimes "equibop.desktop" [ "x-scheme-handler/discord" ];
-      home.xdg.config.files."equibop/settings/settings.json" = {
+      hj.xdg.mime-apps = lib.x.genMimes "equibop.desktop" [ "x-scheme-handler/discord" ];
+      hj.xdg.config.files."equibop/settings/settings.json" = {
         type = "copy";
         permissions = "644";
         generator = builtins.toJSON;

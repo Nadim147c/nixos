@@ -11,12 +11,18 @@ let
   };
 in
 {
+  perSystem = { pkgs, ... }: {
+    packages.sops = inputs.wrappers.lib.wrapPackage {
+      inherit pkgs;
+      package = pkgs.sops;
+      env.SOPS_AGE_KEY_FILE = "/nix/persist/var/lib/sops/age.txt";
+    };
+  };
   flake.modules.nixos.base =
     { config, pkgs, ... }:
     let
-      inherit (config.home) xdg;
       copyPath = path: user // { inherit path; };
-      createConfigKey = name: copyPath "${xdg.config.directory}/${name}";
+      createConfigKey = name: copyPath "${config.hj.xdg.config.directory}/${name}";
     in
     {
       imports = [ inputs.sops-nix.nixosModules.sops ];
@@ -29,9 +35,11 @@ in
         defaultSopsFile = ../../../secrets/secrets.yaml;
         defaultSopsFormat = "yaml";
         useSystemdActivation = true;
-        age.keyFile = "/var/sops/age.txt";
+        age.keyFile = "/nix/persist/var/lib/sops/age.txt";
         secrets = {
-          password = { };
+          password = {
+            neededForUsers = true;
+          };
           slskd = { };
           "discord_client_id" = user;
           "freeimage_api" = user;
@@ -51,8 +59,7 @@ in
 
       users.users.${username} = {
         isNormalUser = true;
-        initialPassword = "letgo";
-        #hashedPasswordFile = config.sops.secrets.password.path;
+        hashedPasswordFile = config.sops.secrets.password.path;
       };
     };
 }

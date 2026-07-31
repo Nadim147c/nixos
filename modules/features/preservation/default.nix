@@ -35,7 +35,6 @@ in
         ];
 
         files = [
-          "/var/sops/age.txt"
           {
             file = "/etc/machine-id";
             inInitrd = true;
@@ -45,8 +44,8 @@ in
         ];
 
         users.${username} = {
-          # This dicistion was not made lightly!!!! Some application just
-          # doesn't work well without persitence cache!
+          # This decision was not made lightly!!!! Some application just
+          # doesn't work well without persistence cache!
           directories = [
             ".cache"
             ".local/bin"
@@ -80,6 +79,6 @@ in
         ".local"
         ".local/share"
         ".local/state"
-      ] (name: nameValuePair "${config.home.directory}/${name}" mode);
+      ] (name: nameValuePair "${config.hj.directory}/${name}" mode);
   };
 }

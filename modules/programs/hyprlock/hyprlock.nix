@@ -160,7 +160,7 @@ in
     in
     {
       security.pam.services.hyprlock.enable = true;
-      home.packages = [
+      hj.packages = [
         electroharmonix
         hyprlock
         pkgs.nerd-fonts.jetbrains-mono

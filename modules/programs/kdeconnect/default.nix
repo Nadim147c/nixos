@@ -8,7 +8,7 @@ in
 
     programs.kdeconnect.enable = true;
 
-    home.systemd.services.kdeconnect-indicator = fix (final: {
+    hj.systemd.services.kdeconnect-indicator = fix (final: {
       enable = true;
       description = "Kdeconnect Indicator";
       requires = singleton "tray.target";

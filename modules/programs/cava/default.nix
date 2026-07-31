@@ -28,7 +28,7 @@ in
     {
       programs.rong.settings.themes = singleton {
         target = "cava.ini";
-        links = "${config.home.xdg.config.directory}/cava/themes/rong";
+        links = "${config.hj.xdg.config.directory}/cava/themes/rong";
         cmds = pkgs.writers.writeNu "reload-cava" /* nu */ ''
           let pids = ps | find cava | get pid
           if ($pids | is-not-empty) {

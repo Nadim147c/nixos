@@ -133,10 +133,10 @@ in
       ];
 
       programs.rong.settings.installs = {
-        "quickshell.json" = "${config.home.xdg.state.directory}/quickshell/colors.json";
+        "quickshell.json" = "${config.hj.xdg.state.directory}/quickshell/colors.json";
       };
 
-      home.systemd.services.quickshell = fix (final: {
+      hj.systemd.services.quickshell = fix (final: {
         enable = true;
         description = "mpvpaper control daemon";
         partOf = singleton "graphical-session.target";

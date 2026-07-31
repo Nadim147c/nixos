@@ -13,8 +13,8 @@ in
       {
         target = "qt6ct.conf";
         links = [
-          "${config.home.xdg.config.directory}/qt5ct/colors/rong.conf"
-          "${config.home.xdg.config.directory}/qt6ct/colors/rong.conf"
+          "${config.hj.xdg.config.directory}/qt5ct/colors/rong.conf"
+          "${config.hj.xdg.config.directory}/qt6ct/colors/rong.conf"
         ];
         cmds = ''
           ${getExe' pkgs.coreutils "touch"} ~/.config/qt5ct/qt5ct.conf ~/.config/qt6ct/qt6ct.conf
@@ -22,7 +22,7 @@ in
       }
       {
         target = "qtct.colors";
-        links = "${config.home.xdg.data.directory}/color-schemes/Rong.colors";
+        links = "${config.hj.xdg.data.directory}/color-schemes/Rong.colors";
         cmds = ''
           ${getExe' pkgs.coreutils "touch"} ~/.config/dolphinrc
         '';

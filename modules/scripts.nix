@@ -40,7 +40,7 @@ in
           |> mapAttrsToList (name: value: optional (value.cond pkgs) (value.script pkgs))
           |> flatten;
 
-        home.xdg.config.files =
+        hj.xdg.config.files =
           config.scripts
           |> filterAttrs (_: value: value.completion != { })
           |> mapAttrsToList (

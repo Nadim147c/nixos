@@ -90,7 +90,7 @@ in
 
       config = mkIf cfg.enable {
         packages = mkIf (cfg.package != null) [ cfg.package ];
-        home.xdg.config.files."rong/config.json" = mkIf (cfg.settings != { }) {
+        hj.xdg.config.files."rong/config.json" = mkIf (cfg.settings != { }) {
           generator = builtins.toJSON;
           value = cfg.settings;
         };
@@ -102,7 +102,7 @@ in
     {
       preserveHome.directories = singleton ".local/state/rong";
 
-      home.systemd.services.rong-generate = {
+      hj.systemd.services.rong-generate = {
         enable = true;
         description = "Generate rong colors";
         before = singleton "graphical-session.target";
