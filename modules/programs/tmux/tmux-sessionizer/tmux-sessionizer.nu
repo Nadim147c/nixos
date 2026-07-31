@@ -10,7 +10,7 @@
 # Session names are sanitized from repository paths (colons replaced with hyphens)
 # to ensure tmux compatibility.
 def main [] {
-  let selected_repo = tmux-list-repos ~/git | fzf --ansi
+  let selected_repo = tmux-list-repos ~/git | fzf --ansi --scheme=history
   tmux-list-repos add (echo ~/git | path join $selected_repo | path expand)
 
   let fullpath = echo ~/git | path join $selected_repo | path expand
