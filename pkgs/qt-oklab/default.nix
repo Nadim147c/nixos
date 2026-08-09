@@ -1,6 +1,5 @@
 {
   cmake,
-  fetchFromGitHub,
   lib,
   ninja,
   qt6,
@@ -12,15 +11,10 @@ let
   inherit (lib.platforms) linux;
 in
 stdenv.mkDerivation (finalAttrs: {
-  pname = "qt-m3shapes";
+  pname = "qt-oklab";
   version = "0-unstable-2026-06-09";
 
-  src = fetchFromGitHub {
-    owner = "soramanew";
-    repo = "m3shapes";
-    rev = "bdc327b29f95394a732baf3c9b19658ba23755b6";
-    hash = "sha256-kfHyzZaPHgqZML48OA+5JwBOsLdQJ2ci/aGPShvUB4Y=";
-  };
+  src = ./src;
 
   nativeBuildInputs = [
     cmake
@@ -41,10 +35,23 @@ stdenv.mkDerivation (finalAttrs: {
     (cmakeFeature "INSTALL_QML_PREFIX" "${placeholder "out"}/${qtQmlPrefix}")
   ];
 
+  installPhase = ''
+    runHook preInstall
+
+    mkdir -p $out/${qtQmlPrefix}/OkLab
+    cp -r libOkLabPlugin.so libOkLabPluginplugin.so qmldir *.qmltypes $out/${qtQmlPrefix}/OkLab/
+
+    runHook postInstall
+  '';
+
   postFixup = ''
     patchelf \
-      --set-rpath "$out/${qtQmlPrefix}/M3Shapes:${makeLibraryPath finalAttrs.buildInputs}" \
-      $out/${qtQmlPrefix}/M3Shapes/libm3shapesplugin.so
+      --set-rpath "$out/${qtQmlPrefix}/OkLab:${makeLibraryPath finalAttrs.buildInputs}" \
+      $out/${qtQmlPrefix}/OkLab/libOkLabPlugin.so
+
+    patchelf \
+      --set-rpath "$out/${qtQmlPrefix}/OkLab:${makeLibraryPath finalAttrs.buildInputs}" \
+      $out/${qtQmlPrefix}/OkLab/libOkLabPluginplugin.so
   '';
 
   meta = {

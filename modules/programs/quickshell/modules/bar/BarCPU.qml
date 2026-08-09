@@ -3,6 +3,7 @@ import qs.modules.end4
 
 import QtQuick
 import Quickshell
+import OkLab
 
 Rectangle {
     id: root
@@ -15,12 +16,13 @@ Rectangle {
     Behavior on fg {
         animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
     }
-    readonly property var from: OkLab.fromColor(Appearance.material.myPrimary)
-    readonly property var to: OkLab.fromColor(Appearance.material.myError)
+    readonly property oklab from: OkLab.fromColor(Appearance.material.myPrimary)
+    readonly property oklab to: OkLab.fromColor(Appearance.material.myError)
     property color fg: {
         const ratio = Utils.cubicBezier([0.75, 0.25, 0.25, 0.75], SystemUsage.cpuUtilization / 100);
-        return OkLab.toColor(OkLab.blend(from, to, ratio));
+        return OkLab.blendToColor(from, to, ratio);
     }
+
     CircularProgress {
         id: progress
         anchors.centerIn: parent

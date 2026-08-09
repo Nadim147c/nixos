@@ -32,7 +32,7 @@ in
       buildInputs = attrValues {
         inherit (pkgs.kdePackages) qt5compat qtdeclarative;
         inherit (pkgs.qt6) qtimageformats qtmultimedia qtsvg;
-        inherit (self'.packages) qt-m3shapes;
+        inherit (self'.packages) qt-m3shapes qt-oklab;
       };
 
       quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
@@ -61,7 +61,7 @@ in
       });
 
       /*
-        Quickshell cannot natively execute .desktop files, and its
+        Quickshell cannot natively execute `.desktop` files, and its
         systemd service does not inherit the system PATH. This
         wrapper uses `uwsm` to handle the application launching,
         explicitly exposing the system PATH so desktop apps can

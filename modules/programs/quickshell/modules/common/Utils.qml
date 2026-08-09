@@ -28,7 +28,7 @@ Singleton {
         return from + (to - from) * ratio;
     }
 
-    function cubicBezier(curve, x) {
+    function cubicBezier(curve, x): real {
         const x1 = curve[0], y1 = curve[1], x2 = curve[2], y2 = curve[3];
         x = normalize(x);
 

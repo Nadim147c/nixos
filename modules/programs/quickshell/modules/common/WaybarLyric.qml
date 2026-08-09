@@ -12,12 +12,13 @@ Singleton {
 
     property string playerName: ""
     onPlayerNameChanged: {
-        const mprisPlayer = Mpris.players.values.filter(p => p.dbusName == playerName)[0];
+        const mprisPlayer = Mpris.players.values.find(p => p.dbusName === playerName);
         if (mprisPlayer) {
             player = mprisPlayer;
         }
     }
     property MprisPlayer player
+
     Timer {
         running: root.isPlaying
         interval: 1000 / 6
@@ -25,7 +26,7 @@ Singleton {
         onTriggered: root.player?.positionChanged()
     }
 
-    property string title: player?.trackTitle ?? "Unknonw Title"
+    property string title: player?.trackTitle ?? "Unknown Title"
     property string artist: player?.trackArtist ?? "Unknown Artist"
     property string album: player?.trackAlbum ?? "Single"
     property bool isPlaying: player?.isPlaying ?? false
@@ -39,23 +40,38 @@ Singleton {
                     break;
                 }
             }
-            lineIndex = i - 1;
+            lineIndex = Math.max(0, i - 1);
         }
     }
 
-    property string mprisCoverURL: player?.trackArtUrl ?? 0
-    onMprisCoverURLChanged: downloadCover.exec(["qs-coverdb", mprisCoverURL])
+    property string mprisCoverURL: player?.trackArtUrl ?? ""
+    onMprisCoverURLChanged: {
+        if (mprisCoverURL) {
+            downloadCover.exec(["qs-coverdb", mprisCoverURL]);
+        }
+    }
 
     property string trackID: ""
     onTrackIDChanged: {
-        lines = [];
-        importLines.exec(["waybar-lyric", "export", "--format=json", trackID]);
+        clearLines(); // Clean up old memory immediately on track change
+        if (trackID) {
+            importLines.exec(["waybar-lyric", "export", "--format=json", trackID]);
+        }
     }
+
+    property bool shouldImport: false
+
+    // Increased interval from 2s to 10s to stop spamming process executions
     Timer {
-        running: root.isPlaying
-        interval: 1000 * 2
+        running: root.isPlaying && root.trackID !== ""
+        interval: 1000
         repeat: true
-        onTriggered: importLines.exec(["waybar-lyric", "export", "--format=json", root.trackID])
+        onTriggered: {
+            if (root.shouldImport) {
+                importLines.exec(["waybar-lyric", "export", "--format=json", root.trackID]);
+                root.shouldImport = false;
+            }
+        }
     }
 
     property string text: ""
@@ -65,15 +81,35 @@ Singleton {
     property int lineIndex: 0
     property list<LyricLine> lines: []
 
+    // Helper function to explicitly free memory of dynamic QML objects
+    function clearLines() {
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i]) {
+                if (lines[i].words) {
+                    for (let j = 0; j < lines[i].words.length; j++) {
+                        if (lines[i].words[j])
+                            lines[i].words[j].destroy();
+                    }
+                }
+                lines[i].destroy(); // Destroy C++ QML object!
+            }
+        }
+        lines = [];
+    }
+
     property string cover: ""
-    onCoverChanged: coverColors.exec(["rong", "image", "--dry-run", "--json", cover])
+    onCoverChanged: {
+        if (cover) {
+            coverColors.exec(["rong", "image", "--dry-run", "--json", cover]);
+        }
+    }
 
     Process {
         id: downloadCover
         running: false
         stdout: SplitParser {
             onRead: data => {
-                if (!data || data.length === 0)
+                if (!data)
                     return;
                 root.cover = data.toString().trim();
             }
@@ -85,9 +121,9 @@ Singleton {
         running: false
         stdout: SplitParser {
             onRead: data => {
-                if (!data || data.length === 0)
-                    return;
-                Appearance.applyPlayerColors(data.toString());
+                if (data) {
+                    Appearance.applyPlayerColors(data.toString());
+                }
             }
         }
     }
@@ -108,11 +144,29 @@ Singleton {
             onRead: data => {
                 if (!data || data.length === 0)
                     return;
-                const parsed = JSON.parse(data);
 
-                const lines = [];
+                const jsonText = data.toString();
+                const parsed = JSON.parse(jsonText);
+                if (!parsed.lyrics)
+                    return;
+
                 const SECOND = 1000_000_000;
 
+                if (root.lines.length === parsed.lyrics.length && root.lines.length > 0) {
+                    let isSame = true;
+                    for (let i = 0; i < parsed.lyrics.length; i++) {
+                        if (root.lines[i].line !== parsed.lyrics[i].line) {
+                            isSame = false;
+                            break;
+                        }
+                    }
+                    if (isSame)
+                        return; // Exit early without instantiating any new objects!
+                }
+
+                root.clearLines();
+
+                const newLines = [];
                 for (const lyric of parsed.lyrics) {
                     const words = [];
                     for (const word of lyric.words ?? []) {
@@ -122,31 +176,15 @@ Singleton {
                             word: word.word
                         }));
                     }
-                    lines.push(lyricLine.createObject(root, {
+                    newLines.push(lyricLine.createObject(root, {
                         time: lyric.time / SECOND,
                         line: lyric.line,
                         words: words
                     }));
                 }
-                if (root.lines.length == lines.length) {
-                    for (let i = 0; i < lines.length; i++) {
-                        if (root.lines[i].line !== lines[i].line) {
-                            root.lines = lines;
-                            break;
-                        }
-                    }
-                    return;
-                }
-                root.lines = lines;
-            }
-        }
-    }
 
-    Component {
-        id: linesComponent
-        QtObject {
-            property string line: ""
-            property real time: 0
+                root.lines = newLines;
+            }
         }
     }
 
@@ -155,8 +193,8 @@ Singleton {
     }
 
     Component.onCompleted: {
-        const player = Mpris.players.values.filter(p => p.dbusName == playerName)[0];
-        if (player != undefined) {
+        const player = Mpris.players.values.find(p => p.dbusName === playerName);
+        if (player) {
             root.player = player;
         }
     }
@@ -172,8 +210,10 @@ Singleton {
                     if (!data || data.length === 0)
                         return;
 
-                    const jsonText = data.toString();
-                    const waybar = JSON.parse(jsonText);
+                    const waybar = JSON.parse(data.toString());
+
+                    // It is finished downloading
+                    root.shouldImport = root.alt === "getting" && waybar.alt !== "no_lyric" && root.alt !== waybar.alt;
 
                     root.text = waybar.text ?? "";
                     root.alt = waybar.alt ?? "";

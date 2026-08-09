@@ -3,6 +3,7 @@ import qs.modules.end4
 
 import QtQuick
 import QtQuick.Layouts
+import OkLab
 
 Rectangle {
     id: root
