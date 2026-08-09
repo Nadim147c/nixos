@@ -16,7 +16,7 @@ in
       ensureFree = "50G";
     };
     services.fast-nix-optimise = {
-      enable = true;
+      enable = false; # The extra CPU usages not the disk space.
       automatic = true;
       dates = "weekly";
     };
