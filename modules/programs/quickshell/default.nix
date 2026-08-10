@@ -32,7 +32,7 @@ in
       buildInputs = attrValues {
         inherit (pkgs.kdePackages) qt5compat qtdeclarative;
         inherit (pkgs.qt6) qtimageformats qtmultimedia qtsvg;
-        inherit (self'.packages) qt-m3shapes qt-oklab;
+        inherit (self'.packages) qt-m3shapes qt-oklab qt-cava;
       };
 
       quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
@@ -89,25 +89,6 @@ in
         mkdir -p $out/bin
         ln -s ${app-launcher}/bin/app-launcher $out/bin/app-launcher
       '';
-
-      packages.qs-cava = inputs.wrappers.wrappers.cava.wrap {
-        inherit pkgs;
-        binName = "qs-cava";
-        settings = {
-          general = {
-            framerate = 30;
-            bars = 16;
-          };
-          output = {
-            method = "raw";
-            raw_target = "/dev/stdout";
-            data_format = "ascii";
-            ascii_max_range = 1000;
-            bar_delimiter = 59;
-            frame_delimiter = 10;
-          };
-        };
-      };
 
       packages.quickshell = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
