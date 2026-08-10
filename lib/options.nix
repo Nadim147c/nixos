@@ -27,6 +27,7 @@ in
 {
   inherit createOption;
   pkg = default: createOption types.package default;
+  path = default: createOption types.path default;
   bool = default: createOption types.bool default;
   num = default: createOption types.number default;
   int = default: createOption types.int default;
@@ -77,7 +78,9 @@ in
       int = default: option types.int default;
       line = default: option types.singleLineStr default;
       str = default: option types.str default;
-      block = default: option lib.types.lines default;
+      block = default: option types.lines default;
+      attrs = default: option types.attrs default;
+      path = default: option types.path default;
       recursive = default: option recursiveType default;
     };
 }

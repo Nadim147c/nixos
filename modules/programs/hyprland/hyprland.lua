@@ -1,4 +1,3 @@
--- Sets "Windows" key as main modifier
 local main_mod = "SUPER"
 
 local function get_binds(...)
@@ -6,28 +5,6 @@ local function get_binds(...)
   return table.concat(args, " + ")
 end
 
-local displays = require("displays")
-local programs = require("programs")
-local envs = require("envs")
-
-for _, value in pairs(displays) do
-  hl.monitor(value)
-end
-
-for key, value in pairs(envs) do
-  hl.env(key, value)
-end
-
--- screenshot
-hl.bind(get_binds(main_mod, "Print"), hl.dsp.exec_cmd(programs.hyprscreenshot .. " screen"))
-hl.bind(get_binds("Print"), hl.dsp.exec_cmd(programs.hyprscreenshot .. " region"))
-
--- Programs
-hl.bind(get_binds(main_mod, "E"), hl.dsp.exec_cmd(programs.file_manager))
-hl.bind(get_binds(main_mod, "Q"), hl.dsp.exec_cmd(programs.terminal))
-hl.bind(get_binds(main_mod, "B"), hl.dsp.exec_cmd(programs.browser))
-hl.bind(get_binds(main_mod, "D"), hl.dsp.exec_cmd(programs.discord))
-hl.bind(get_binds(main_mod, "M"), hl.dsp.exec_cmd(programs.music))
 hl.window_rule({
   name = "kitty workspace 1",
   match = { class = "^(kitty)$" },
@@ -49,51 +26,11 @@ hl.window_rule({
   workspace = "4 silent",
 })
 
-hl.on("hyprland.start", function()
-  hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment WAYLAND_DISPLAY DISPLAY"))
-  local keys = {}
-  for k, _ in pairs(envs) do
-    table.insert(keys, k)
-  end
-  local env_keys_str = table.concat(keys, " ")
-  hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment " .. env_keys_str))
-  hl.dispatch(hl.dsp.exec_cmd("dbus-update-activation-environment --systemd " .. env_keys_str))
-  hl.dispatch(hl.dsp.exec_cmd([[
-  systemctl --user stop hyprland-session.target
-  systemctl --user start hyprland-session.target
-  ]]))
-  hl.dispatch(hl.dsp.exec_cmd(programs.terminal))
-  hl.dispatch(hl.dsp.exec_cmd(programs.browser))
-  hl.dispatch(hl.dsp.exec_cmd(programs.discord))
-  hl.dispatch(hl.dsp.exec_cmd(programs.music))
-end)
-
 hl.on("window.urgent", function(w)
   if w ~= nil and w.workspace ~= nil then
     hl.dispatch(hl.dsp.focus({ workspace = w.workspace.id }))
   end
 end)
-
-local function toggle_mpvpaper_pause_state()
-  local workspace = hl.get_active_workspace()
-  if workspace == nil then
-    return
-  end
-  local windows = hl.get_windows({ workspace = workspace.id })
-  local command = "set pause no"
-  for _, window in pairs(windows) do
-    if (not window.floating) or (window.fullscreen == 1) then
-      command = "set pause yes"
-    end
-  end
-  hl.dispatch(hl.dsp.exec_cmd(programs.mpvpaper_send_ipc .. " '" .. command .. "'"))
-end
-
-hl.on("window.active", toggle_mpvpaper_pause_state)
-hl.on("window.class", toggle_mpvpaper_pause_state)
-hl.on("window.fullscreen", toggle_mpvpaper_pause_state)
-hl.on("window.move_to_workspace", toggle_mpvpaper_pause_state)
-hl.on("workspace.active", toggle_mpvpaper_pause_state)
 
 hl.config({
   master = {
@@ -162,8 +99,6 @@ hl.config({
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(get_binds(main_mod, "X"), hl.dsp.window.close())
-hl.bind(get_binds(main_mod, "V"), hl.dsp.exec_cmd(programs.qs_toggle .. " clipboard toggle"))
-hl.bind(get_binds(main_mod, "SPACE"), hl.dsp.exec_cmd(programs.qs_toggle .. " launcher toggle"))
 hl.bind(get_binds(main_mod, "F"), hl.dsp.window.float())
 hl.bind(get_binds(main_mod, "SHIFT", "F"), hl.dsp.window.fullscreen())
 
@@ -185,37 +120,6 @@ hl.bind(get_binds(main_mod, "L"), hl.dsp.focus({ direction = "r" }))
 -- Move/resize windows with mainMod + LMB/RMB and dragging
 hl.bind(get_binds(main_mod, "mouse:272"), hl.dsp.window.drag(), { mouse = true })
 hl.bind(get_binds(main_mod, "mouse:273"), hl.dsp.window.resize(), { mouse = true })
-
--- -- Laptop multimedia keys for volume and LCD brightness
-hl.bind(
-  "XF86AudioRaiseVolume",
-  hl.dsp.exec_cmd(programs.wpctl .. " set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+"),
-  { locked = true, repeating = true }
-)
-hl.bind(
-  "XF86AudioLowerVolume",
-  hl.dsp.exec_cmd(programs.wpctl .. " set-volume @DEFAULT_AUDIO_SINK@ 5%-"),
-  { locked = true, repeating = true }
-)
-hl.bind(
-  "XF86AudioMute",
-  hl.dsp.exec_cmd(programs.wpctl .. " set-mute @DEFAULT_AUDIO_SINK@ toggle"),
-  { locked = true, repeating = true }
-)
-hl.bind(
-  "XF86AudioMicMute",
-  hl.dsp.exec_cmd(programs.wpctl .. " set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
-  { locked = true, repeating = true }
-)
--- hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%+"), { locked = true, repeating = true })
--- hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightnessctl -e4 -n2 set 5%-"), { locked = true, repeating = true })
-
--- Requires playerctl
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd(programs.playerctl .. " next"), { locked = true })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd(programs.playerctl .. " pause"), { locked = true })
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd(programs.playerctl .. " play-pause"), { locked = true })
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd(programs.playerctl .. " previous"), { locked = true })
---
 
 hl.layer_rule({
   name = "quickshell",
