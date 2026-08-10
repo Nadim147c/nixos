@@ -2,17 +2,20 @@
 #include <cmath>
 #include <algorithm>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 OkLabSingleton::OkLabSingleton(QObject *parent) : QObject(parent) {}
 
-// normalization helpers
-double OkLabSingleton::linearized(double component) const {
+double OkLabSingleton::linearized(double component) {
     if (component <= 0.040449936) {
         return normalize(component / 12.92);
     }
     return normalize(std::pow((component + 0.055) / 1.055, 2.4));
 }
 
-double OkLabSingleton::delinearized(double component) const {
+double OkLabSingleton::delinearized(double component) {
     if (component <= 0.0031308) {
         return normalize(component * 12.92);
     }
@@ -74,4 +77,80 @@ QColor OkLabSingleton::toColor(const OkLab &lab) const {
         delinearized(lg),
         delinearized(lb)
     );
+}
+
+OkLchSingleton::OkLchSingleton(QObject *parent) : QObject(parent) {}
+
+OkLch OkLchSingleton::fromLab(const OkLab &lab) const {
+    const double c = std::sqrt(lab.a * lab.a + lab.b * lab.b);
+    double h = std::atan2(lab.b, lab.a) * (180.0 / M_PI);
+    if (h < 0.0) {
+        h += 360.0;
+    }
+    return OkLch(lab.l, c, h);
+}
+
+OkLab OkLchSingleton::toLab(const OkLch &lch) const {
+    const double hRad = lch.h * (M_PI / 180.0);
+    const double a = lch.c * std::cos(hRad);
+    const double b = lch.c * std::sin(hRad);
+    return OkLab(lch.l, a, b);
+}
+
+OkLch OkLchSingleton::fromColor(const QColor &c) const {
+    static OkLabSingleton labSingleton;
+    return fromLab(labSingleton.fromColor(c));
+}
+
+OkLch OkLchSingleton::blend(const OkLch &src, const OkLch &dst, double r) const {
+    const double l = src.l + (dst.l - src.l) * r;
+    const double c = src.c + (dst.c - src.c) * r;
+
+    double dh = dst.h - src.h;
+    if (dh > 180.0) {
+        dh -= 360.0;
+    } else if (dh < -180.0) {
+        dh += 360.0;
+    }
+
+    double h = src.h + dh * r;
+    if (h < 0.0) h += 360.0;
+    if (h >= 360.0) h -= 360.0;
+
+    return OkLch(l, c, h);
+}
+
+OkLch OkLchSingleton::blendHue(const OkLch &from, const OkLch &to, double ratio) const {
+    double dh = to.h - from.h;
+
+    if (dh > 180.0) {
+        dh -= 360.0;
+    } else if (dh < -180.0) {
+        dh += 360.0;
+    }
+
+    double blendedHue = from.h + dh * ratio;
+
+    if (blendedHue < 0.0) {
+        blendedHue += 360.0;
+    } else if (blendedHue >= 360.0) {
+        blendedHue -= 360.0;
+    }
+
+    return OkLch(from.l, from.c, blendedHue);
+}
+
+QColor OkLchSingleton::blendToColor(const OkLch &src, const OkLch &dst, double r) const {
+    return toColor(blend(src, dst, r));
+}
+
+QColor OkLchSingleton::blendColors(const QColor &src, const QColor &dst, double t) const {
+    const OkLch srcLch = fromColor(src);
+    const OkLch dstLch = fromColor(dst);
+    return toColor(blend(srcLch, dstLch, t));
+}
+
+QColor OkLchSingleton::toColor(const OkLch &lch) const {
+    static OkLabSingleton labSingleton;
+    return labSingleton.toColor(toLab(lch));
 }
