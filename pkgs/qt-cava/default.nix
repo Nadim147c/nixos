@@ -9,12 +9,11 @@
   symlinkJoin,
   writeText,
   cavaBarCount ? 16,
-  cavaFramerate ? 20,
+  cavaFramerate ? 30,
 }:
 let
   inherit (qt6.qtbase) qtQmlPrefix;
   inherit (lib) makeLibraryPath cmakeFeature;
-  inherit (lib.meta) getExe;
   inherit (lib.platforms) linux;
 
   cavaConfig = writeText "cava.ini" ''
