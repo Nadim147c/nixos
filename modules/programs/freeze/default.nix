@@ -26,7 +26,7 @@ in
         inherit pkgs;
         package = pkgs.chroma;
         flags = {
-          "--style" = ./chroma-tokionight-moon.xml;
+          "--style" = ./chroma-tokyonight-moon.xml;
           "--formatter" = "terminal16m";
         };
       };
@@ -42,7 +42,7 @@ in
           mkdir -p "$(dirname "$screenshot_file")"
         '';
         flags = {
-          "--theme" = ./chroma-tokionight-moon.xml;
+          "--theme" = ./chroma-tokyonight-moon.xml;
           "--output" = makeEnvFlag "screenshot_file";
         };
       };
