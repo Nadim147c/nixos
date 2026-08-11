@@ -1,6 +1,8 @@
 { self, lib, ... }:
 let
-  inherit (lib) getExe escapeShellArg singleton;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
+  inherit (lib.strings) escapeShellArg;
   inherit (builtins) attrValues;
   appId = "com.temidaradev.kopuz";
   sha256 = "sha256-fioHNFJJnUsHjG7RIKaqajc10WGynfmfDxfnkX3Mz4A=";

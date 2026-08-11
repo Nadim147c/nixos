@@ -1,12 +1,10 @@
 { config, lib, ... }:
 let
   inherit (config) username;
-  inherit (lib)
-    genAttrs
-    const
-    singleton
-    mkForce
-    ;
+  inherit (lib.attrsets) genAttrs;
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkForce;
+  inherit (lib.trivial) const;
 in
 {
   flake.modules.nixos.base = { config, ... }: {

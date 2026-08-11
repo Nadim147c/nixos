@@ -1,12 +1,9 @@
 { self, lib, ... }:
 let
   inherit (lib.hm.generators) toHyprconf;
-  inherit (lib)
-    escapeShellArg
-    toList
-    getExe
-    getExe'
-    ;
+  inherit (lib.lists) toList;
+  inherit (lib.meta) getExe getExe';
+  inherit (lib.strings) escapeShellArg;
 in
 {
   perSystem =

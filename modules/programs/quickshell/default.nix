@@ -5,17 +5,14 @@
   ...
 }:
 let
-  inherit (lib)
-    mkIf
-    attrValues
-    cleanSource
-    filterAttrs
-    fix
-    getExe
-    hasPrefix
-    makeBinPath
-    singleton
-    ;
+  inherit (lib.attrsets) attrValues filterAttrs;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.strings) hasPrefix;
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkIf;
+  inherit (lib.sources) cleanSource;
+  inherit (lib.strings) makeBinPath;
   inherit (lib.fileset) toSource unions;
 in
 {

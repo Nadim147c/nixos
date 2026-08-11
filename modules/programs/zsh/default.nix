@@ -1,12 +1,8 @@
 { lib, ... }:
 let
-  inherit (lib)
-    concatMapAttrsStringSep
-    flatten
-    mkAfter
-    singleton
-    ;
-  inherit (lib.strings) join;
+  inherit (lib.lists) flatten singleton;
+  inherit (lib.modules) mkAfter;
+  inherit (lib.strings) join concatMapAttrsStringSep;
   inherit (lib.filesystem) listFilesRecursive;
   inherit (lib.x) opt;
 in

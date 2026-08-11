@@ -1,18 +1,14 @@
 { config, lib, ... }:
 let
-  inherit (builtins) attrValues;
   inherit (config) username;
-  inherit (lib.x) quote;
-  inherit (lib.options) mkOption;
-  inherit (lib)
-    types
-    const
-    mapAttrs
-    mapAttrs'
-    nameValuePair
-    ;
+  inherit (builtins) attrValues;
+  inherit (lib.attrsets) mapAttrs mapAttrs' nameValuePair;
   inherit (lib.generators) toKeyValue;
+  inherit (lib.options) mkOption;
   inherit (lib.strings) toUpper;
+  inherit (lib.trivial) const;
+  inherit (lib.types) attrs;
+  inherit (lib.x) quote;
 in
 {
   flake.modules.nixos.base =
@@ -50,7 +46,7 @@ in
     in
     {
       options.xdg-dirs = mkOption {
-        type = types.attrs;
+        type = attrs;
         default = dirs // extra;
         readOnly = true;
       };

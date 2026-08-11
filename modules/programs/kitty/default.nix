@@ -5,7 +5,9 @@
   ...
 }:
 let
-  inherit (lib) attrValues getExe singleton;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
 in
 {
   perSystem =

@@ -5,14 +5,11 @@
   ...
 }:
 let
-  inherit (lib)
-    getExe
-    makeBinPath
-    singleton
-    ;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
+  inherit (lib.strings) makeBinPath;
 in
 {
-
   perSystem = { pkgs, ... }: {
     packages.rong-impure = inputs.wrappers.lib.wrapPackage {
       inherit pkgs;

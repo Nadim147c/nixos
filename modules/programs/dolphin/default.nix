@@ -5,7 +5,9 @@
   ...
 }:
 let
-  inherit (lib) mkIf concatMapStringsSep singleton;
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkIf;
+  inherit (lib.strings) concatMapStringsSep;
   inherit (builtins) isBool;
 in
 {

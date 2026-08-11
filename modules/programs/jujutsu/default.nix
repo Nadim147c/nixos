@@ -1,8 +1,9 @@
 { config, lib, ... }:
 let
   inherit (lib.generators) toJSON;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
   inherit (config) username fullname email;
-  inherit (lib) getExe singleton;
 in
 {
   flake.modules.nixos.base =

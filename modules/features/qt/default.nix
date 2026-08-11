@@ -1,6 +1,7 @@
 { lib, ... }:
 let
-  inherit (lib) getExe' attrValues;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.meta) getExe';
 in
 {
   flake.modules.nixos.gui = { config, pkgs, ... }: {

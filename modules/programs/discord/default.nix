@@ -1,7 +1,9 @@
 { lib, ... }:
 let
-  inherit (lib) singleton escapeShellArg;
-  inherit (lib.modules) mkOption types;
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) types;
+  inherit (lib.options) mkOption;
+  inherit (lib.strings) escapeShellArg;
 
   appId = "org.equicord.equibop";
   readonly =

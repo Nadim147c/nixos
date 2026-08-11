@@ -1,6 +1,8 @@
 { lib, ... }:
 let
-  inherit (lib) genAttrs getExe const;
+  inherit (lib.attrsets) genAttrs;
+  inherit (lib.meta) getExe;
+  inherit (lib.trivial) const;
 
   enabled.enable = true;
   makeEnabled = names: genAttrs names (const enabled);

@@ -1,9 +1,9 @@
 { lib, ... }:
 let
-  inherit (lib) singleton;
-  inherit (lib.trivial) const;
   inherit (lib.attrsets) filterAttrs;
   inherit (lib.generators) toKeyValue toINI;
+  inherit (lib.lists) singleton;
+  inherit (lib.trivial) const;
   inherit (builtins) isAttrs;
 in
 {

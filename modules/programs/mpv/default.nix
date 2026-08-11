@@ -5,13 +5,8 @@
   ...
 }:
 let
-  inherit (lib)
-    nameValuePair
-    flatten
-    genAttrs'
-    optional
-    singleton
-    ;
+  inherit (lib.attrsets) nameValuePair genAttrs';
+  inherit (lib.lists) flatten optional singleton;
 in
 {
   perSystem =

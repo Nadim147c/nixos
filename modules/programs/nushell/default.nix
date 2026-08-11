@@ -1,14 +1,9 @@
 { lib, ... }:
 let
-  inherit (lib.x) opt;
   inherit (lib.hm.nushell) toNushell;
-  inherit (lib)
-    mkIf
-    mkMerge
-    mkAliasOptionModule
-    concatMapAttrsStringSep
-    ;
-
+  inherit (lib.modules) mkIf mkMerge mkAliasOptionModule;
+  inherit (lib.strings) concatMapAttrsStringSep;
+  inherit (lib.x) opt;
 in
 {
   flake.modules.nixos.base =

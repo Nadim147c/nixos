@@ -1,16 +1,10 @@
 { lib, ... }:
 let
-  inherit (lib)
-    singleton
-    collect
-    escape
-    getExe
-    getExe'
-    mapAttrsRecursive
-    ;
-  inherit (builtins) isAttrs isString;
-  inherit (lib.strings) join;
+  inherit (lib.attrsets) isAttrs collect mapAttrsRecursive;
   inherit (lib.generators) toINI mkKeyValueDefault mkValueStringDefault;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe getExe';
+  inherit (lib.strings) escape isString join;
 in
 {
   flake.modules.nixos.base =

@@ -5,8 +5,8 @@
   ...
 }:
 let
+  inherit (lib.attrsets) genAttrs' nameValuePair;
   inherit (config) username;
-  inherit (lib) genAttrs' nameValuePair;
 in
 {
   flake.modules.nixos.base = { config, ... }: {

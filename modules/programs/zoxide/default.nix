@@ -1,6 +1,7 @@
 { lib, ... }:
 let
-  inherit (lib) singleton getExe;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
 in
 {
   flake.modules.nixos.base =

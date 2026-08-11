@@ -5,7 +5,8 @@
   ...
 }:
 let
-  inherit (lib) getExe singleton;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
   inherit (lib.x) makeEnvFlag;
 in
 {

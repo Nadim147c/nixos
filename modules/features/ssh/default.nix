@@ -1,7 +1,7 @@
 { config, lib, ... }:
 let
   inherit (config) username;
-  inherit (lib) concatMapAttrsStringSep;
+  inherit (lib.strings) concatMapAttrsStringSep;
 in
 {
   flake.modules.nixos.base =

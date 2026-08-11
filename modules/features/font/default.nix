@@ -1,13 +1,8 @@
 { self, lib, ... }:
 let
-  inherit (lib)
-    attrValues
-    unique
-    singleton
-    mkForce
-    mkBefore
-    mkIf
-    ;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.lists) unique singleton;
+  inherit (lib.modules) mkForce mkBefore mkIf;
   inherit (lib.x) opt;
 in
 {

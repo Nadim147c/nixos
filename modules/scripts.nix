@@ -1,32 +1,28 @@
 { config, lib, ... }:
 let
-  inherit (lib)
-    const
-    filterAttrs
-    flatten
-    mapAttrsToList
-    mkIf
-    mkMerge
-    mkOption
-    optional
-    types
-    ;
-  inherit (lib.x) opt;
-  inherit (types)
-    attrs
+  inherit (lib.attrsets) filterAttrs mapAttrsToList;
+  inherit (lib.lists) flatten optional;
+  inherit (lib.modules) mkIf mkMerge;
+  inherit (lib.options) mkOption;
+  inherit (lib.trivial) const;
+  inherit (lib.types)
     attrsOf
+    attrs
     functionTo
     submodule
+    bool
+    package
     ;
+  inherit (lib.x) opt;
 in
 {
   options.scripts = mkOption {
     type = attrsOf (submodule {
       options = {
         name = opt.line "";
-        cond = opt.createOption (functionTo types.bool) (const true);
+        cond = opt.createOption (functionTo bool) (const true);
         completion = opt.createOption attrs { };
-        script = opt.createOption (functionTo types.package) (const null);
+        script = opt.createOption (functionTo package) (const null);
       };
     });
   };

@@ -1,12 +1,9 @@
 { lib, ... }:
 let
   inherit (builtins) length;
-  inherit (lib)
-    attrValues
-    mkOption
-    mapAttrsToList
-    types
-    ;
+  inherit (lib.types) attrsOf submodule;
+  inherit (lib.attrsets) attrValues mapAttrsToList;
+  inherit (lib.options) mkOption;
   inherit (lib.x) opt;
 in
 {
@@ -17,20 +14,18 @@ in
     in
     {
       options.displays = mkOption {
-        type = types.attrsOf (
-          types.submodule {
-            options = {
-              enable = opt.bool true;
-              primary = opt.bool (attrValues cfg |> length |> (x: (x == 1)));
-              refreshRate = opt.num 60;
-              width = opt.int 1920;
-              height = opt.int 1080;
-              x = opt.int 0;
-              y = opt.int 0;
-              extra = opt.attrs.any { };
-            };
-          }
-        );
+        type = attrsOf (submodule {
+          options = {
+            enable = opt.bool true;
+            primary = opt.bool (attrValues cfg |> length |> (x: (x == 1)));
+            refreshRate = opt.num 60;
+            width = opt.int 1920;
+            height = opt.int 1080;
+            x = opt.int 0;
+            y = opt.int 0;
+            extra = opt.attrs.any { };
+          };
+        });
         default = { };
       };
 

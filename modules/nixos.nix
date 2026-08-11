@@ -5,14 +5,11 @@
   ...
 }:
 let
-  inherit (lib)
-    mkOption
-    types
-    flip
-    mapAttrs
-    mapAttrsToList
-    mkMerge
-    ;
+  inherit (lib) types;
+  inherit (lib.attrsets) mapAttrs mapAttrsToList;
+  inherit (lib.modules) mkMerge;
+  inherit (lib.options) mkOption;
+  inherit (lib.trivial) flip;
 in
 {
   options.configurations.nixos = mkOption {

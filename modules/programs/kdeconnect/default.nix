@@ -1,6 +1,8 @@
 { lib, ... }:
 let
-  inherit (lib) fix getExe' singleton;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe';
 in
 {
   flake.modules.nixos.gui = { pkgs, ... }: {

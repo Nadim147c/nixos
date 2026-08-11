@@ -5,11 +5,9 @@
   ...
 }:
 let
-  inherit (lib)
-    getExe
-    makeBinPath
-    singleton
-    ;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
+  inherit (lib.strings) makeBinPath;
 in
 {
   perSystem = { self', pkgs, ... }: {

@@ -5,7 +5,9 @@
   ...
 }:
 let
-  inherit (lib) fix getExe singleton;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
 in
 {
   perSystem = { pkgs, ... }: {
@@ -25,7 +27,10 @@ in
   flake.modules.nixos.gui = { system, ... }: {
     packages = singleton self.packages.${system}.yankd-impure;
 
-    preserveHome.directories = singleton ".local/share/yankd";
+    preserveHome.directories = [
+      ".local/share/yankd"
+      ".duckdb"
+    ];
 
     hj.systemd.services.yankd = fix (final: {
       enable = true;

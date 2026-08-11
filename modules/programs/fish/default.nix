@@ -1,6 +1,7 @@
 { lib, ... }:
 let
-  inherit (lib) concatMapAttrsStringSep singleton;
+  inherit (lib.lists) singleton;
+  inherit (lib.strings) concatMapAttrsStringSep;
   inherit (lib.x) opt;
 in
 {

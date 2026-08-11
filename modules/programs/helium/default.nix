@@ -1,13 +1,10 @@
 { inputs, lib, ... }:
 let
+  inherit (lib.attrsets) mapAttrsToList;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.strings) concatStringsSep escapeURL;
   inherit (lib.x) genMimes;
-  inherit (lib)
-    fix
-    singleton
-    concatStringsSep
-    mapAttrsToList
-    escapeURL
-    ;
 in
 {
   perSystem = { system, ... }: {

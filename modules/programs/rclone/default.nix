@@ -42,14 +42,10 @@
 
 { lib, ... }:
 let
-  inherit (lib)
-    singleton
-    getExe'
-    mapAttrsToList
-    optionalString
-    escapeShellArgs
-    escapeShellArg
-    ;
+  inherit (lib.attrsets) mapAttrsToList;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe';
+  inherit (lib.strings) optionalString escapeShellArgs escapeShellArg;
 in
 {
   flake.modules.nixos.base =

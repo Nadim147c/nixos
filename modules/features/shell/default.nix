@@ -1,6 +1,7 @@
 { self, lib, ... }:
 let
-  inherit (lib) attrValues getExe getExe';
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.meta) getExe getExe';
 in
 {
   flake.modules.nixos.base =

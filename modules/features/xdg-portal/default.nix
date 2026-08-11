@@ -1,6 +1,6 @@
 { lib, ... }:
 let
-  inherit (lib) attrValues;
+  inherit (lib.attrsets) attrValues;
 in
 {
   flake.modules.nixos.gui =

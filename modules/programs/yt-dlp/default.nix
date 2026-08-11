@@ -5,7 +5,7 @@
   ...
 }:
 let
-  inherit (lib) getExe;
+  inherit (lib.meta) getExe;
   inherit (lib.x) quote;
 in
 {

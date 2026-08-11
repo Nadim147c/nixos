@@ -1,6 +1,8 @@
 { lib, ... }:
 let
-  inherit (lib) singleton mkAfter concatMapAttrsStringSep;
+  inherit (lib.lists) singleton;
+  inherit (lib.modules) mkAfter;
+  inherit (lib.strings) concatMapAttrsStringSep;
   inherit (lib.x) opt;
 in
 {

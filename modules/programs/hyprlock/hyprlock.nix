@@ -6,7 +6,9 @@
   ...
 }:
 let
-  inherit (lib) mkForce getExe escapeShellArg;
+  inherit (lib.meta) getExe;
+  inherit (lib.modules) mkForce;
+  inherit (lib.strings) escapeShellArg;
 in
 {
   perSystem =

@@ -1,11 +1,9 @@
 { self, lib, ... }:
 let
-  inherit (lib)
-    fix
-    singleton
-    escapeShellArg
-    getExe
-    ;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
+  inherit (lib.strings) escapeShellArg;
 
   settings = {
     ignore = [

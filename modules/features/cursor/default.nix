@@ -1,12 +1,10 @@
 { self, lib, ... }:
 let
-  inherit (lib)
-    escapeShellArg
-    fix
-    getExe'
-    mkIf
-    singleton
-    ;
+  inherit (lib.fixedPoints) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe';
+  inherit (lib.modules) mkIf;
+  inherit (lib.strings) escapeShellArg;
   inherit (lib.x) opt;
 in
 {
