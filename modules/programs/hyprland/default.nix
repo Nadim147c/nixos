@@ -209,10 +209,7 @@ in
               inherit keys exec;
               autostart = true;
             };
-            makeBind = keys: exec: {
-              inherit keys exec;
-              autostart = true;
-            };
+            makeBind = keys: exec: { inherit keys exec; };
             lockedAndRepeat = {
               locked = true;
               repeating = true;
