@@ -26,11 +26,7 @@ in
           diff-editor = ":builtin";
           diff-formatter = [
             (getExe pkgs.delta)
-            "--navigate"
-            "--line-numbers"
-            "--hunk-header-style=omit"
             "--width=$width"
-            "--side-by-side"
             "$left"
             "$right"
           ];

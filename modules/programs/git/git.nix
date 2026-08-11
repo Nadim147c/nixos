@@ -1,6 +1,7 @@
 { config, lib, ... }:
 let
-  inherit (lib) singleton;
+  inherit (lib.attrsets) mapAttrs' nameValuePair;
+  inherit (lib.lists) singleton;
   inherit (config) fullname email;
 in
 {
@@ -12,7 +13,6 @@ in
         mkdir -p $out/bin
         ln -s ${getExe pkgs.svu} $out/bin/git-svu
       '';
-
       cmd = pkg: text: "!${getExe pkg} ${text}";
     in
     {
@@ -166,6 +166,30 @@ in
           submodule.fetchJobs = 16;
 
           "git-extras".feature.prefix = "feat";
+
+          delta =
+            let
+              syntax = mapAttrs' (name: value: nameValuePair name "syntax \"${value}\"") {
+                minus-emph-style = "#8a4a5e";
+                minus-empty-line-marker-style = "#4b2a3d";
+                minus-non-emph-style = "#4b2a3d";
+                minus-style = "#4b2a3d";
+                plus-emph-style = "#4d7c8d";
+                plus-empty-line-marker-style = "#2a4556";
+                plus-non-emph-style = "#2a4556";
+                plus-style = "#2a4556";
+              };
+            in
+            syntax
+            // {
+              navigate = true;
+              line-numbers = true;
+              side-by-side = false;
+              hunk-header-style = "omit";
+              line-numbers-minus-style = "#914c54";
+              line-numbers-plus-style = "#449dab";
+              line-numbers-zero-style = "#3b4261";
+            };
         };
       };
     };
