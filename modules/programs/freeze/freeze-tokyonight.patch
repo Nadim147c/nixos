@@ -1,0 +1,45 @@
+diff --git i/ansi.go w/ansi.go
+index b0b2729..c7d95a0 100644
+--- i/ansi.go
++++ w/ansi.go
+@@ -179,23 +179,23 @@ func (p *dispatcher) CsiDispatch(cmd ansi.Cmd, params ansi.Params) {
+ }
+
+ var ansiPalette = map[int]string{
+-	30: "#282a2e", // black
+-	31: "#D74E6F", // red
+-	32: "#31BB71", // green
+-	33: "#D3E561", // yellow
+-	34: "#8056FF", // blue
+-	35: "#ED61D7", // magenta
+-	36: "#04D7D7", // cyan
+-	37: "#C5C8C6", // white
++	30: "#1b1d2b", // black
++	31: "#ff757f", // red
++	32: "#c3e88d", // green
++	33: "#ffc777", // yellow
++	34: "#82aaff", // blue
++	35: "#c099ff", // magenta
++	36: "#86e1fc", // cyan
++	37: "#828bb8", // white
+
+-	90: "#4B4B4B", // bright black
+-	91: "#FE5F86", // bright red
+-	92: "#00D787", // bright green
+-	93: "#EBFF71", // bright yellow
+-	94: "#8F69FF", // bright blue
+-	95: "#FF7AEA", // bright magenta
+-	96: "#00FEFE", // bright cyan
+-	97: "#FFFFFF", // bright white
++	90: "#444a73", // bright black
++	91: "#ff8d94", // bright red
++	92: "#c7fb6d", // bright green
++	93: "#ffd8ab", // bright yellow
++	94: "#9ab8ff", // bright blue
++	95: "#caabff", // bright magenta
++	96: "#b2ebff", // bright cyan
++	97: "#c8d3f5", // bright white
+ }
+
+ var palette = []string{
+

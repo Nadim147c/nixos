@@ -5,7 +5,9 @@
   ...
 }:
 let
-  inherit (lib) singleton attrValues getExe;
+  inherit (lib.attrsets) attrValues;
+  inherit (lib.lists) singleton;
+  inherit (lib.meta) getExe;
   inherit (lib.x) makeEnvFlag;
 in
 {
@@ -24,20 +26,23 @@ in
         inherit pkgs;
         package = pkgs.chroma;
         flags = {
-          "--style" = ./tokionight-moon.xml;
+          "--style" = ./chroma-tokionight-moon.xml;
           "--formatter" = "terminal16m";
         };
       };
 
       packages.freeze = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
-        package = pkgs.charm-freeze;
+        package = pkgs.charm-freeze.overrideAttrs (final: {
+          patches = [ ./freeze-tokyonight.patch ];
+          doCheck = false;
+        });
         runShell = singleton /* bash */ ''
           screenshot_file="$(${xdg-base-dir} user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"
           mkdir -p "$(dirname "$screenshot_file")"
         '';
         flags = {
-          "--theme" = "tokionight-moon";
+          "--theme" = ./chroma-tokionight-moon.xml;
           "--output" = makeEnvFlag "screenshot_file";
         };
       };
@@ -46,13 +51,8 @@ in
         name = "termshot";
         runtimeInputs = attrValues {
           inherit center-screenshot;
-          inherit (pkgs)
-            chafa
-            charm-freeze
-            coreutils
-            wl-clipboard
-            ;
-          inherit (self'.packages) xdg-base-dir;
+          inherit (pkgs) chafa coreutils wl-clipboard;
+          inherit (self'.packages) freeze xdg-base-dir;
         };
         text = ''
           screenshot_file="$(xdg-base-dir user-pictures)/freeze/$(date +'%Y-%m-%d_%H-%M-%S').png"
@@ -67,7 +67,7 @@ in
           }
           trap cleanup EXIT
 
-          freeze "$@" --theme=rose-pine --output="$temp_screenshot"
+          freeze "$@" --output="$temp_screenshot"
 
           center-screenshot "$temp_screenshot" "$screenshot_file"
 
