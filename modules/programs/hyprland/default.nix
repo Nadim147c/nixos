@@ -46,7 +46,9 @@ in
           opts,
           ...
         }:
-        "hl.bind(${join " + " keys |> toJSON}, hl.dsp.exec_cmd(${toJSON exec}), ${toLua { } opts})"
+        optionalString (
+          keys != [ ]
+        ) "hl.bind(${join " + " keys |> toJSON}, hl.dsp.exec_cmd(${toJSON exec}), ${toLua { } opts})"
       ) cfg.programs;
 
       autostart = mapList (
@@ -221,8 +223,18 @@ in
           [
             (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=200% ${getExe helium}")
             (makeProgram [ "SUPER" "D" ] "${launcher} --memory=1G --cpu=80% ${getExe discord}")
-            (makeProgram [ "SUPER" "Q" ] "${launcher} ${getExe kitty}")
             (makeProgram [ "SUPER" "M" ] "${launcher} ${getExe kopuz}")
+            {
+              keys = [
+                "SUPER"
+                "Q"
+              ];
+              exec = "${launcher} ${getExe kitty}";
+            }
+            {
+              autostart = true;
+              exec = "sleep 10 && ${launcher} ${getExe kitty}";
+            }
 
             (makeBind [ "SUPER" "E" ] "${launcher} ${getExe' dolphin "dolphin"}")
             (makeBind [ "SUPER" "V" ] "${getExe qs-toggle} clipboard toggle")
