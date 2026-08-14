@@ -8,6 +8,7 @@ in
     dev.imports = singleton containerization;
     server.imports = singleton containerization;
     containerization = {
+      preserve.directories = singleton "/var/lib/docker";
       virtualisation.docker = {
         enable = true;
         enableOnBoot = false;
