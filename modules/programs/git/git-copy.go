@@ -21,7 +21,9 @@ func main() {
 	log.SetFlags(0)
 
 	var targetDir string
+	var useGit bool
 	pflag.StringVarP(&targetDir, "destination", "d", "", "destination file")
+	pflag.BoolVarP(&useGit, "git", "g", false, "use git to clone instead of jj")
 	pflag.SetInterspersed(false)
 
 	pflag.Parse()
@@ -55,7 +57,14 @@ func main() {
 	args := []string{"git", "clone", cloneURI, targetDir}
 	args = append(args, extraArgs...)
 
-	cmd := exec.Command("jj", args...)
+	var cmd *exec.Cmd
+	if useGit {
+		args[0] = "clone"       // replace "git" with "clone"
+		args[1] = "--recursive" // replace "clone" with "--recursive"
+		cmd = exec.Command("git", args...)
+	} else {
+		cmd = exec.Command("jj", args...)
+	}
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
