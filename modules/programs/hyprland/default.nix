@@ -142,7 +142,6 @@ in
         hyprscreenshot
         helium
         kitty
-        kopuz
         control
         ;
     in
@@ -223,7 +222,6 @@ in
           [
             (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=200% ${getExe helium}")
             (makeProgram [ "SUPER" "D" ] "${launcher} --memory=1G --cpu=80% ${getExe discord}")
-            (makeProgram [ "SUPER" "M" ] "${launcher} ${getExe kopuz}")
             {
               keys = [
                 "SUPER"

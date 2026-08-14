@@ -15,11 +15,6 @@ hl.window_rule({
   match = { class = "^(discord|vesktop|equibop)$" },
   workspace = "3 silent",
 })
-hl.window_rule({
-  name = "music workspace 4",
-  match = { class = "^(kopuz)$" },
-  workspace = "4 silent",
-})
 
 hl.on("window.urgent", function(w)
   if w ~= nil and w.workspace ~= nil then
@@ -125,7 +120,7 @@ hl.layer_rule({
 
 hl.window_rule({
   name = "Low Opacity",
-  match = { title = "^(kitty|kopuz)$" },
+  match = { title = "^(kitty)$" },
   opacity = "0.85 0.70",
 })
 
