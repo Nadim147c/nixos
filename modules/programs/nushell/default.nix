@@ -1,7 +1,12 @@
 { lib, ... }:
 let
   inherit (lib.hm.nushell) toNushell;
-  inherit (lib.modules) mkIf mkMerge mkAliasOptionModule;
+  inherit (lib.modules)
+    mkIf
+    mkMerge
+    mkDefault
+    mkAliasOptionModule
+    ;
   inherit (lib.strings) concatMapAttrsStringSep;
   inherit (lib.x) opt;
 in
@@ -22,10 +27,9 @@ in
           [ "programs" "nushell" "interactiveShellInit" ]
           [ "programs" "nushell" "extraConfig" ]
         )
+        { programs.nushell.enable = mkDefault true; }
       ];
       options.programs.nushell = {
-        enable = opt.bool true;
-        package = opt.null.pkg pkgs.nushell;
         extraConfig = opt.block "";
         init = opt.attrs.block { };
         settings = opt.attrs.recursive {
