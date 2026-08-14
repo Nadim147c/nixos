@@ -38,6 +38,7 @@ in
           "ctrl+=" = "change_font_size all +0.5";
           "ctrl+c" = "copy_or_interrupt";
           "ctrl+v" = "paste_from_clipboard";
+          "ctrl+e" = "copy_ansi_to_clipboard";
         };
       };
     };
