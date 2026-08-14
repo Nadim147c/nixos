@@ -54,7 +54,7 @@ in
           {
             # Core utils aliases
             du = wrap "du" "-h";
-            grep = wrap "grep" "--color";
+            grep = getExe self.packages.${system}.ripgrep;
             exe = wrap "chmod" "+x";
             x = getExe' findutils "xargs";
             ffmpeg = wrap' (getExe ffmpeg) "-hide_banner";
