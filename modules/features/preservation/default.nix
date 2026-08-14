@@ -22,7 +22,6 @@ in
           "/var/lib/bluetooth"
           "/var/lib/fprint"
           "/var/lib/fwupd"
-          "/var/lib/libvirt"
           "/var/lib/power-profiles-daemon"
           "/var/lib/systemd/coredump"
           "/var/lib/systemd/rfkill"
