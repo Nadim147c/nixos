@@ -15,10 +15,12 @@ in
               "goimports"
               "gofumpt"
             ];
+            nim = [ "nph" ];
           };
           formatters = {
             goimports.command = getExe' pkgs.gotools "goimports";
             sql_formatter.command = getExe pkgs.sql-formatter;
+            nph.command = getExe pkgs.nph;
             topiary_nushell = {
               command = getExe self.packages.${system}.nu-formatter;
               args = [
