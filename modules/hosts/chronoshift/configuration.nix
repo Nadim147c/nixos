@@ -1,5 +1,8 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
+  inherit (lib) fix;
+  inherit (lib.lists) singleton;
+  inherit (lib.strings) getName;
   inherit (config.flake.modules) nixos;
 in
 {
@@ -14,6 +17,18 @@ in
         nixos.pc
         nixos.wireless
       ];
+
+      nixpkgs.config.allowUnfreePredicate =
+        pkg:
+        builtins.elem (getName pkg) [
+          "steam"
+          "steam-unwrapped"
+        ];
+      preserveHome.directories = [
+        ".steam"
+        ".local/share/Steam"
+      ];
+      programs.steam.enable = true;
 
       services.git-sync.enable = true;
 
@@ -50,6 +65,10 @@ in
       environment.systemPackages = with pkgs; [
         libva
         libva-utils
+
+        libxcb-cursor
+        libxcb
+        xcb-util-cursor
       ];
 
       environment.sessionVariables = {
