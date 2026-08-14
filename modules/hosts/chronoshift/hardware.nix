@@ -17,6 +17,8 @@
         "usb_storage"
         "sd_mod"
         "rtsx_pci_sdmmc"
+        "tpm_crb"
+        "tpm_tis"
       ];
       boot.initrd.kernelModules = [ ];
       boot.kernelModules = [ "kvm-intel" ];
