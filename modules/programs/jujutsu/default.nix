@@ -11,7 +11,6 @@ in
     {
       packages = with pkgs; [
         jujutsu
-        watchman
       ];
       # Should we???
       preserveHome.directories = singleton ".config/jj/repos";
@@ -50,7 +49,7 @@ in
         # Copied from https://github.com/RGBCube/ncc/blob/60d98caa4cb2a273619385120b51008bb959234b/modules/version-control/version-control.mod.nix
         fsmonitor = {
           backend = "watchman";
-          watchman.register-snapshot-trigger = true;
+          watchman.register-snapshot-trigger = false;
         };
 
         templates.git_push_bookmark = /* javascript */ ''
