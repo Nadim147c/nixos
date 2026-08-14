@@ -6,11 +6,6 @@ local function get_binds(...)
 end
 
 hl.window_rule({
-  name = "kitty workspace 1",
-  match = { class = "^(kitty)$" },
-  workspace = "1 silent",
-})
-hl.window_rule({
   name = "browser workspace 2",
   match = { class = "^(zen-(beta|browser)|[hH]elium)$" },
   workspace = "2 silent",
