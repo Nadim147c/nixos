@@ -4,7 +4,7 @@
   cloud = {
     authenticated = false;
     settingsSync = false;
-    settingsSyncVersion = 1785426054477;
+    settingsSyncVersion = 9999999999999;
     url = "https://cloud.equicord.org/";
   };
   disableMinSize = false;
@@ -13,7 +13,7 @@
   enableReactDevtools = false;
   enabledThemeLinks = [ ];
   enabledThemes = [ ];
-  frameless = false;
+  frameless = true;
   ignoreResetWarning = false;
   mainWindowFrameless = true;
   notifications = {
@@ -41,10 +41,6 @@
     };
     BadgeAPI.enabled = true;
     BetterGifLoad.enabled = true;
-    BetterGifPicker = {
-      enabled = true;
-      keepOpen = true;
-    };
     BetterInvites.enabled = true;
     BetterRoleContext = {
       enabled = true;
@@ -56,6 +52,7 @@
       enabled = true;
       organizeMenu = true;
     };
+    BetterUploadButton.enabled = true;
     BlurNSFW = {
       blurAllChannels = false;
       blurAmount = 10;
@@ -67,6 +64,7 @@
     };
     CharacterCounter.enabled = true;
     ChatInputButtonAPI.enabled = true;
+    CleanChannelName.enabled = true;
     ClearURLs.enabled = true;
     CommandsAPI.enabled = true;
     ConcatenatedComponentExtractor.enabled = true;
@@ -87,6 +85,7 @@
       removeLibraryAboveDms = false;
       removeNameplate = false;
       removeProfileEffect = true;
+      removeProfileFrame = true;
       removeQuestsAboveDms = false;
       removeServerBoostInfo = true;
       removeShopAboveDms = false;
@@ -96,6 +95,7 @@
     DisableDeepLinks.enabled = true;
     DownloadAllAttachments.enabled = true;
     Dragify.enabled = true;
+    EquibopStreamFixes.enabled = true;
     EquicordHelper = {
       accountStandingButton = false;
       disableAdoptTagPrompt = true;
@@ -122,6 +122,7 @@
       transformEmojis = true;
       transformStickers = true;
     };
+    FastDeleteChannels.enabled = true;
     FixCodeblockGap.enabled = true;
     FixImagesQuality = {
       enabled = true;
@@ -154,6 +155,7 @@
       showFullUrl = false;
     };
     LimitlessScreenshare.enabled = true;
+    LoadingQuotes.enabled = true;
     MarkdownTables.enabled = true;
     MessageAccessoriesAPI.enabled = true;
     MessageClickActions = {
@@ -186,7 +188,18 @@
       rows = 2;
       scroll = true;
     };
-    NewPluginsManager.enabled = true;
+    NewGuildSettings = {
+      enabled = true;
+      events = true;
+      everyone = true;
+      guild = true;
+      highlights = true;
+      messages = 1;
+      mobilePush = true;
+      role = true;
+      showAllChannels = true;
+      voiceChannels = false;
+    };
     NoTrack = {
       disableAnalytics = true;
       enabled = true;
@@ -204,6 +217,7 @@
     };
     PreviewMessage.enabled = true;
     ProfileCollectionsAPI.enabled = true;
+    Questify.enabled = true;
     QuickReply = {
       enabled = true;
       ignoreBlockedAndIgnored = true;
@@ -223,6 +237,7 @@
       offlineRemovals = true;
       servers = true;
     };
+    RevealAllSpoilers.enabled = true;
     RichMagnetLinks.enabled = true;
     SaveFavoriteGIFs.enabled = true;
     ServerListAPI.enabled = true;
@@ -242,6 +257,7 @@
       noShiftDelete = true;
       noShiftPin = true;
     };
+    ShowSongName.enabled = true;
     SupportHelper.enabled = true;
     TypingTweaks = {
       alternativeFormatting = true;
@@ -257,7 +273,11 @@
       enabled = true;
     };
     WebContextMenus.enabled = true;
-    WebKeybinds.enabled = true;
+    WebKeybinds = {
+      enabled = true;
+      overrideCommonKeybinds = true;
+      showNavigationButtons = true;
+    };
     WebScreenShareFixes.enabled = true;
     WhoReacted.enabled = true;
   };
