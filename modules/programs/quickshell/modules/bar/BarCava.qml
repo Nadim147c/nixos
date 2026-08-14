@@ -1,22 +1,18 @@
 pragma ComponentBehavior: Bound
 
 import qs.modules.common
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
-import OkLab
+import Quickshell.Widgets
 import Cava
 
-Rectangle {
+RetroButton {
     id: root
-
     Layout.fillHeight: true
-    implicitWidth: mute ? 0 : body.width + (Appearance.space.small * 2)
-    Behavior on implicitWidth {
-        animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
-    }
 
-    color: "transparent"
+    enabled: false
 
     property bool mute: true
     property double total: Cava.total
@@ -34,27 +30,111 @@ Rectangle {
         onTriggered: root.mute = !root.total
     }
 
-    readonly property oklab from: OkLab.fromColor(Appearance.material.myPrimary)
-    readonly property oklab to: OkLab.fromColor(Appearance.material.mySecondary)
+    Item {
+        implicitWidth: body.width + Appearance.space.tiny * 3
+        implicitHeight: root.contentHeight
+        Rectangle {
+            id: rect
+            anchors.fill: parent
+            anchors.margins: Appearance.space.tiny
+            color: Appearance.material.mySurfaceContainerHighest
+            Loader {
+                active: root.mute
+                anchors.fill: parent
+                sourceComponent: Item {
+                    anchors.fill: parent
+                    Item {
+                        id: textContainer
+                        anchors.fill: parent
+                        visible: false
 
-    RowLayout {
-        id: body
-        spacing: 1
-        x: Appearance.space.small
+                        Text {
+                            anchors.fill: parent
+                            text: "OwO"
+                            color: Appearance.material.myOnBackground
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                            font {
+                                family: Appearance.font.family.pixel
+                                pixelSize: Appearance.font.pixelSize.larger
+                            }
+                        }
+                    }
 
-        Repeater {
-            model: Cava.values
-            Item {
-                id: bar
-                implicitWidth: Appearance.space.tiny
-                implicitHeight: root.height
-                required property double modelData
-                Rectangle {
-                    y: (parent.height - implicitHeight) / 2
-                    radius: Appearance.round.medium
-                    implicitWidth: bar.implicitWidth
-                    implicitHeight: root.mute ? 0 : Math.max(root.height * bar.modelData, 1)
-                    color: OkLab.blendToColor(root.from, root.to, bar.modelData)
+                    ShaderEffectSource {
+                        id: textSource
+                        sourceItem: textContainer
+                        hideSource: true
+                        live: true
+                    }
+
+                    ShaderEffect {
+                        id: glitchEffect
+                        anchors.fill: parent
+
+                        property variant source: textSource
+                        property real time: 0
+                        property real glitchAmount: 0.0
+
+                        fragmentShader: "glitch.frag.qsb"
+
+                        NumberAnimation on time {
+                            from: 0
+                            to: 100
+                            duration: 10000
+                            loops: Animation.Infinite
+                            running: true
+                        }
+                    }
+
+                    Timer {
+                        interval: 150
+                        running: true
+                        repeat: true
+                        onTriggered: {
+                            glitchEffect.glitchAmount = Math.random() > 0.6 ? Math.random() : 0.0;
+                        }
+                    }
+                }
+            }
+            RowLayout {
+                id: body
+                height: parent.height
+                spacing: 1
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                Repeater {
+                    model: Cava.values
+
+                    Item {
+                        id: bar
+                        implicitWidth: Appearance.space.tiny
+                        implicitHeight: body.height
+                        required property double modelData
+
+                        ClippingRectangle {
+                            anchors.bottom: parent.bottom
+                            implicitWidth: bar.implicitWidth
+                            implicitHeight: rect.height * bar.modelData
+
+                            Rectangle {
+                                anchors.bottom: parent.bottom
+                                width: parent.width
+                                height: root.height
+
+                                gradient: Gradient {
+                                    GradientStop {
+                                        position: 0.0
+                                        color: Appearance.material.myError
+                                    }
+                                    GradientStop {
+                                        position: 1.0
+                                        color: Appearance.material.myPrimary
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

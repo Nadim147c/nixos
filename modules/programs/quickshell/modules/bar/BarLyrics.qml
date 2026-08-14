@@ -1,88 +1,161 @@
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
 import OkLab
+import Quickshell.Io
+import Quickshell.Widgets
 
-Rectangle {
+RetroButton {
     id: root
-    implicitWidth: lyrics.width + (Appearance.space.medium * 2)
-    implicitHeight: parent.height
 
-    radius: Appearance.round.medium
+    property string fortuneQuote: ""
 
-    color: lyricArea.containsMouse ? Appearance.material.mySecondary : "transparent"
+    Layout.fillHeight: true
+    Layout.fillWidth: true
 
-    property color fg: {
-        if (lyricArea.containsMouse) {
-            return Appearance.material.myOnSecondary;
-        } else if (!WaybarLyric.isPlaying) {
-            return Appearance.material.myOnSurfaceVariant;
+    onClicked: {
+        if (!WaybarLyric.text || WaybarLyric.text.trim().length === 0) {
+            fortuneProcess.running = false;
+            fortuneProcess.running = true;
         } else {
-            return Appearance.material.myPrimary;
+            Toggle.player = !Toggle.player;
         }
     }
+    onRightClicked: WaybarLyric.player.togglePlaying()
 
-    Behavior on color {
-        animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
-    }
-    Behavior on fg {
-        animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
-    }
+    Component.onCompleted: fortuneProcess.running = true
 
-    MouseArea {
-        id: lyricArea
-        y: (parent.height - lyrics.implicitHeight) / 2
-        x: Appearance.space.medium
+    Process {
+        id: fortuneProcess
+        command: ["bash", "-c", "fortune -s -n 100 | tr '\\n' ' ' | xargs"]
+        running: true
 
-        implicitWidth: lyrics.implicitWidth + (Appearance.space.little * 2)
-        implicitHeight: parent.height
-
-        cursorShape: Qt.PointingHandCursor
-
-        hoverEnabled: true
-        enabled: true
-
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-
-        onClicked: mouse => {
-            if (mouse.button === Qt.LeftButton) {
-                Toggle.player = true;
-            }
-            if (mouse.button === Qt.RightButton) {
-                WaybarLyric.player.togglePlaying();
+        stdout: SplitParser {
+            onRead: data => {
+                if (data && data.trim().length > 0) {
+                    root.fortuneQuote = data.trim();
+                }
             }
         }
+    }
+
+    Item {
+        implicitWidth: root.contentWidth
+        implicitHeight: root.contentHeight
 
         RowLayout {
-            id: lyrics
-
+            anchors.fill: parent
+            anchors.leftMargin: Appearance.space.medium
+            anchors.rightMargin: Appearance.space.medium
             spacing: Appearance.space.little
+
             MaterialSymbol {
-                text: WaybarLyric.icon
-                visible: WaybarLyric.icon.length != 0
-                color: root.fg
+                text: {
+                    if (WaybarLyric.icon.length) {
+                        return WaybarLyric.icon;
+                    } else if (WaybarLyric.text.length) {
+                        return "play_arrow";
+                    } else {
+                        return "auto_awesome";
+                    }
+                }
+                visible: text.length != 0
+                color: Appearance.material.myOnBackground
                 iconSize: Appearance.font.pixelSize.large
                 fill: 1
             }
-            StyledText {
-                textFormat: Text.RichText
-                property color highlight: {
-                    var color = OkLab.fromColor(root.fg);
-                    color.l *= color.l > 0.5 ? 1.2 : 0.8;
-                    return OkLab.toColor(color);
-                }
-                text: {
-                    const text = WaybarLyric.text;
-                    const out = text.replace(/<b>/g, `<b style="color: ${highlight};">`);
-                    return out;
-                }
-                color: root.fg
-                font {
-                    family: Appearance.font.family.main
-                    italic: !WaybarLyric.isPlaying
-                    pixelSize: Appearance.font.pixelSize.small
+
+            ClippingRectangle {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                color: "transparent"
+                Text {
+                    id: textItem
+                    height: parent.height
+                    width: parent.width
+
+                    property color highlight: {
+                        var c = OkLab.fromColor(color);
+                        c.l *= c.l > 0.5 ? 1.5 : 0.5;
+                        return OkLab.toColor(c);
+                    }
+
+                    property string rawText: WaybarLyric.text
+                    property string plainText: WaybarLyric.text.replace(/<\/?\w+[^>]*>/g, "")
+                    onPlainTextChanged: textAnimation.restart()
+                    text: {
+                        if (!rawText || rawText.trim().length === 0) {
+                            return root.fortuneQuote;
+                        }
+
+                        const colored = rawText.replace(/<b>/g, `<span style="font-weight: 600; color: ${highlight};">`).replace(/<\/b>/g, "</span>");
+                        if (WaybarLyric.alt !== "getting") {
+                            return colored;
+                        }
+                        return `${colored} <span style="color: ${Appearance?.material?.mySurfaceVariant};">[Loading lyrics]</span>`;
+                    }
+
+                    verticalAlignment: Text.AlignVCenter
+                    elide: Text.ElideRight
+                    textFormat: Text.RichText
+                    color: Appearance.material.myOnBackground
+
+                    font {
+                        family: Appearance.font.family.pixel
+                        italic: WaybarLyric.text.length !== 0 && !WaybarLyric.isPlaying
+                        pixelSize: Appearance.font.pixelSize.small
+                    }
+
+                    SequentialAnimation {
+                        id: textAnimation
+                        alwaysRunToEnd: true
+
+                        ParallelAnimation {
+                            NumberAnimation {
+                                target: textItem
+                                property: "y"
+                                to: -textItem.height
+                                duration: 100
+                                easing.type: Easing.InSine
+                            }
+                            NumberAnimation {
+                                target: textItem
+                                property: "opacity"
+                                to: 0
+                                duration: 100
+                                easing.type: Easing.InSine
+                            }
+                        }
+
+                        PropertyAction {}
+
+                        PropertyAction {
+                            target: textItem
+                            property: "y"
+                            value: textItem.height
+                        }
+
+                        ParallelAnimation {
+                            NumberAnimation {
+                                target: textItem
+                                property: "y"
+                                to: 0
+                                duration: 100
+                                easing.type: Easing.OutSine
+                            }
+                            NumberAnimation {
+                                target: textItem
+                                property: "opacity"
+                                to: 1
+                                duration: 100
+                                easing.type: Easing.OutSine
+                            }
+                        }
+                    }
                 }
             }
         }

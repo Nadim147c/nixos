@@ -1,54 +1,31 @@
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
 
-Rectangle {
+RetroButton {
     id: root
-
-    implicitWidth: clock.width + (Appearance.space.medium * 2)
-    implicitHeight: parent.height
-
-    radius: Appearance.round.medium
-
-    color: mouseArea.containsMouse ? Appearance.material.mySecondary : Appearance.material.mySurfaceContainerHighest
-    property color fg: mouseArea.containsMouse ? Appearance.material.myOnSecondary : Appearance.material.myPrimary
-    Behavior on color {
-        animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
-    }
-    Behavior on fg {
-        animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
-    }
+    Layout.fillHeight: true
+    enabled: false
 
     SystemClock {
         id: clockData
         precision: SystemClock.Seconds
     }
 
-    RowLayout {
-        id: clock
-        y: (parent.height - clock.implicitHeight) / 2
-        x: Appearance.space.medium
-        spacing: Appearance.space.little
+    Item {
+        implicitWidth: 100
+        implicitHeight: root.contentHeight
         StyledText {
-            text: Qt.formatDateTime(clockData.date, "hh:mm AP")
-            color: root.fg
-            font {
-                pixelSize: Appearance.font.pixelSize.small
-            }
-        }
-    }
-
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-
-        onClicked: {
-            console.log("Calendar toggle signal emitted");
+            anchors.fill: parent
+            text: Qt.formatDateTime(clockData.date, "hh:mm:ss AP")
+            color: Appearance.material.myOnBackground
+            horizontalAlignment: Text.AlignHCenter
+            fontSizeMode: Text.Fit
+            font.family: Appearance.font.family.pixel
         }
     }
 }

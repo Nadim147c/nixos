@@ -10,14 +10,34 @@ import Quickshell.Services.Mpris
 Singleton {
     id: root
 
+    Component.onCompleted: selectPlayer()
+    onLatestUpdatedPlayerNameChanged: selectPlayer()
+    onPlayerNameChanged: selectPlayer()
+
+    property string latestUpdatedPlayerName: ""
     property string playerName: ""
-    onPlayerNameChanged: {
-        const mprisPlayer = Mpris.players.values.find(p => p.dbusName === playerName);
+    function selectPlayer() {
+        let mprisPlayer = Mpris.players.values.find(p => p.dbusName === playerName);
         if (mprisPlayer) {
             player = mprisPlayer;
+            return;
+        }
+        mprisPlayer = Mpris.players.values.find(p => p.dbusName === latestUpdatedPlayerName && p.isPlaying);
+        if (mprisPlayer) {
+            player = mprisPlayer;
+            return;
+        }
+        if (Mpris.players.values.length) {
+            player = Mpris.players.values[0];
+        } else {
+            player = null;
         }
     }
     property MprisPlayer player
+
+    function setPosition(sec) {
+        player.position = sec;
+    }
 
     Timer {
         running: root.isPlaying
@@ -74,7 +94,9 @@ Singleton {
         }
     }
 
-    property string text: ""
+    property string wtext: ""
+    property string ptext: player?.trackTitle || player?.trackArtist ? `${player.trackArtist} - ${player.trackTitle}` : ""
+    property string text: wtext || ptext
     property string alt: ""
     property string icon: ""
 
@@ -101,6 +123,19 @@ Singleton {
     onCoverChanged: {
         if (cover) {
             coverColors.exec(["rong", "image", "--dry-run", "--json", cover]);
+        }
+    }
+
+    Process {
+        running: true
+        command: ["qs-mpris-monitor"]
+        stdout: SplitParser {
+            onRead: data => {
+                if (data) {
+                    root.latestUpdatedPlayerName = data.toString().trim();
+                    root.selectPlayer();
+                }
+            }
         }
     }
 
@@ -188,17 +223,6 @@ Singleton {
         }
     }
 
-    function setPosition(pos) {
-        return Quickshell.execDetached(["waybar-lyric", "position", `${pos}s`]);
-    }
-
-    Component.onCompleted: {
-        const player = Mpris.players.values.find(p => p.dbusName === playerName);
-        if (player) {
-            root.player = player;
-        }
-    }
-
     Process {
         id: commandProcess
         running: true
@@ -215,7 +239,7 @@ Singleton {
                     // It is finished downloading
                     root.shouldImport = root.alt === "getting" && waybar.alt !== "no_lyric" && root.alt !== waybar.alt;
 
-                    root.text = waybar.text ?? "";
+                    root.wtext = waybar.text ?? "";
                     root.alt = waybar.alt ?? "";
                     root.trackID = waybar.id ?? "";
                     root.playerName = waybar.player ?? "";

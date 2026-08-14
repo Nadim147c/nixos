@@ -4,16 +4,14 @@
   ...
 }:
 stdenvNoCC.mkDerivation {
-  pname = "google-fonts";
+  pname = "dseg_v046";
   version = "0-unstable-2026-09-06"; # date +"0-unstable-%Y-%m-%d"
   src = lib.cleanSource (
     lib.fileset.toSource {
       root = ./.;
       fileset = lib.fileset.unions [
-        ./Anton
-        ./Gabarito
-        ./Space_Grotesk
-        ./Pixelify_Sans
+        ./DSEG7-Classic
+        ./DSEG7-Classic-MINI
       ];
     }
   );

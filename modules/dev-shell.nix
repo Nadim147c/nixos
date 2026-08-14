@@ -4,7 +4,7 @@
     {
       devShells.default = pkgs.mkShell {
         name = "nixos";
-        buildInputs = builtins.attrValues {
+        nativeBuildInputs = builtins.attrValues {
           inherit (pkgs)
             lua-language-server
             nh
@@ -13,9 +13,13 @@
             nixfmt
             stylua
             statix
+            fortune
+            pkg-config
             ;
+          inherit (pkgs.qt6) qtshadertools;
           inherit (self'.packages) nu-formatter;
         };
+        buildinputs = [ pkgs.glib ];
       };
     };
 }

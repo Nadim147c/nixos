@@ -30,7 +30,7 @@ in
               twemoji-color-font
               ;
             inherit (pkgs.nerd-fonts) jetbrains-mono;
-            inherit (self'.packages) electroharmonix google-fonts;
+            inherit (self'.packages) dseg_v046 electroharmonix google-fonts;
           };
         };
         bangla = /* xml */ ''
@@ -101,7 +101,7 @@ in
               twemoji-color-font
               ;
             inherit (pkgs.nerd-fonts) jetbrains-mono;
-            inherit (self.packages.${system}) electroharmonix google-fonts;
+            inherit (self.packages.${system}) dseg_v046 electroharmonix google-fonts;
           };
           fontconfig = {
             inherit (cfg) enable;

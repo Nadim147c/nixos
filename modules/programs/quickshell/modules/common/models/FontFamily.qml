@@ -9,4 +9,6 @@ QtObject {
     property string monospace: "JetBrains Mono NF"
     property string reading: "Readex Pro"
     property string expressive: "Space Grotesk"
+    property string pixel: "Pixelify Sans"
+    property string clock: "DSEG7 Classic Mini"
 }

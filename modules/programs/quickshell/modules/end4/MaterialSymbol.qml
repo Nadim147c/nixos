@@ -6,7 +6,7 @@ StyledText {
     property int code: 0
     text: String.fromCodePoint(code)
     property real iconSize: Appearance?.font.pixelSize.small ?? 16
-    property real fill: 0
+    property real fill: 1
     property real truncatedFill: fill.toFixed(1) // Reduce memory consumption spikes from constant font remapping
     renderType: fill !== 0 ? Text.CurveRendering : Text.NativeRendering
     font {

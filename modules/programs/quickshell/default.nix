@@ -11,9 +11,7 @@ let
   inherit (lib.strings) hasPrefix;
   inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf;
-  inherit (lib.sources) cleanSource;
   inherit (lib.strings) makeBinPath;
-  inherit (lib.fileset) toSource unions;
 in
 {
   perSystem =
@@ -35,7 +33,14 @@ in
       quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
       runtimeInputs =
         attrValues {
-          inherit (pkgs) hyprshutdown pavucontrol;
+          inherit (pkgs)
+            hyprshutdown
+            pavucontrol
+            bash
+            fortune
+            coreutils
+            findutils
+            ;
           inherit (self'.packages)
             hyprscreenshot
             rong-impure
@@ -49,13 +54,18 @@ in
         }
         ++ quickshellScripts;
 
-      quickshellConfig = cleanSource (toSource {
-        root = ./.;
-        fileset = unions [
-          ./modules
-          ./shell.qml
-        ];
-      });
+      quickshellConfig =
+        pkgs.runCommand "quickshell-config"
+          {
+            nativeBuildInputs = [ pkgs.qt6.qtshadertools ];
+          }
+          ''
+            mkdir -p $out
+            cp -r ${./modules} $out/modules
+            cp -r ${./shell.qml} $out/shell.qml
+
+            find ${./modules} -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
+          '';
 
       /*
         Quickshell cannot natively execute `.desktop` files, and its

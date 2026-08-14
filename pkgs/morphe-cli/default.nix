@@ -10,17 +10,17 @@
   wrapGAppsHook3,
 }:
 let
-  inherit (lib) toList escapeShellArg;
+  inherit (lib) toList;
   inherit (lib.licenses) gpl3Only;
   inherit (lib.sourceTypes) binaryBytecode;
 in
 stdenv.mkDerivation (finalAttr: {
-  pname = "morphe-cli";
-  version = "1.9.0";
+  pname = "morphe-desktop";
+  version = "1.14.0";
 
   src = fetchurl {
-    url = "https://github.com/MorpheApp/morphe-cli/releases/download/v${finalAttr.version}/morphe-cli-${finalAttr.version}-all.jar";
-    hash = "sha256-cHxWaqqEqMY6Log6ccsep/VeHjwIjEJs0Gss0fl9Pmk=";
+    url = "https://github.com/MorpheApp/morphe-desktop/releases/download/v${finalAttr.version}/morphe-desktop-${finalAttr.version}-all.jar";
+    hash = "sha256-0Fed81nHUzXX15kn+lLjUcR2u0OmbkPzUqhelD5RETE=";
   };
 
   strictDeps = true;
