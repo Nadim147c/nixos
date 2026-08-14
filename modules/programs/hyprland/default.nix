@@ -238,7 +238,7 @@ in
 
             (makeBind [ "SUPER" "E" ] "${launcher} ${getExe' dolphin "dolphin"}")
             (makeBind [ "SUPER" "V" ] "${getExe qs-toggle} clipboard toggle")
-            (makeBind [ "SUPER" "SPACE" ] "${getExe qs-toggle} clipboard launcher")
+            (makeBind [ "SUPER" "SPACE" ] "${getExe qs-toggle} launcher toggle")
             (makeBind [ "SUPER" "PRINT" ] "${getExe hyprscreenshot} screen")
             (makeBind [ "PRINT" ] "${getExe hyprscreenshot} region")
 
