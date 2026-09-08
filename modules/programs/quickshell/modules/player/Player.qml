@@ -1,10 +1,11 @@
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls
 import Quickshell
-import Quickshell.Widgets
 import Quickshell.Hyprland
 import Quickshell.Wayland
 
@@ -12,12 +13,7 @@ PanelWindow {
     id: player
 
     anchors {
-        left: true
         top: true
-    }
-    margins {
-        left: 50
-        top: 10
     }
 
     implicitWidth: body.width
@@ -26,6 +22,7 @@ PanelWindow {
     WlrLayershell.namespace: "quickshell:player"
 
     aboveWindows: true
+    exclusiveZone: 0
 
     color: "transparent"
 
@@ -39,14 +36,38 @@ PanelWindow {
         item: body
     }
 
-    Rectangle {
+    Item {
+        id: sourceItem
+        implicitHeight: body.height
+        implicitWidth: body.width
+    }
+
+    ShaderEffectSource {
+        id: contentTexture
+        sourceItem: sourceItem
+        hideSource: true
+        live: true
+    }
+
+    ShaderEffect {
+        anchors.fill: sourceItem
+
+        property variant source: contentTexture
+        property color borderCol: Appearance.player.myOutline
+        property color shadowCol: Appearance.player.myShadow
+        property color fillBG: Appearance.player.myBackground
+        property real pixelSize: 3
+        property real radius: 8
+        property real borderWidth: 1.0
+        property vector2d shadowOffset: Qt.vector2d(1.4, 2.0)
+        property vector2d size: Qt.vector2d(width, height)
+        fragmentShader: "./pixel_mask.frag.qsb"
+    }
+
+    Item {
         id: body
         implicitWidth: 450
         implicitHeight: content.height + (Appearance.space.large * 2)
-        opacity: 0.85
-
-        radius: Appearance.round.larger
-        color: Appearance.player.myBackground
 
         ColumnLayout {
             id: content
@@ -56,17 +77,39 @@ PanelWindow {
             spacing: 0
 
             RowLayout {
-                ClippingRectangle {
+                Item {
                     property real size: 150
                     implicitHeight: size
                     implicitWidth: size
-                    radius: Appearance.round.big
                     Image {
                         id: coverArt
                         anchors.fill: parent
                         source: WaybarLyric.cover
                         fillMode: Image.PreserveAspectCrop
-                        layer.enabled: true
+                        visible: false
+                    }
+                    ShaderEffectSource {
+                        id: imageSource
+                        sourceItem: coverArt
+                        hideSource: true
+                        live: true
+                    }
+
+                    ShaderEffect {
+                        anchors.fill: parent
+
+                        property variant imageTexture: imageSource
+
+                        property color borderCol: Appearance.player.myOutline
+                        property color shadowCol: Appearance.player.myShadow
+
+                        property real pixelSize: 2.0
+                        property real radius: 8
+                        property real borderWidth: 1.0
+                        property vector2d shadowOffset: Qt.vector2d(2, 2)
+                        property vector2d size: Qt.vector2d(width, height)
+
+                        fragmentShader: "./pixel_image_border.frag.qsb"
                     }
                 }
                 spacing: Appearance.space.large
@@ -80,14 +123,14 @@ PanelWindow {
                         StyledText {
                             id: trackTitle
                             width: control.width
-                            font.pixelSize: Appearance.font.pixelSize.large
-                            horizontalAlignment: Text.AlignHCenter
                             color: Appearance.player.myOnBackground
                             text: WaybarLyric.title || "Untitled"
                             elide: Text.ElideRight
                             animateChange: true
                             animationDistanceX: 6
                             animationDistanceY: 0
+                            font.family: Appearance.font.family.pixel
+                            font.pixelSize: Appearance.font.pixelSize.larger
                         }
                     }
                     Item {
@@ -96,15 +139,34 @@ PanelWindow {
                         StyledText {
                             id: trackArtist
                             width: control.width
-                            horizontalAlignment: Text.AlignHCenter
-                            font.pixelSize: Appearance.font.pixelSize.smaller
                             color: Appearance.player.myOnSurfaceVariant
-                            text: `${WaybarLyric.artist || "Untitled"} - ${WaybarLyric.album || "Single"}`
+                            text: WaybarLyric.artist || "Untitled"
                             elide: Text.ElideRight
                             animateChange: true
                             animationDistanceX: 6
                             animationDistanceY: 0
+                            font.family: Appearance.font.family.pixel
+                            font.pixelSize: Appearance.font.pixelSize.smaller
                         }
+                    }
+                    Item {
+                        implicitWidth: control.width
+                        implicitHeight: trackArtist.height
+                        StyledText {
+                            width: control.width
+                            color: Appearance.player.myOnSurfaceVariant
+                            text: WaybarLyric.album || "Single"
+                            elide: Text.ElideRight
+                            animateChange: true
+                            animationDistanceX: 6
+                            animationDistanceY: 0
+                            font.family: Appearance.font.family.pixel
+                            font.pixelSize: Appearance.font.pixelSize.smaller
+                        }
+                    }
+
+                    Item {
+                        Layout.fillHeight: true
                     }
                     Item {
                         implicitHeight: buttons.height
@@ -114,35 +176,63 @@ PanelWindow {
                             anchors.horizontalCenter: parent.horizontalCenter
                         }
                     }
-                    // Spacer to push the next item to the right
                     Item {
-                        id: progressBarContainer
+                        Layout.fillHeight: true
+                    }
+                    Slider {
+                        id: slider
                         Layout.fillWidth: true
-                        implicitHeight: sliderLoader.implicitHeight
+                        implicitHeight: 10
+                        value: WaybarLyric.position / (WaybarLyric.player?.length || WaybarLyric.position)
+                        onMoved: {
+                            WaybarLyric.player.position = value * (WaybarLyric.player?.length || WaybarLyric.position);
+                        }
+                        live: true
 
-                        Loader {
-                            id: sliderLoader
-                            anchors.fill: parent
-                            sourceComponent: StyledSlider {
-                                wavy: WaybarLyric.isPlaying
-                                waveFrequency: 10
-                                waveAmplitudeMultiplier: 0.1
-                                configuration: StyledSlider.Configuration.Wavy
-                                highlightColor: Appearance.player.myPrimary
-                                handleColor: Appearance.player.myPrimary
-                                trackColor: Appearance.player.myOnPrimaryFixedVariant
-                                tooltipContent: {
-                                    const pos = WaybarLyric.player?.length * value;
-                                    const mm = (pos / 60).toFixed(0).padStart(2, "0");
-                                    const ss = (pos % 60).toFixed(0).padStart(2, "0");
-                                    return `${mm}:${ss}`;
-                                }
-                                value: WaybarLyric.player?.position / WaybarLyric.player?.length
-                                onMoved: {
-                                    WaybarLyric.player.position = value * WaybarLyric.player.length;
-                                }
+                        Behavior on value {
+                            SmoothedAnimation {
+                                velocity: Appearance.animation.elementMoveFast.velocity
                             }
                         }
+
+                        background: Item {
+                            anchors.verticalCenter: parent.verticalCenter
+                            implicitWidth: control.width
+                            height: 5
+
+                            Rectangle {
+                                anchors.fill: parent
+                                color: Appearance.player.mySurfaceVariant
+                            }
+
+                            Rectangle {
+                                width: slider.visualPosition * parent.width
+                                height: parent.height
+                                color: Appearance.player.myPrimary
+                            }
+                        }
+
+                        handle: Rectangle {
+                            id: handle
+                            property real size: 15
+                            implicitHeight: size
+                            implicitWidth: size
+
+                            x: slider.visualPosition * (slider.width - width)
+                            y: (parent.height - height) / 2
+                            Behavior on y {
+                                animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+                            }
+
+                            color: Appearance.player.mySurfaceVariant
+                            border {
+                                width: 2
+                                color: Appearance.player.myOutline
+                            }
+                        }
+                    }
+                    Item {
+                        Layout.fillHeight: true
                     }
                 }
             }

@@ -1,8 +1,11 @@
+pragma ComponentBehavior: Bound
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 
 Rectangle {
     id: root
@@ -11,46 +14,52 @@ Rectangle {
     color: "transparent"
     property real buttonHeight: Appearance.space.large * 3
 
+    component PlayerButton: RetroButton {
+        id: button
+        Layout.fillHeight: true
+        Layout.preferredWidth: root.height + 4
+        color: Qt.lighter(active ? Appearance.player.mySurfaceContainerHighest : Appearance.player.mySurfaceContainer, 1.7)
+        required property string icon
+        MaterialSymbol {
+            text: button.icon
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignHCenter
+            color: Appearance.player.myOnBackground
+            font.pixelSize: Appearance.font.pixelSize.huge
+        }
+    }
+
     RowLayout {
         id: body
         spacing: Appearance.space.little
 
         PlayerButton {
-            id: previousButton
-            iconName: "skip_previous"
-            buttonHeight: root.buttonHeight
-            buttonWidth: 30
-            buttonRadius: Appearance.round.large * 2
-            onReleased: WaybarLyric.player.previous()
-            StyledToolTip {
-                extraVisibleCondition: previousButton.mouseArea.containsMouse
-                text: "Previous"
-            }
+            enabled: WaybarLyric.player?.shuffleSupported
+            onClicked: WaybarLyric.player.shuffle = !WaybarLyric.player.shuffle
+            icon: "shuffle"
         }
+
         PlayerButton {
-            iconName: WaybarLyric.isPlaying ? "pause" : "play_arrow"
-            content: WaybarLyric.isPlaying ? "pause" : "play"
-            property bool playing: WaybarLyric.isPlaying
-            buttonRadius: playing ? Appearance.round.large * 2 : Appearance.round.large
-            toggled: !WaybarLyric.isPlaying
-            onReleased: {
-                playing = !WaybarLyric.isPlaying; // change radius immediately
-                WaybarLyric.player.togglePlaying();
-            }
-            buttonHeight: root.buttonHeight
-            buttonWidth: root.buttonHeight * 2.5
+            enabled: WaybarLyric.player?.canGoPrevious
+            onClicked: WaybarLyric.player.previous()
+            icon: "skip_previous"
         }
+
         PlayerButton {
-            id: nextButton
-            iconName: "skip_next"
-            buttonRadius: Appearance.round.large * 2
-            buttonHeight: root.buttonHeight
-            buttonWidth: 30
-            onReleased: WaybarLyric.player.next()
-            StyledToolTip {
-                extraVisibleCondition: nextButton.mouseArea.containsMouse
-                text: "Previous"
-            }
+            enabled: WaybarLyric.player?.canTogglePlaying
+            onClicked: WaybarLyric.player.togglePlaying()
+            icon: WaybarLyric.isPlaying ? "pause" : "play_arrow"
+        }
+
+        PlayerButton {
+            enabled: WaybarLyric.player?.canGoNext
+            onClicked: WaybarLyric.player.next()
+            icon: "skip_next"
+        }
+
+        PlayerButton {
+            onClicked: Quickshell.execDetached(["qs-open-music-player", WaybarLyric.player.dbusName])
+            icon: "open_in_browser"
         }
     }
 }

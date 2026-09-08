@@ -12,7 +12,7 @@ RetroButton {
 
     Item {
         implicitHeight: root.contentHeight
-        implicitWidth: height
+        implicitWidth: height + 4
         MaterialSymbol {
             anchors.centerIn: parent
             color: Appearance.material.myOnSurface

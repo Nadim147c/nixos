@@ -63,8 +63,9 @@ in
             mkdir -p $out
             cp -r ${./modules} $out/modules
             cp -r ${./shell.qml} $out/shell.qml
+            chmod -R +w $out
 
-            find ${./modules} -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
+            find $out/modules -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
           '';
 
       /*

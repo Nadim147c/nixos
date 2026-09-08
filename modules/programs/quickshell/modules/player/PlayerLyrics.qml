@@ -98,7 +98,7 @@ MouseArea {
                             lyricsBar.position = Math.max(pos, 0);
                         }
                         font {
-                            family: Appearance.font.family.main
+                            family: Appearance.font.family.pixel
                             pixelSize: Appearance.font.pixelSize.small
                         }
                     }

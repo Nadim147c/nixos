@@ -18,6 +18,11 @@
             ;
           inherit (pkgs.qt6) qtshadertools;
           inherit (self'.packages) nu-formatter;
+          quickshell-dev = pkgs.writeShellScriptBin "quickshell-dev" ''
+            systemctl --user stop quickshell.service
+            trap 'systemctl --user restart quickshell.service' EXIT
+            qs -p modules/programs/quickshell/shell.qml
+          '';
         };
         buildinputs = [ pkgs.glib ];
       };
