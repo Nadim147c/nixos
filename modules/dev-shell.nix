@@ -24,7 +24,11 @@
             qs -p modules/programs/quickshell/shell.qml
           '';
         };
-        buildinputs = [ pkgs.glib ];
+        buildInputs = with pkgs; [
+          nim
+          procps
+          pkg-config
+        ];
       };
     };
 }

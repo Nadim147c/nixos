@@ -11,7 +11,7 @@ RetroButton {
 
     Layout.fillHeight: true
 
-    property real value: SystemUsage.cpuUtilization / 100
+    property real value: SystemUsage.cpuUtilization
     Behavior on value {
         animation: Appearance?.animation.elementMove.numberAnimation.createObject(this)
     }
@@ -19,7 +19,7 @@ RetroButton {
     readonly property oklab from: OkLab.fromColor(Appearance.material.myPrimary)
     readonly property oklab to: OkLab.fromColor(Appearance.material.myError)
     property color fg: {
-        const ratio = Utils.cubicBezier([0.75, 0.25, 0.25, 0.75], SystemUsage.cpuUtilization / 100);
+        const ratio = Utils.cubicBezier([0.75, 0.25, 0.25, 0.75], value);
         return OkLab.blendToColor(from, to, ratio);
     }
     Behavior on fg {
@@ -56,55 +56,12 @@ RetroButton {
 
             Item {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 60
+                Layout.preferredWidth: 70
 
                 StyledText {
                     id: cpuText
-
-                    function formatCpuFrequency(khz) {
-                        if (!khz || khz <= 0)
-                            return "--";
-                        let mhz = khz / 1000;
-                        if (mhz >= 1000) {
-                            return (mhz / 1000).toFixed(1) + " GHz";
-                        }
-                        return Math.round(mhz) + " MHz";
-                    }
-
                     anchors.fill: parent
-                    property int freq: SystemUsage.cpuFrequency
-                    property int animatedFreq: freq
-
-                    onFreqChanged: stepAnim.restart()
-
-                    SequentialAnimation {
-                        id: stepAnim
-
-                        property real fromVal: cpuText.animatedFreq
-                        property real toVal: cpuText.freq
-                        property real duration: 160
-                        property real stepDuration: duration / 2
-
-                        PauseAnimation {
-                            duration: stepAnim.stepDuration
-                        }
-                        PropertyAction {
-                            target: cpuText
-                            property: "animatedFreq"
-                            value: stepAnim.fromVal + (stepAnim.toVal - stepAnim.fromVal) * 0.50
-                        }
-
-                        PauseAnimation {
-                            duration: stepAnim.stepDuration
-                        }
-                        PropertyAction {
-                            target: cpuText
-                            property: "animatedFreq"
-                            value: stepAnim.toVal
-                        }
-                    }
-
-                    text: formatCpuFrequency(animatedFreq)
+                    text: SystemUsage.cpuFrequencyString
                     color: Appearance.material.myOnBackground
                     horizontalAlignment: Text.AlignRight
                     fontSizeMode: Text.Fit

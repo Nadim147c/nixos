@@ -11,8 +11,7 @@ RetroButton {
 
     Layout.fillHeight: true
 
-    property real usages: Utils.normalize(1 - (SystemUsage.memAvailable / SystemUsage.memTotal)) || 0
-    property real value: usages
+    property real value: SystemUsage.memUsed / SystemUsage.memTotal || 0
     Behavior on value {
         animation: Appearance?.animation.elementMove.numberAnimation.createObject(this)
     }
@@ -57,45 +56,13 @@ RetroButton {
 
             Item {
                 Layout.fillHeight: true
-                Layout.preferredWidth: 47
+                Layout.preferredWidth: 60
 
                 StyledText {
                     id: cpuText
                     anchors.fill: parent
 
-                    property real freq: root.usages * 100
-                    property real animatedFreq: freq
-
-                    onFreqChanged: stepAnim.restart()
-
-                    SequentialAnimation {
-                        id: stepAnim
-
-                        property real fromVal: cpuText.animatedFreq
-                        property real toVal: cpuText.freq
-                        property real duration: 160
-                        property real stepDuration: duration / 2
-
-                        PauseAnimation {
-                            duration: stepAnim.stepDuration
-                        }
-                        PropertyAction {
-                            target: cpuText
-                            property: "animatedFreq"
-                            value: stepAnim.fromVal + (stepAnim.toVal - stepAnim.fromVal) * 0.50
-                        }
-
-                        PauseAnimation {
-                            duration: stepAnim.stepDuration
-                        }
-                        PropertyAction {
-                            target: cpuText
-                            property: "animatedFreq"
-                            value: stepAnim.toVal
-                        }
-                    }
-
-                    text: animatedFreq ? `${animatedFreq.toFixed(1)}%` : "--"
+                    text: SystemUsage.memUsedString
                     color: Appearance.material.myOnBackground
                     horizontalAlignment: Text.AlignRight
                     fontSizeMode: Text.Fit
