@@ -1,6 +1,5 @@
 import qs.modules.common
 import qs.modules.end4
-import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
@@ -109,7 +108,7 @@ PanelWindow {
                         property vector2d shadowOffset: Qt.vector2d(2, 2)
                         property vector2d size: Qt.vector2d(width, height)
 
-                        fragmentShader: "./pixel_image_border.frag.qsb"
+                        fragmentShader: "./pixel_image_border2.frag.qsb"
                     }
                 }
                 spacing: Appearance.space.large
