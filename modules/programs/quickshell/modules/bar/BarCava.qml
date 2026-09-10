@@ -97,39 +97,44 @@ RetroButton {
                     }
                 }
             }
-            RowLayout {
+            Loader {
                 id: body
+                active: !root.mute
+                width: Cava.values.length * (Appearance.space.tiny + 1)
                 height: parent.height
-                spacing: 1
-                anchors.horizontalCenter: parent.horizontalCenter
+                sourceComponent: RowLayout {
+                    id: bars
+                    x: 1
+                    spacing: 1
 
-                Repeater {
-                    model: Cava.values
-
-                    Item {
-                        id: bar
-                        implicitWidth: Appearance.space.tiny
-                        implicitHeight: body.height
-                        required property double modelData
-
-                        ClippingRectangle {
-                            anchors.bottom: parent.bottom
-                            implicitWidth: bar.implicitWidth
-                            implicitHeight: rect.height * bar.modelData
+                    Repeater {
+                        model: Cava.values
+                        Item {
+                            id: bar
+                            implicitWidth: Appearance.space.tiny
+                            implicitHeight: bars.height
+                            required property double modelData
 
                             Rectangle {
                                 anchors.bottom: parent.bottom
-                                width: parent.width
-                                height: root.height
+                                implicitWidth: bar.implicitWidth
+                                implicitHeight: rect.height * bar.modelData
+                                clip: true
 
-                                gradient: Gradient {
-                                    GradientStop {
-                                        position: 0.0
-                                        color: Appearance.material.myError
-                                    }
-                                    GradientStop {
-                                        position: 1.0
-                                        color: Appearance.material.myPrimary
+                                Rectangle {
+                                    anchors.bottom: parent.bottom
+                                    width: parent.width
+                                    height: bars.height
+
+                                    gradient: Gradient {
+                                        GradientStop {
+                                            position: 0.0
+                                            color: Appearance.material.myError
+                                        }
+                                        GradientStop {
+                                            position: 1.0
+                                            color: Appearance.material.myPrimary
+                                        }
                                     }
                                 }
                             }
