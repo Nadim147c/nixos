@@ -26,7 +26,6 @@ MouseArea {
             contentItem: Rectangle {
                 visible: lyricsBar.active
                 implicitWidth: 5
-                radius: 3
                 color: Appearance.player.myPrimary
             }
             Behavior on position {
@@ -83,7 +82,7 @@ MouseArea {
                             interval: 100
                             onTriggered: parent.updatePosition()
                         }
-                        onActiveChanged: updatePosition()
+                        onActiveChanged: active && updatePosition()
                         function updatePosition() {
                             if (!active || root.containsMouse) {
                                 return;
