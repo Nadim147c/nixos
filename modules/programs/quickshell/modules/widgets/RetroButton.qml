@@ -1,6 +1,8 @@
 pragma ComponentBehavior: Bound
-import QtQuick
+
 import qs.modules.common
+
+import QtQuick
 
 Item {
     id: root
@@ -10,6 +12,7 @@ Item {
     property real maxOffset: 2
 
     property color color: Qt.lighter(active ? Appearance.material.mySurfaceContainerHighest : Appearance.material.mySurfaceContainer, 1.7)
+    property color rippleColor: Appearance.material.myPrimary
     property color hoverColor: Qt.lighter(color, 1.3)
     property color shadowColor: Qt.darker(color, 1.4)
 
@@ -36,6 +39,8 @@ Item {
         acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
 
         onClicked: mouse => {
+            rippleEffect.clickPos = Qt.vector2d(mouseArea.mouseX / mouseArea.width, mouseArea.mouseY / mouseArea.height);
+            rippleAnim.restart();
             if (mouse.button === Qt.LeftButton) {
                 root.clicked(mouse);
             } else if (mouse.button === Qt.RightButton) {
@@ -73,6 +78,32 @@ Item {
                     easing.type: Appearance?.animation.elementMoveFast.type
                     easing.bezierCurve: Appearance?.animation.elementMoveFast.bezierCurve
                 }
+            }
+
+            ShaderEffect {
+                id: rippleEffect
+                anchors.fill: parent
+                visible: rippleAnim.running
+
+                property vector2d clickPos: Qt.vector2d(0.5, 0.5)
+                property real progress: 1
+                property real aspectRatio: width / height
+                property real waveWidth: 1
+
+                property color centerColor: root.rippleColor
+                property color edgeColor: Qt.lighter(root.rippleColor, 1.2)
+
+                fragmentShader: "./ripple.frag.qsb"
+            }
+
+            NumberAnimation {
+                id: rippleAnim
+                target: rippleEffect
+                property: "progress"
+                from: 0.0
+                to: 1.0
+                duration: Appearance.animation.clickBounce.duration * 2
+                easing.bezierCurve: Appearance.animation.clickBounce.bezierCurve
             }
 
             Rectangle {

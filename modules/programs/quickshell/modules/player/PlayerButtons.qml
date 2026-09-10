@@ -19,6 +19,7 @@ Rectangle {
         Layout.fillHeight: true
         Layout.preferredWidth: root.height + 4
         color: Qt.lighter(active ? Appearance.player.mySurfaceContainerHighest : Appearance.player.mySurfaceContainer, 1.7)
+        rippleColor: Appearance.player.myPrimary
         required property string icon
         MaterialSymbol {
             text: button.icon
