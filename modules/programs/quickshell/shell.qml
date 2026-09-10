@@ -25,39 +25,39 @@ ShellRoot {
     }
 
     LazyLoader {
-        active: true
+        activeAsync: true
         component: VolumeOSD {}
     }
     LazyLoader {
-        active: true
+        activeAsync: true
         component: Bar {}
     }
     LazyLoader {
-        active: Toggle.player
+        activeAsync: Toggle.player
         component: Player {}
     }
     LazyLoader {
-        active: Toggle.wallpaper
+        activeAsync: Toggle.wallpaper
         component: Wallpaper {}
     }
     LazyLoader {
-        active: Toggle.logout
+        activeAsync: Toggle.logout
         component: Logout {}
     }
     LazyLoader {
-        active: Toggle.panel
+        activeAsync: Toggle.panel
         component: Panel {}
     }
     LazyLoader {
-        active: Toggle.clipboard
+        activeAsync: Toggle.clipboard
         component: Clipboard {}
     }
     LazyLoader {
-        active: Toggle.discord
+        activeAsync: Toggle.discord
         component: DiscordOverly {}
     }
     LazyLoader {
-        active: Toggle.launcher
+        activeAsync: Toggle.launcher
         component: Launcher {}
     }
 }
