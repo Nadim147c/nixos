@@ -108,6 +108,9 @@ PanelWindow {
                         property vector2d shadowOffset: Qt.vector2d(2, 2)
                         property vector2d size: Qt.vector2d(width, height)
 
+                        // there are two version
+                        // - pixel_image_border.frag will create pixel borders
+                        // - pixel_image_border2.frag will create pixel borders and also pixelate the image
                         fragmentShader: "./pixel_image_border2.frag.qsb"
                     }
                 }
