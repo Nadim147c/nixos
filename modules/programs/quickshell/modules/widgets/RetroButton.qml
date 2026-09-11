@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 
 import qs.modules.common
+import qs.modules.end4.functions
 
 import QtQuick
 
@@ -11,10 +12,12 @@ Item {
     property real shadowSize: 4
     property real maxOffset: 2
 
-    property color color: Qt.lighter(active ? Appearance.material.mySurfaceContainerHighest : Appearance.material.mySurfaceContainer, 1.7)
+    property color color: Qt.lighter(Appearance.material.mySurfaceContainer, 1.7)
+    property color activeColor: Qt.lighter(color, 1.8)
+    property color disabledColor: color
     property color rippleColor: Appearance.material.myPrimary
     property color hoverColor: Qt.lighter(color, 1.3)
-    property color shadowColor: Qt.darker(color, 1.4)
+    property color shadowColor: Appearance.material.myShadow
 
     property Item contentItem
     property alias contentHeight: body.height
@@ -70,7 +73,17 @@ Item {
             width: root.width - root.maxOffset - root.shadowSize
             height: root.height - root.maxOffset - root.shadowSize
 
-            color: mouseArea.containsMouse ? root.hoverColor : root.color
+            color: {
+                if (mouseArea.containsMouse) {
+                    return root.hoverColor;
+                } else if (root.active) {
+                    return root.activeColor;
+                } else if (!root.enabled) {
+                    return root.disabledColor;
+                } else {
+                    return root.color;
+                }
+            }
 
             Behavior on offset {
                 NumberAnimation {
@@ -86,6 +99,8 @@ Item {
                 visible: rippleAnim.running
 
                 property vector2d clickPos: Qt.vector2d(0.5, 0.5)
+                property vector2d screenSize: Qt.vector2d(width, height)
+                property real pixelSize: 5.0
                 property real progress: 1
                 property real aspectRatio: width / height
                 property real waveWidth: 1
@@ -110,7 +125,8 @@ Item {
                 id: body
                 anchors.fill: parent
                 color: "transparent"
-
+                border.width: 1
+                border.color: ColorUtils.transparentize(root.shadowColor, 0.7)
                 onChildrenChanged: {
                     for (var i = 0; i < children.length; i++) {
                         if (children[i] instanceof Item) {

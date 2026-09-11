@@ -32,20 +32,18 @@ RetroButton {
             id: volume
             anchors.centerIn: parent
             spacing: Appearance.space.little
-            MaterialSymbol {
+
+            Text {
                 color: Appearance.material.myOnBackground
                 text: {
                     const vol = Pipewire.defaultAudioSink?.audio.volume;
                     if (vol === 0) {
-                        return "volume_mute";
-                    } else if (vol <= 0.5) {
-                        return "volume_down";
-                    } else {
-                        return "volume_up";
+                        return "volume";
                     }
+                    return `volume-${Math.ceil(vol / 0.33333333)}`;
                 }
-                font.weight: 800
-                fill: 1
+                font.family: Appearance.font.family.iconPixel
+                font.pixelSize: Appearance.font.pixelSize.large
             }
             StyledText {
                 text: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100).toString() + "% " // extra space is intention

@@ -5,6 +5,7 @@ QtObject {
     property string numbers: "Rubik"
     property string title: "Gabarito"
     property string iconMaterial: "Material Symbols Rounded"
+    property string iconPixel: "PixelartIcons"
     property string iconNerd: "JetBrainsMono Nerd Font Propo"
     property string monospace: "JetBrains Mono NF"
     property string reading: "Readex Pro"

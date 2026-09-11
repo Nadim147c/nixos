@@ -13,13 +13,14 @@ RowLayout {
     RetroButton {
         Layout.fillHeight: true
         Layout.preferredWidth: root.height + 4
-        enabled: WaybarLyric.player?.canGoPrevious
+        enabled: !!WaybarLyric.player?.canGoPrevious
         onClicked: WaybarLyric.player.previous()
+        disabledColor: Appearance.player.mySurfaceContainer
         MaterialSymbol {
             text: "skip_previous"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignHCenter
-            color: Appearance.material.myOnBackground
+            color: parent.enabled ? Appearance.material.myOnBackground : Appearance.material.mySurfaceVariant
             font.pixelSize: Appearance.font.pixelSize.huge
         }
     }
@@ -27,13 +28,14 @@ RowLayout {
     RetroButton {
         Layout.fillHeight: true
         Layout.preferredWidth: root.height + 4
-        enabled: WaybarLyric.player?.canTogglePlaying
+        enabled: !!WaybarLyric.player?.canTogglePlaying
         onClicked: WaybarLyric.player.togglePlaying()
+        disabledColor: Appearance.player.mySurfaceContainer
         MaterialSymbol {
             text: WaybarLyric.isPlaying ? "pause" : "play_arrow"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignHCenter
-            color: Appearance.material.myOnBackground
+            color: parent.enabled ? Appearance.material.myOnBackground : Appearance.material.mySurfaceVariant
             font.pixelSize: Appearance.font.pixelSize.huge
         }
     }
@@ -41,13 +43,14 @@ RowLayout {
     RetroButton {
         Layout.fillHeight: true
         Layout.preferredWidth: root.height + 4
-        enabled: WaybarLyric.player?.canGoNext
+        enabled: !!WaybarLyric.player?.canGoNext
         onClicked: WaybarLyric.player.next()
+        disabledColor: Appearance.player.mySurfaceContainer
         MaterialSymbol {
             text: "skip_next"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignHCenter
-            color: Appearance.material.myOnBackground
+            color: parent.enabled ? Appearance.material.myOnBackground : Appearance.material.mySurfaceVariant
             font.pixelSize: Appearance.font.pixelSize.huge
         }
     }

@@ -17,11 +17,13 @@ RetroButton {
         RowLayout {
             id: network
             spacing: Appearance.space.tiny
+            implicitHeight: root.contentHeight
             anchors.centerIn: parent
-            MaterialSymbol {
+            Text {
                 color: Appearance.material.myOnBackground
-                text: SystemUsage.netUp > SystemUsage.netDown ? "arrow_upward" : "arrow_downward"
-                font.weight: 800
+                text: SystemUsage.netUp > SystemUsage.netDown ? "arrow-big-up-dash" : "arrow-big-down-dash"
+                font.family: Appearance.font.family.iconPixel
+                font.pixelSize: Appearance.font.pixelSize.large
             }
             Item {
                 implicitWidth: 80

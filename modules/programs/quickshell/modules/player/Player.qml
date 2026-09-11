@@ -116,125 +116,142 @@ PanelWindow {
                 }
                 spacing: Appearance.space.large
 
-                ColumnLayout {
-                    id: control
+                Item {
                     implicitWidth: content.width - coverArt.width - Appearance.space.large
-                    Item {
-                        implicitWidth: control.width
-                        implicitHeight: trackTitle.height
+                    Layout.fillHeight: true
+
+                    ColumnLayout {
+                        anchors {
+                            fill: parent
+                            topMargin: Appearance.space.small
+                            bottomMargin: Appearance.space.big
+                        }
+
                         StyledText {
-                            id: trackTitle
-                            width: control.width
+                            Layout.fillWidth: true
                             color: Appearance.player.myOnBackground
                             text: WaybarLyric.title || "Untitled"
                             elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignHCenter
                             animateChange: true
                             animationDistanceX: 6
                             animationDistanceY: 0
                             font.family: Appearance.font.family.pixel
                             font.pixelSize: Appearance.font.pixelSize.larger
                         }
-                    }
-                    Item {
-                        implicitWidth: control.width
-                        implicitHeight: trackArtist.height
+
                         StyledText {
-                            id: trackArtist
-                            width: control.width
+                            Layout.fillWidth: true
                             color: Appearance.player.myOnSurfaceVariant
-                            text: WaybarLyric.artist || "Untitled"
+                            text: `  ${WaybarLyric.artist || "Unknown Artist"}`
                             elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignHCenter
                             animateChange: true
                             animationDistanceX: 6
                             animationDistanceY: 0
                             font.family: Appearance.font.family.pixel
-                            font.pixelSize: Appearance.font.pixelSize.smaller
+                            font.pixelSize: Appearance.font.pixelSize.small
                         }
-                    }
-                    Item {
-                        implicitWidth: control.width
-                        implicitHeight: trackArtist.height
-                        StyledText {
-                            width: control.width
-                            color: Appearance.player.myOnSurfaceVariant
-                            text: WaybarLyric.album || "Single"
-                            elide: Text.ElideRight
-                            animateChange: true
-                            animationDistanceX: 6
-                            animationDistanceY: 0
-                            font.family: Appearance.font.family.pixel
-                            font.pixelSize: Appearance.font.pixelSize.smaller
-                        }
-                    }
 
-                    Item {
-                        Layout.fillHeight: true
-                    }
-                    Item {
-                        implicitHeight: buttons.height
-                        implicitWidth: control.width
-                        PlayerButtons {
-                            id: buttons
-                            anchors.horizontalCenter: parent.horizontalCenter
-                        }
-                    }
-                    Item {
-                        Layout.fillHeight: true
-                    }
-                    Slider {
-                        id: slider
-                        Layout.fillWidth: true
-                        implicitHeight: 10
-                        value: WaybarLyric.position / (WaybarLyric.player?.length || WaybarLyric.position)
-                        onMoved: {
-                            WaybarLyric.player.position = value * (WaybarLyric.player?.length || WaybarLyric.position);
-                        }
-                        live: true
-
-                        Behavior on value {
-                            SmoothedAnimation {
-                                velocity: Appearance.animation.elementMoveFast.velocity
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignHCenter
+                            Text {
+                                Layout.fillWidth: true
+                                color: Appearance.player.myOnSurfaceVariant
+                                text: `󰀥  ${WaybarLyric.album || "Single"}`
+                                elide: Text.ElideRight
+                                horizontalAlignment: Text.AlignRight
+                                font.family: Appearance.font.family.pixel
+                                font.pixelSize: Appearance.font.pixelSize.small
+                            }
+                            Item {
+                                Layout.preferredWidth: Appearance.space.medium
+                            }
+                            Text {
+                                Layout.fillWidth: true
+                                color: Appearance.player.myOnSurfaceVariant
+                                text: `   ${WaybarLyric.player.identity || "Unknow Player"}`
+                                elide: Text.ElideRight
+                                horizontalAlignment: Text.AlignLeft
+                                font.family: Appearance.font.family.pixel
+                                font.pixelSize: Appearance.font.pixelSize.small
                             }
                         }
 
-                        background: Item {
-                            anchors.verticalCenter: parent.verticalCenter
-                            implicitWidth: control.width
-                            height: 5
+                        Item {
+                            implicitHeight: buttons.height
+                            Layout.fillWidth: true
+                            PlayerButtons {
+                                id: buttons
+                                anchors.horizontalCenter: parent.horizontalCenter
+                            }
+                        }
 
-                            Rectangle {
+                        Slider {
+                            id: slider
+                            Layout.fillWidth: true
+                            implicitHeight: 10
+                            value: WaybarLyric.position / (WaybarLyric.player?.length || WaybarLyric.position)
+                            onMoved: {
+                                WaybarLyric.player.position = Utils.clamp(0, value, 0.99) * (WaybarLyric.player?.length || WaybarLyric.position);
+                            }
+                            live: true
+
+                            MouseArea {
+                                id: mouseArea
                                 anchors.fill: parent
-                                color: Appearance.player.mySurfaceVariant
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                onPressed: mouse => mouse.accepted = false
                             }
 
-                            Rectangle {
-                                width: slider.visualPosition * parent.width
-                                height: parent.height
-                                color: Appearance.player.myPrimary
-                            }
-                        }
-
-                        handle: Rectangle {
-                            id: handle
-                            property real size: 15
-                            implicitHeight: size
-                            implicitWidth: size
-
-                            x: slider.visualPosition * (slider.width - width)
-                            y: (parent.height - height) / 2
-                            Behavior on y {
+                            property real gap: 3
+                            property real handleSize: 15
+                            property real offset: visualPosition * (width - handleSize)
+                            Behavior on offset {
                                 animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
                             }
 
-                            color: Appearance.player.mySurfaceVariant
-                            border {
-                                width: 2
-                                color: Appearance.player.myOutline
+                            background: Item {
+                                implicitWidth: slider.width
+                                y: (parent.height - height) / 2
+                                height: 5 + ((slider.hovered || slider.pressed) * 2)
+                                Behavior on height {
+                                    animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+                                }
+
+                                Rectangle {
+                                    anchors.right: parent.right
+                                    height: parent.height
+                                    width: slider.width - slider.offset - slider.handleSize - slider.gap
+                                    radius: 1
+                                    color: Appearance.player.mySurfaceVariant
+                                }
+
+                                Rectangle {
+                                    width: slider.offset - slider.gap
+                                    height: parent.height
+                                    radius: 1
+                                    color: Appearance.player.myPrimary
+                                }
+                            }
+
+                            handle: Rectangle {
+                                id: handle
+                                implicitHeight: slider.handleSize
+                                implicitWidth: slider.handleSize
+
+                                x: slider.offset
+                                y: (parent.height - height) / 2
+
+                                color: Appearance.player.mySurfaceVariant
+                                border {
+                                    width: 2
+                                    color: Appearance.player.myPrimary
+                                }
                             }
                         }
-                    }
-                    Item {
-                        Layout.fillHeight: true
                     }
                 }
             }

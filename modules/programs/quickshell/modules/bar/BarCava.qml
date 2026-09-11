@@ -31,7 +31,7 @@ RetroButton {
     }
 
     Item {
-        implicitWidth: body.width + Appearance.space.tiny * 3
+        implicitWidth: body.width + Appearance.space.little * 2
         implicitHeight: root.contentHeight
         Rectangle {
             id: rect
@@ -100,46 +100,25 @@ RetroButton {
             Loader {
                 id: body
                 active: !root.mute
-                width: Cava.values.length * (Appearance.space.tiny + 1)
+                width: Cava.values.length * Appearance.space.little
                 height: parent.height
-                sourceComponent: RowLayout {
-                    id: bars
-                    x: 1
-                    spacing: 1
+                anchors.centerIn: parent
+                sourceComponent: ShaderEffect {
+                    id: cavaShader
+                    anchors.fill: parent
 
-                    Repeater {
-                        model: Cava.values
-                        Item {
-                            id: bar
-                            implicitWidth: Appearance.space.tiny
-                            implicitHeight: bars.height
-                            required property double modelData
+                    property color colorTop: Appearance.material.myError
+                    property color colorBottom: Appearance.material.myPrimary
 
-                            Rectangle {
-                                anchors.bottom: parent.bottom
-                                implicitWidth: bar.implicitWidth
-                                implicitHeight: rect.height * bar.modelData
-                                clip: true
+                    property real totalGapWidth: 15
+                    property vector4d params: Qt.vector4d(width, totalGapWidth, 16.0, 0)
 
-                                Rectangle {
-                                    anchors.bottom: parent.bottom
-                                    width: parent.width
-                                    height: bars.height
+                    property vector4d cava0: Qt.vector4d(Cava.values[0] || 0, Cava.values[1] || 0, Cava.values[2] || 0, Cava.values[3] || 0)
+                    property vector4d cava1: Qt.vector4d(Cava.values[4] || 0, Cava.values[5] || 0, Cava.values[6] || 0, Cava.values[7] || 0)
+                    property vector4d cava2: Qt.vector4d(Cava.values[8] || 0, Cava.values[9] || 0, Cava.values[10] || 0, Cava.values[11] || 0)
+                    property vector4d cava3: Qt.vector4d(Cava.values[12] || 0, Cava.values[13] || 0, Cava.values[14] || 0, Cava.values[15] || 0)
 
-                                    gradient: Gradient {
-                                        GradientStop {
-                                            position: 0.0
-                                            color: Appearance.material.myError
-                                        }
-                                        GradientStop {
-                                            position: 1.0
-                                            color: Appearance.material.myPrimary
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    fragmentShader: "cava.frag.qsb"
                 }
             }
         }

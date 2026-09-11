@@ -41,11 +41,26 @@ RetroButton {
                 Layout.bottomMargin: 3
 
                 color: Appearance.material.mySurfaceVariant
-                Rectangle {
+                Item {
                     anchors.bottom: parent.bottom
                     width: parent.width
                     height: parent.height * root.value
-                    color: root.fg
+                    clip: true
+                    Rectangle {
+                        anchors.bottom: parent.bottom
+                        implicitWidth: rect.width
+                        implicitHeight: rect.height
+                        gradient: Gradient {
+                            GradientStop {
+                                position: 0.0
+                                color: Appearance.material.myError
+                            }
+                            GradientStop {
+                                position: 1.0
+                                color: Appearance.material.myPrimary
+                            }
+                        }
+                    }
                 }
                 SharpRectShadow {
                     target: rect

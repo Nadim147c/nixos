@@ -12,10 +12,19 @@ layout(std140, binding = 0) uniform buf {
     float waveWidth;
     vec4 centerColor;
     vec4 edgeColor;
+    vec2 screenSize;
+    float pixelSize;
 };
 
 void main() {
-    vec2 aspectUv = vec2((qt_TexCoord0.x - clickPos.x) * aspectRatio, qt_TexCoord0.y - clickPos.y);
+    vec2 uv = qt_TexCoord0;
+
+    if (pixelSize > 1.0) {
+        vec2 grid = screenSize / pixelSize;
+        uv = floor(uv * grid) / grid;
+    }
+
+    vec2 aspectUv = vec2((uv.x - clickPos.x) * aspectRatio, uv.y - clickPos.y);
     float dist = length(aspectUv);
 
     float maxDist = 1.5;

@@ -9,7 +9,7 @@
   symlinkJoin,
   writeText,
   cavaBarCount ? 16,
-  cavaFramerate ? 30,
+  cavaFramerate ? 45,
 }:
 let
   inherit (qt6.qtbase) qtQmlPrefix;

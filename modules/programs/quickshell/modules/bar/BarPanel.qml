@@ -1,6 +1,5 @@
 import qs.modules.common
 import qs.modules.widgets
-import qs.modules.end4
 
 import QtQuick
 import QtQuick.Layouts
@@ -13,11 +12,12 @@ RetroButton {
     Item {
         implicitHeight: root.contentHeight
         implicitWidth: height + 4
-        MaterialSymbol {
+        Text {
             anchors.centerIn: parent
             color: Appearance.material.myOnSurface
-            text: "menu"
-            font.weight: 800
+            text: "menu-square"
+            font.family: Appearance.font.family.iconPixel
+            font.pixelSize: Appearance.font.pixelSize.large
         }
     }
 }
