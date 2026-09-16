@@ -1,3 +1,4 @@
+{ self, ... }:
 let
   name = "qs-open-music-player";
 in
@@ -8,9 +9,9 @@ in
       pkgs:
       pkgs.writeNuApplication {
         inherit name;
-        runtimeInputs = with pkgs; [
-          dbus
-          hyprland
+        runtimeInputs = [
+          pkgs.dbus
+          self.packages.${pkgs.stdenv.hostPlatform.system}.hyprland
         ];
         source = ./qs-open-music-player.nu;
       };

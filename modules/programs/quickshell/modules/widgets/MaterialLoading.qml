@@ -11,7 +11,7 @@ MaterialShape {
 
     shape: MaterialShape.Circle
     animationDuration: 500
-    color: Appearance.player.myBackground
+    color: Appearance.material.myBackground
 
     function changeRandomShape() {
         shape = getRandomShape();

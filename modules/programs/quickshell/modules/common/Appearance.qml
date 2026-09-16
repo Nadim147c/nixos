@@ -10,7 +10,6 @@ import Quickshell.Io
 Singleton {
     id: root
     property RongColors material: RongColors {}
-    property RongColors player: RongColors {}
 
     readonly property FontConfig font: FontConfig {}
     readonly property Space space: Space {}
@@ -21,17 +20,6 @@ Singleton {
 
     function reloadTheme() {
         themeFileView.reload();
-    }
-
-    function applyPlayerColors(fileContent: string) {
-        const json = JSON.parse(fileContent);
-        for (let i = 0; i < json.colors.length; i++) {
-            const color = json.colors[i];
-            const key = "my" + color.name.pascal;
-            if (root.player.hasOwnProperty(key)) {
-                root.player[key] = color.value.hex_rgb;
-            }
-        }
     }
 
     function applyColors(fileContent) {

@@ -26,7 +26,7 @@ MouseArea {
             contentItem: Rectangle {
                 visible: lyricsBar.active
                 implicitWidth: 5
-                color: Appearance.player.myPrimary
+                color: Appearance.material.myPrimary
             }
             Behavior on position {
                 animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
@@ -57,7 +57,7 @@ MouseArea {
                         wrapMode: Text.WordWrap
                         textFormat: Text.RichText
 
-                        property color highlight: Appearance.player.myOnSurface
+                        property color highlight: Appearance.material.myOnSurface
 
                         text: {
                             if (!active || !lyricLine.modelData.words.length) {
@@ -73,7 +73,7 @@ MouseArea {
                             }
                             return text;
                         }
-                        color: active && !lyricLine.modelData.words.length ? Appearance.player.myOnSurface : Appearance.player.myOutline
+                        color: active && !lyricLine.modelData.words.length ? Appearance.material.myOnSurface : Appearance.material.myOutline
                         Behavior on color {
                             animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
                         }

@@ -18,16 +18,16 @@ Rectangle {
         id: button
         Layout.fillHeight: true
         Layout.preferredWidth: root.height + 4
-        color: Qt.lighter(Appearance.player.mySurfaceContainer, 1.7)
-        rippleColor: Appearance.player.myPrimary
-        disabledColor: Appearance.player.myBackground
-        shadowColor: Appearance.player.myShadow
+        color: Qt.lighter(Appearance.material.mySurfaceContainer, 1.7)
+        rippleColor: Appearance.material.myPrimary
+        disabledColor: Appearance.material.myBackground
+        shadowColor: Appearance.material.myShadow
         required property string icon
         MaterialSymbol {
             text: button.icon
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignHCenter
-            color: parent.enabled ? Appearance.player.myOnBackground : Appearance.player.mySurfaceVariant
+            color: parent.enabled ? Appearance.material.myOnBackground : Appearance.material.mySurfaceVariant
             font.pixelSize: Appearance.font.pixelSize.huge
         }
     }

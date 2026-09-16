@@ -52,9 +52,9 @@ PanelWindow {
         anchors.fill: sourceItem
 
         property variant source: contentTexture
-        property color borderCol: Appearance.player.myOutline
-        property color shadowCol: Appearance.player.myShadow
-        property color fillBG: Appearance.player.myBackground
+        property color borderCol: Appearance.material.myOutline
+        property color shadowCol: Appearance.material.myShadow
+        property color fillBG: Appearance.material.myBackground
         property real pixelSize: 3
         property real radius: 8
         property real borderWidth: 1.0
@@ -80,6 +80,7 @@ PanelWindow {
                     property real size: 150
                     implicitHeight: size
                     implicitWidth: size
+
                     Image {
                         id: coverArt
                         anchors.fill: parent
@@ -87,6 +88,7 @@ PanelWindow {
                         fillMode: Image.PreserveAspectCrop
                         visible: false
                     }
+
                     ShaderEffectSource {
                         id: imageSource
                         sourceItem: coverArt
@@ -99,8 +101,8 @@ PanelWindow {
 
                         property variant imageTexture: imageSource
 
-                        property color borderCol: Appearance.player.myOutline
-                        property color shadowCol: Appearance.player.myShadow
+                        property color borderCol: Appearance.material.myOutline
+                        property color shadowCol: Appearance.material.myShadow
 
                         property real pixelSize: 2.0
                         property real radius: 8
@@ -129,7 +131,7 @@ PanelWindow {
 
                         StyledText {
                             Layout.fillWidth: true
-                            color: Appearance.player.myOnBackground
+                            color: Appearance.material.myOnBackground
                             text: WaybarLyric.title || "Untitled"
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignHCenter
@@ -142,7 +144,7 @@ PanelWindow {
 
                         StyledText {
                             Layout.fillWidth: true
-                            color: Appearance.player.myOnSurfaceVariant
+                            color: Appearance.material.myOnSurfaceVariant
                             text: `  ${WaybarLyric.artist || "Unknown Artist"}`
                             elide: Text.ElideRight
                             horizontalAlignment: Text.AlignHCenter
@@ -158,7 +160,7 @@ PanelWindow {
                             Layout.alignment: Qt.AlignHCenter
                             Text {
                                 Layout.fillWidth: true
-                                color: Appearance.player.myOnSurfaceVariant
+                                color: Appearance.material.myOnSurfaceVariant
                                 text: `󰀥  ${WaybarLyric.album || "Single"}`
                                 elide: Text.ElideRight
                                 horizontalAlignment: Text.AlignRight
@@ -170,7 +172,7 @@ PanelWindow {
                             }
                             Text {
                                 Layout.fillWidth: true
-                                color: Appearance.player.myOnSurfaceVariant
+                                color: Appearance.material.myOnSurfaceVariant
                                 text: `   ${WaybarLyric.player.identity || "Unknow Player"}`
                                 elide: Text.ElideRight
                                 horizontalAlignment: Text.AlignLeft
@@ -226,14 +228,14 @@ PanelWindow {
                                     height: parent.height
                                     width: slider.width - slider.offset - slider.handleSize - slider.gap
                                     radius: 1
-                                    color: Appearance.player.mySurfaceVariant
+                                    color: Appearance.material.mySurfaceVariant
                                 }
 
                                 Rectangle {
                                     width: slider.offset - slider.gap
                                     height: parent.height
                                     radius: 1
-                                    color: Appearance.player.myPrimary
+                                    color: Appearance.material.myPrimary
                                 }
                             }
 
@@ -245,10 +247,10 @@ PanelWindow {
                                 x: slider.offset
                                 y: (parent.height - height) / 2
 
-                                color: Appearance.player.mySurfaceVariant
+                                color: Appearance.material.mySurfaceVariant
                                 border {
                                     width: 2
-                                    color: Appearance.player.myPrimary
+                                    color: Appearance.material.myPrimary
                                 }
                             }
                         }

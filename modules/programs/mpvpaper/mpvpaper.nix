@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ self, lib, ... }:
 let
   inherit (lib.fixedPoints) fix;
   inherit (lib.lists) singleton;
@@ -11,7 +11,7 @@ in
     '';
   };
 
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.modules.nixos.gui = { pkgs, system, ... }: {
     packages = with pkgs; [ mpvpaper ];
     preserveHome.directories = singleton ".local/state/wallpaper";
 
@@ -28,6 +28,14 @@ in
         Unit = "mpvpaper-watcher.service";
       };
     });
+
+    hj.programs.hyprland.programs = singleton {
+      keys = [
+        "SUPER"
+        "W"
+      ];
+      exec = getExe self.packages.${system}.wallpaper;
+    };
 
     hj.systemd.services.mpvpaper-watcher = {
       enable = true;

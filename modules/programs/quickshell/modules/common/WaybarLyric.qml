@@ -70,6 +70,12 @@ Singleton {
             downloadCover.exec(["qs-coverdb", mprisCoverURL]);
         }
     }
+    property color primaryColor: Appearance?.material.myPrimary
+    onPrimaryColorChanged: {
+        if (mprisCoverURL) {
+            downloadCover.exec(["qs-coverdb", mprisCoverURL]);
+        }
+    }
 
     property string trackID: ""
     onTrackIDChanged: {
@@ -119,13 +125,6 @@ Singleton {
         lines = [];
     }
 
-    property string cover: ""
-    onCoverChanged: {
-        if (cover) {
-            coverColors.exec(["rong", "image", "--dry-run", "--json", cover]);
-        }
-    }
-
     Process {
         running: true
         command: ["qs-mpris-monitor"]
@@ -139,6 +138,7 @@ Singleton {
         }
     }
 
+    property string cover: ""
     Process {
         id: downloadCover
         running: false

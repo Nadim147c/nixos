@@ -15,7 +15,7 @@ RowLayout {
         Layout.preferredWidth: root.height + 4
         enabled: !!WaybarLyric.player?.canGoPrevious
         onClicked: WaybarLyric.player.previous()
-        disabledColor: Appearance.player.mySurfaceContainer
+        disabledColor: Appearance.material.mySurfaceContainer
         MaterialSymbol {
             text: "skip_previous"
             horizontalAlignment: Text.AlignHCenter
@@ -30,7 +30,7 @@ RowLayout {
         Layout.preferredWidth: root.height + 4
         enabled: !!WaybarLyric.player?.canTogglePlaying
         onClicked: WaybarLyric.player.togglePlaying()
-        disabledColor: Appearance.player.mySurfaceContainer
+        disabledColor: Appearance.material.mySurfaceContainer
         MaterialSymbol {
             text: WaybarLyric.isPlaying ? "pause" : "play_arrow"
             horizontalAlignment: Text.AlignHCenter
@@ -45,7 +45,7 @@ RowLayout {
         Layout.preferredWidth: root.height + 4
         enabled: !!WaybarLyric.player?.canGoNext
         onClicked: WaybarLyric.player.next()
-        disabledColor: Appearance.player.mySurfaceContainer
+        disabledColor: Appearance.material.mySurfaceContainer
         MaterialSymbol {
             text: "skip_next"
             horizontalAlignment: Text.AlignHCenter
