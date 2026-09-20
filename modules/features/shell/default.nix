@@ -20,6 +20,7 @@ in
           chafa
           coreutils
           ffmpeg
+          imagemagick
           file
           findutils
           gum
