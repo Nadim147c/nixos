@@ -114,26 +114,6 @@
         "type": "github"
       }
     },
-    "helium": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1787231675,
-        "narHash": "sha256-arHy5u15g7wTVo8a9dWzd6xF/qGGfZyHWyNnGFpvzj0=",
-        "owner": "amaanq",
-        "repo": "helium-flake",
-        "rev": "c5a59b04f29020a6562e3a1c9672b94cc9a60068",
-        "type": "github"
-      },
-      "original": {
-        "owner": "amaanq",
-        "repo": "helium-flake",
-        "type": "github"
-      }
-    },
     "hjem": {
       "inputs": {
         "nixpkgs": [
@@ -203,6 +183,28 @@
         "owner": "Gerg-L",
         "repo": "mnw",
         "type": "github"
+      }
+    },
+    "nix-bwrapper": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "nuschtosSearch": [],
+        "sscli": [],
+        "treefmt-nix": []
+      },
+      "locked": {
+        "lastModified": 1788639674,
+        "narHash": "sha256-yipllrIMetM0dSaP1d/OY10Gc6AuPxhaMkSHwNJF3Q8=",
+        "rev": "de0acdabb2f2f2c65458b1c6275190bfe0ac17c3",
+        "revCount": 114,
+        "type": "tarball",
+        "url": "https://api.flakehub.com/f/pinned/Naxdy/nix-bwrapper/1.5.0/01a075db-c0c6-7df2-805c-d7fed1a8f31c/source.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://flakehub.com/f/Naxdy/nix-bwrapper/1.%2A"
       }
     },
     "nix-flatpak": {
@@ -393,10 +395,10 @@
         "fast-nix-gc": "fast-nix-gc",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils",
-        "helium": "helium",
         "hjem": "hjem",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
+        "nix-bwrapper": "nix-bwrapper",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
         "nixos-hardware": "nixos-hardware",

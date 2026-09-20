@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ lib, ... }:
 let
   inherit (lib.attrsets) mapAttrsToList;
   inherit (lib.fixedPoints) fix;
@@ -7,14 +7,16 @@ let
   inherit (lib.x) genMimes;
 in
 {
-  perSystem = { system, ... }: {
-    packages.helium = inputs.helium.packages.${system}.default;
-  };
-
-  flake.modules.nixos.gui = { pkgs, system, ... }: {
-    packages = singleton inputs.helium.packages.${system}.default;
-    preserveHome.directories = singleton ".config/net.imput.helium";
-    preserve.directories = singleton "/etc/chromium/policies/managed";
+  flake.modules.nixos.gui = { config, pkgs, ... }: {
+    packages = singleton pkgs.brave-origin;
+    preserveHome.directories = [
+      ".config/net.imput.helium"
+      ".config/BraveSoftware"
+    ];
+    preserve.directories = [
+      "/etc/chromium/policies/managed"
+      "/etc/brave/policies/managed"
+    ];
 
     programs.rong.settings.themes = singleton {
       target = "chromium.json";
@@ -38,6 +40,7 @@ in
             }
 
             {BrowserThemeColor: $color} | save --force "/etc/chromium/policies/managed/colors.json"
+            {BrowserThemeColor: $color} | save --force "/etc/brave/policies/managed/colors.json"
           }
         '';
 
@@ -53,7 +56,7 @@ in
       };
     };
 
-    hj.xdg.mime-apps = genMimes "helium.desktop" [
+    hj.xdg.mime-apps = genMimes "brave.desktop" [
       # Web Pages & Documents
       "text/html"
       "text/xml"
@@ -71,6 +74,8 @@ in
     ];
 
     # Copied from https://github.com/RGBCube/ncc/blob/fd1860d09aaca345badff5f48b38c124b729fdf8/modules/web-browser.mod.nix
+    environment.etc."brave/policies/managed/policies.json".text =
+      config.environment.etc."chromium/policies/managed/policies.json".text;
     environment.etc."chromium/policies/managed/policies.json".text =
       builtins.toJSON
       <| fix (final: {
@@ -81,18 +86,22 @@ in
           "gdnpnkfophbmbpcjdlbiajpkgdndlino" # Infy Scroll
           "jinjaccalgkegednnccohejagnlnfdag" # Violentmonkey
           "lodbfhdipoipcjmlebjbgmmgekckhpfb" # Harper
-          "enamippconapkdmgfgjchkhakpfinmaj" # DeArrow
-          "blockjmkbacgjkknlgpkjjiijinjdanf" # Ublock Origin
           "jplgfhpmjnbigmhklmmbgecoobifkmpa" # Proton VPN
           "ghmbeldphafepmbegfdlkpapadhbakde" # Proton Pass
           "kekjfbackdeiabghhcdklcdoekaanoel" # MalSync
           "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock
           "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
           "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader
+
+          # Ublock Origin
+          "blockjmkbacgjkknlgpkjjiijinjdanf;https://raw.githubusercontent.com/imputnet/ublock-origin-crx/refs/heads/main/update.xml"
         ];
         ExtensionInstallSources = singleton "https://services.helium.imput.net/*";
         DefaultBrowserSettingEnabled = false;
         DeveloperToolsAvailability = 1;
+        PasswordManagerEnabled = false;
+        AutofillAddressEnabled = false;
+        PromptForDownloadLocation = false;
 
         # Bookmarks
         ManagedBookmarks =

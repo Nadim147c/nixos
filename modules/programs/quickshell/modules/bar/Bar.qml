@@ -41,7 +41,6 @@ PanelWindow {
 
             BarWorkspaces {}
             BarCava {}
-            BarPlayerButtons {}
             BarLyrics {}
             BarNetwork {}
             BarVolume {}

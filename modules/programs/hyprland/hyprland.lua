@@ -7,7 +7,7 @@ end
 
 hl.window_rule({
   name = "browser workspace 2",
-  match = { class = "^(zen-(beta|browser)|[hH]elium)$" },
+  match = { class = "^(brave(-origin)|zen-(beta|browser)|[hH]elium)$" },
   workspace = "2 silent",
 })
 hl.window_rule({

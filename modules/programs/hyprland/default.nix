@@ -136,11 +136,8 @@ in
     let
       inherit (self.packages.${system})
         qs-toggle
-        mpvpaper-send-ipc
         dolphin
-        discord
         hyprscreenshot
-        helium
         kitty
         control
         ;
@@ -220,8 +217,7 @@ in
             brightnessctl = getExe pkgs.brightnessctl;
           in
           [
-            (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=200% ${getExe helium}")
-            (makeProgram [ "SUPER" "D" ] "${launcher} --memory=1G --cpu=80% ${getExe discord}")
+            (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=200% ${getExe pkgs.brave-origin}")
             {
               keys = [
                 "SUPER"
@@ -292,44 +288,22 @@ in
             }
           ];
 
-        events =
-          let
-            mpvpaperToggle = /* lua */ ''
-              local workspace = hl.get_active_workspace()
-              if workspace == nil then
-                return
-              end
-              local windows = hl.get_windows({ workspace = workspace.id })
-              local command = " 'set pause no'"
-              for _, window in pairs(windows) do
-                if (not window.floating) or (window.fullscreen == 1) then
-                  command = " 'set pause yes'"
-                end
-              end
-              hl.dispatch(hl.dsp.exec_cmd(${getExe mpvpaper-send-ipc |> toJSON} .. command))
+        events = {
+          "hyprland.start" =
+            let
+              envNames = attrNames final.env |> join " " |> toJSON;
+            in
+            /* lua */ ''
+              hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment " .. ${envNames}))
+              hl.dispatch(hl.dsp.exec_cmd("dbus-update-activation-environment --systemd " .. ${envNames}))
+              hl.dispatch(hl.dsp.exec_cmd(${
+                toJSON /* bash */ ''
+                  systemctl --user stop  hyprland-session.target
+                  systemctl --user start hyprland-session.target
+                ''
+              }))
             '';
-          in
-          {
-            "window.active" = mpvpaperToggle;
-            "window.class" = mpvpaperToggle;
-            "window.fullscreen" = mpvpaperToggle;
-            "window.move_to_workspace" = mpvpaperToggle;
-            "workspace.active" = mpvpaperToggle;
-            "hyprland.start" =
-              let
-                envNames = attrNames final.env |> join " " |> toJSON;
-              in
-              /* lua */ ''
-                hl.dispatch(hl.dsp.exec_cmd("systemctl --user import-environment " .. ${envNames}))
-                hl.dispatch(hl.dsp.exec_cmd("dbus-update-activation-environment --systemd " .. ${envNames}))
-                hl.dispatch(hl.dsp.exec_cmd(${
-                  toJSON /* bash */ ''
-                    systemctl --user stop  hyprland-session.target
-                    systemctl --user start hyprland-session.target
-                  ''
-                }))
-              '';
-          };
+        };
 
         env = {
           CLUTTER_BACKEND = "wayland";

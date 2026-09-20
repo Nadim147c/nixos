@@ -17,8 +17,9 @@ fmt:
     nix fmt
 
 quickshell-dev:
-    find ./modules -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
+    find ./modules -iname "*.frag" -exec sh -c \
+      'echo "Compiling $1..."; qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o "$1.qsb" "$1"' _ {} \;
     quickshell-dev
 
 update-discord-settings:
-    go run ./modules/programs/discord/update.go > ./modules/programs/discord/_settings.nix
+    jq . ~/.config/Equicord/settings/settings.json > ./modules/programs/discord/settings.json

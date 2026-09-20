@@ -46,6 +46,7 @@ Singleton {
         onTriggered: root.player?.positionChanged()
     }
 
+    property string cover: player?.trackArtUrl ?? ""
     property string title: player?.trackTitle ?? "Unknown Title"
     property string artist: player?.trackArtist ?? "Unknown Artist"
     property string album: player?.trackAlbum ?? "Single"
@@ -61,19 +62,6 @@ Singleton {
                 }
             }
             lineIndex = Math.max(0, i - 1);
-        }
-    }
-
-    property string mprisCoverURL: player?.trackArtUrl ?? ""
-    onMprisCoverURLChanged: {
-        if (mprisCoverURL) {
-            downloadCover.exec(["qs-coverdb", mprisCoverURL]);
-        }
-    }
-    property color primaryColor: Appearance?.material.myPrimary
-    onPrimaryColorChanged: {
-        if (mprisCoverURL) {
-            downloadCover.exec(["qs-coverdb", mprisCoverURL]);
         }
     }
 
@@ -134,19 +122,6 @@ Singleton {
                     root.latestUpdatedPlayerName = data.toString().trim();
                     root.selectPlayer();
                 }
-            }
-        }
-    }
-
-    property string cover: ""
-    Process {
-        id: downloadCover
-        running: false
-        stdout: SplitParser {
-            onRead: data => {
-                if (!data)
-                    return;
-                root.cover = data.toString().trim();
             }
         }
     }

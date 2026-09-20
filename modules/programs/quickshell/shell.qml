@@ -12,6 +12,7 @@ import qs.modules.player
 import qs.modules.wallpaper
 import qs.modules.discord
 import qs.modules.launcher
+import qs.modules.background
 
 import QtQuick
 import Quickshell
@@ -59,5 +60,9 @@ ShellRoot {
     LazyLoader {
         activeAsync: Toggle.launcher
         component: Launcher {}
+    }
+    LazyLoader {
+        activeAsync: Toggle.background
+        component: Background {}
     }
 }

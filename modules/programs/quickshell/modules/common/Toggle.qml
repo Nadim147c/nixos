@@ -14,6 +14,7 @@ Singleton {
     property bool panel: false
     property bool discord: true
     property bool launcher: false
+    property bool background: true
 
     IpcHandler {
         target: "toggle"

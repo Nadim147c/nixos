@@ -1,8 +1,5 @@
-{ config, lib, ... }:
+{ config, ... }:
 let
-  inherit (lib) fix;
-  inherit (lib.lists) singleton;
-  inherit (lib.strings) getName;
   inherit (config.flake.modules) nixos;
 in
 {
@@ -18,12 +15,6 @@ in
         nixos.wireless
       ];
 
-      nixpkgs.config.allowUnfreePredicate =
-        pkg:
-        builtins.elem (getName pkg) [
-          "steam"
-          "steam-unwrapped"
-        ];
       preserveHome.directories = [
         ".steam"
         ".local/share/Steam"
@@ -31,6 +22,8 @@ in
       programs.steam.enable = true;
 
       services.git-sync.enable = true;
+
+      programs.gpu-screen-recorder.enable = true;
 
       # Small ahh display
       cursor.size = 22;

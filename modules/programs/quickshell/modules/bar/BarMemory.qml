@@ -4,6 +4,7 @@ import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import OkLab
 
 RetroButton {
@@ -18,10 +19,10 @@ RetroButton {
 
     readonly property oklab from: OkLab.fromColor(Appearance.material.myPrimary)
     readonly property oklab to: OkLab.fromColor(Appearance.material.myError)
-    property color fg: {
-        const ratio = Utils.cubicBezier([0.75, 0.25, 0.25, 0.75], value);
-        return OkLab.blendToColor(from, to, ratio);
+    readonly property EasingCurve gg: EasingCurve {
+        curve.bezierCurve: Easing.OutCubic
     }
+    property color fg: OkLab.blendToColor(from, to, gg.valueAt(value))
     Behavior on fg {
         animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
     }
@@ -41,26 +42,11 @@ RetroButton {
                 Layout.bottomMargin: 3
 
                 color: Appearance.material.mySurfaceVariant
-                Item {
+                Rectangle {
                     anchors.bottom: parent.bottom
                     width: parent.width
                     height: parent.height * root.value
-                    clip: true
-                    Rectangle {
-                        anchors.bottom: parent.bottom
-                        implicitWidth: rect.width
-                        implicitHeight: rect.height
-                        gradient: Gradient {
-                            GradientStop {
-                                position: 0.0
-                                color: Appearance.material.myError
-                            }
-                            GradientStop {
-                                position: 1.0
-                                color: Appearance.material.myPrimary
-                            }
-                        }
-                    }
+                    color: root.fg
                 }
                 SharpRectShadow {
                     target: rect

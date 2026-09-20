@@ -121,9 +121,29 @@ in
         inputs.discord-voice-rpc.packages.${system}.default
       ];
 
+      preserveHome.directories = singleton ".local/state/quickshell";
+
       programs.rong.settings.installs = {
         "quickshell.json" = "${config.hj.xdg.state.directory}/quickshell/colors.json";
       };
+
+      hj.programs.hyprland.programs = [
+        {
+          keys = [
+            "SUPER"
+            "W"
+          ];
+          exec = getExe self.packages.${system}.wallpaper;
+        }
+        {
+          keys = [
+            "SUPER"
+            "SHIFT"
+            "W"
+          ];
+          exec = "${getExe self.packages.${system}.qs-toggle} wallpaper toggle";
+        }
+      ];
 
       hj.systemd.services.quickshell = fix (final: {
         enable = true;

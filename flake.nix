@@ -14,9 +14,12 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    helium = {
-      url = "github:amaanq/helium-flake";
+    nix-bwrapper = {
+      url = "https://flakehub.com/f/Naxdy/nix-bwrapper/1.*";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nuschtosSearch.follows = "";
+      inputs.treefmt-nix.follows = "";
+      inputs.sscli.follows = "";
     };
     hjem = {
       url = "github:feel-co/hjem";

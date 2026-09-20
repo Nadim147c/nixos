@@ -100,15 +100,15 @@ RetroButton {
             Loader {
                 id: body
                 active: !root.mute
-                width: Cava.values.length * Appearance.space.little + 1
+                width: Cava.values.length * Appearance.space.small
                 height: parent.height
                 anchors.centerIn: parent
                 sourceComponent: ShaderEffect {
                     id: cavaShader
                     anchors.fill: parent
 
-                    property color colorTop: Appearance.material.myError
-                    property color colorBottom: Appearance.material.myPrimary
+                    property color colorLow: Appearance.material.myPrimary
+                    property color colorHigh: Appearance.material.mySecondary
 
                     property real totalGapWidth: 16
                     property vector4d params: Qt.vector4d(width, totalGapWidth, 16.0, 0)

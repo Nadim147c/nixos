@@ -6,8 +6,8 @@ layout(location = 0) out vec4 fragColor;
 layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
-    vec4 colorTop;
-    vec4 colorBottom;
+    vec4 colorLow;
+    vec4 colorHigh;
     vec4 params;
     vec4 cava0;
     vec4 cava1;
@@ -51,6 +51,8 @@ void main() {
         discard;
     }
 
-    vec4 barColor = mix(ubuf.colorBottom, ubuf.colorTop, heightThreshold);
+    float colorsCount = 10;
+    float quantizedVal = round(value * (colorsCount - 1.0)) / (colorsCount - 1.0);
+    vec4 barColor = mix(ubuf.colorLow, ubuf.colorHigh, quantizedVal);
     fragColor = barColor * ubuf.qt_Opacity;
 }

@@ -5,6 +5,8 @@ let
   inherit (lib.lists) singleton;
   inherit (lib.meta) getExe getExe';
   inherit (lib.strings) escape isString join;
+
+  port = 1616;
 in
 {
   flake.modules.nixos.base =
@@ -29,7 +31,6 @@ in
           if isAttrs value then attrsToLines name value else mkKeyValueDefault { } iniNameValueSep name value;
       };
 
-      port = 1616;
       profileDir = config.hj.xdg.state.directory;
       configFile = pkgs.writeText "qBittorrent.conf" <| generateDeepINI settings;
       settings = {
@@ -77,10 +78,13 @@ in
         <| pkgs.makeDesktopItem {
           name = "qbittorrent-nox";
           desktopName = "qBittorrent Web UI";
-          genericName = "Internet Manager";
-          exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://localhost:1616";
+          genericName = "Downloader";
+          exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://127.0.0.1:${toString port}";
           terminal = false;
-          categories = [ "Network" ];
+          categories = [
+            "Network"
+            "X-Bittorrent"
+          ];
           icon = "qbittorrent";
           type = "Application";
         };

@@ -101,13 +101,19 @@ PanelWindow {
 
                         property variant imageTexture: imageSource
 
-                        property color borderCol: Appearance.material.myOutline
-                        property color shadowCol: Appearance.material.myShadow
+                        property color borderColor: Appearance.material.myOutline
+                        property color shadowColor: Appearance.material.myShadow
+                        property color targetColor: Appearance.material.myPrimary
+                        Behavior on targetColor {
+                            animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
+                        }
+                        property real kuwaharaStrength: 0.67
 
+                        property real bitDepth: 4
                         property real pixelSize: 2.0
                         property real radius: 8
                         property real borderWidth: 1.0
-                        property vector2d shadowOffset: Qt.vector2d(2, 2)
+                        property vector2d shadowOffset: Qt.vector2d(3, 3)
                         property vector2d size: Qt.vector2d(width, height)
 
                         // there are two version

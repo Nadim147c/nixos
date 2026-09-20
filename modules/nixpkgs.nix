@@ -1,18 +1,28 @@
 { lib, inputs, ... }:
 let
+  inherit (lib) getName;
   isDefaultNix = p: (builtins.match ".*/default\\.nix$" p) != null;
   overlays =
     lib.filesystem.listFilesRecursive ../overlays
     |> map toString
     |> builtins.filter isDefaultNix
     |> map (x: (import x) inputs);
+  config.allowUnfreePredicate =
+    pkg:
+    builtins.elem (getName pkg) [
+      "discord"
+      "discord-unwrapped"
+      "steam"
+      "steam-unwrapped"
+    ];
+
 in
 {
   perSystem =
     { pkgs, system, ... }:
     {
       _module.args.pkgs = import inputs.nixpkgs {
-        inherit system overlays;
+        inherit system overlays config;
       };
 
       # Recusivinly find all default.nix files in ../pkgs and sets {
@@ -30,6 +40,6 @@ in
     };
 
   flake.modules.nixos.base = {
-    nixpkgs.overlays = overlays;
+    nixpkgs = { inherit overlays config; };
   };
 }
