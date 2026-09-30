@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib.attrsets) nameValuePair genAttrs';
-  inherit (lib.lists) flatten optional singleton;
+  inherit (lib.lists) optional singleton;
 in
 {
   perSystem =
@@ -64,38 +64,18 @@ in
           KP_ADD        add speed +0.1
           -             add speed -0.1
           KP_SUBTRACT   add speed -0.1
+          n             cycle-values af "lavfi=[dynaudnorm=f=75:g=25:p=0.55]" "lavfi=[dynaudnorm=f=50:g=31:p=0.95:m=10.0]" ""
         '';
       };
     };
 
   flake.modules.nixos.gui =
     { pkgs, ... }:
-    let
-      createMimesList =
-        prefix: mimes:
-        mimes
-        |> builtins.split "[[:space:]]+"
-        |> flatten
-        |> map (mime: "${prefix}/${mime}");
-
-      audioMimes = createMimesList "audio" ''
-        aac mp4 mpeg mpegurl ogg vnd.rn-realaudio
-        vorbis x-flac x-mp3 x-mpegurl x-ms-wma
-        x-musepack x-oggflac x-pn-realaudio x-scpls
-        x-vorbis x-vorbis+ogg x-wav
-      '';
-      videoMimes = createMimesList "video" ''
-        3gp 3gpp 3gpp2 avi divx dv fli flv mp2t
-        mp4 mp4v-es mpeg msvideo ogg quicktime
-        vnd.divx vnd.mpegurl vnd.rn-realvideo
-        webm x-avi x-flv x-m4v x-matroska x-mpeg2
-        x-ms-asf x-ms-wmv x-ms-wmx x-msvideo
-        x-ogm x-ogm+ogg x-theora x-theora+ogg
-      '';
-
-    in
     {
       packages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.mpv;
-      hj.xdg.mime-apps = lib.x.genMimes "mpv.desktop" (audioMimes ++ videoMimes);
+      hj.xdg.mime-apps = lib.x.genMimes "mpv.desktop" [
+        "audio/*"
+        "video/*"
+      ];
     };
 }
