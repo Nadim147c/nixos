@@ -32,8 +32,25 @@ Singleton {
         }
     }
 
+    function clearMembers() {
+        for (let i = 0; i < members.length; ++i) {
+            if (members[i]) {
+                members[i].destroy();
+            }
+        }
+        members = [];
+    }
+
     function parseJSON(str: string) {
-        const data = JSON.parse(str);
+        clearMembers();
+
+        let data = null;
+        try {
+            data = JSON.parse(str);
+        } catch (e) {
+            isVoiceActive = false;
+            return;
+        }
 
         isVoiceActive = !!data;
         channelName = data?.channelName ?? "";

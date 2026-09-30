@@ -47,15 +47,12 @@ PanelWindow {
             delegate: RowLayout {
                 id: user
                 required property DiscordVoiceMember modelData
-
-                Item {
-                    Layout.fillWidth: true
-                }
+                Layout.alignment: Qt.AlignRight
 
                 Rectangle {
                     id: nameBound
-                    color: ColorUtils.transparentize(Appearance.material.myBackground, 0.15)
-                    radius: Appearance.round.full
+                    color: ColorUtils.transparentize(Appearance.material.myBackground, 0.50)
+                    radius: Appearance.round.little
                     implicitHeight: nickname.height + Appearance.space.large
                     implicitWidth: nickname.width + Appearance.space.larger
                     StyledText {
@@ -73,7 +70,7 @@ PanelWindow {
                         }
                         font {
                             pixelSize: Appearance.font.pixelSize.smaller
-                            family: Appearance.font.family.main
+                            family: Appearance.font.family.pixel
                         }
                     }
                 }
@@ -83,7 +80,7 @@ PanelWindow {
                     property real size: 30
                     implicitHeight: size
                     implicitWidth: size
-                    radius: height
+                    radius: Appearance.round.little
                     StyledImage {
                         anchors.centerIn: parent
                         height: parent.height
@@ -93,50 +90,52 @@ PanelWindow {
                     }
                     Rectangle {
                         anchors.fill: parent
+                        visible: user.modelData.isTalking
                         color: "transparent"
-                        radius: height
+                        radius: Appearance.round.little
                         border {
                             color: Appearance.material.myBackground
-                            width: user.modelData.isTalking ? 3 : 0
+                            width: 3
                         }
                     }
                     Rectangle {
                         anchors.fill: parent
+                        visible: user.modelData.isTalking
                         color: "transparent"
-                        radius: height
+                        radius: Appearance.round.little
                         border {
                             color: Appearance.material.myGreen
-                            width: user.modelData.isTalking ? 2 : 0
+                            width: 2
                         }
                     }
                     Rectangle {
                         anchors.fill: parent
                         visible: user.modelData.status !== 0
                         color: ColorUtils.transparentize(Appearance.material.mySurfaceContainer, 0.2)
-                        MaterialSymbol {
+                        Text {
                             visible: !deafIcon.visible && user.modelData.isMute()
                             anchors.fill: parent
-                            text: "mic_off"
-                            fill: 1
+                            text: "mic-off"
                             font.preferShaping: true
                             fontSizeMode: Text.Fit
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             font.pixelSize: Appearance.font.pixelSize.huge
-                            color: Appearance.material.myRed
+                            font.family: Appearance.font.family.iconPixel
+                            color: Appearance.material.myError
                         }
-                        MaterialSymbol {
+                        Text {
                             id: deafIcon
                             visible: user.modelData.isDeaf() || user.modelData.isSuppressed()
                             anchors.fill: parent
-                            text: "headset_off"
-                            fill: 1
+                            text: "volume-x"
                             font.preferShaping: true
                             fontSizeMode: Text.Fit
                             horizontalAlignment: Text.AlignHCenter
                             verticalAlignment: Text.AlignVCenter
                             font.pixelSize: Appearance.font.pixelSize.huge
-                            color: Appearance.material.myRed
+                            font.family: Appearance.font.family.iconPixel
+                            color: Appearance.material.myError
                         }
                     }
                 }

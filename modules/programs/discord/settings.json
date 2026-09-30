@@ -670,7 +670,23 @@
       "enabled": false
     },
     "Declutter": {
-      "enabled": true
+      "enabled": true,
+      "removeProfileFrame": false,
+      "removeAvatarDecoration": false,
+      "removeNameplate": false,
+      "removeProfileEffect": false,
+      "removeClanTag": false,
+      "alwaysShowUsername": false,
+      "removeButtonTooltips": false,
+      "removeAudioMenus": true,
+      "removeShopAboveDms": true,
+      "removeQuestsAboveDms": true,
+      "removeLibraryAboveDms": true,
+      "removeFamilyCenterAboveDms": false,
+      "removeServerBoostInfo": false,
+      "removeBillingSettings": false,
+      "removeGiftButton": false,
+      "removeUnavailableEmojiPicker": false
     },
     "DisableCameras": {
       "enabled": false
