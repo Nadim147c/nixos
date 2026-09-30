@@ -1,15 +1,46 @@
 {
+  nixConfig = {
+    eval-cache = true;
+    experimental-features = [
+      "nix-command"
+      "cgroups"
+      "flakes"
+      "pipe-operators"
+    ];
+    trusted-users = [
+      "root"
+      "@build"
+      "@wheel"
+      "@admin"
+    ];
+    warn-dirty = false;
+    substituters = [
+      "https://cache.nixos.org"
+      "https://nvf.cachix.org"
+    ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "nvf.cachix.org-1:GMQWiUhZ6ux9D5CvFFMwnc2nFrUHTeGaXRlVBXo+naI="
+    ];
+
+    builders-use-substitutes = true;
+    flake-registry = "";
+    http-connections = 50;
+    show-trace = true;
+    use-cgroups = true;
+    use-xdg-base-directories = true;
+  };
   inputs = {
     disko.url = "github:nix-community/disko";
     disko.inputs.nixpkgs.follows = "nixpkgs";
     preservation.url = "github:nix-community/preservation";
     discord-voice-rpc = {
-      url = "github:Nadim147c/discord-voice-rpc";
+      url = "https://flakehub.com/f/Nadim147c/discord-voice-rpc/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-utils.url = "github:numtide/flake-utils";
-    nix-flatpak.url = "github:gmodena/nix-flatpak";
+    nix-flatpak.url = "https://flakehub.com/f/gmodena/nix-flatpak/*";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,7 +53,7 @@
       inputs.sscli.follows = "";
     };
     hjem = {
-      url = "github:feel-co/hjem";
+      url = "https://flakehub.com/f/feel-co/hjem/0.*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
@@ -35,12 +66,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs.url = "https://channels.nixos.org/nixos-unstable/nixexprs.tar.xz";
-    fast-nix-gc = {
-      url = "github:Mic92/fast-nix-gc";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nix-darwin.follows = "";
-      inputs.treefmt-nix.follows = "";
-    };
     nvf = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -54,11 +79,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     rong = {
-      url = "github:Nadim147c/rong";
+      url = "https://flakehub.com/f/Nadim147c/rong/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sops-nix = {
-      url = "github:Mic92/sops-nix";
+      url = "https://flakehub.com/f/Mic92/sops-nix/0.*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     topiary-nushell = {
@@ -70,7 +95,7 @@
       flake = false;
     };
     treefmt-nix = {
-      url = "github:numtide/treefmt-nix";
+      url = "https://flakehub.com/f/numtide/treefmt-nix/0.*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     wrappers = {

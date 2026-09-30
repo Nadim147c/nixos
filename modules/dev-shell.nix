@@ -1,3 +1,7 @@
+{ lib, ... }:
+let
+  inherit (lib.meta) getExe;
+in
 {
   perSystem =
     { pkgs, self', ... }:
@@ -21,12 +25,12 @@
           quickshell-dev = pkgs.writeShellScriptBin "quickshell-dev" ''
             systemctl --user stop quickshell.service
             trap 'systemctl --user restart quickshell.service' EXIT
-            qs -p modules/programs/quickshell/shell.qml
+            ${getExe self'.packages.quickshell} -p modules/programs/quickshell/shell.qml
           '';
           quickshell-debug = pkgs.writeShellScriptBin "quickshell-debug" ''
             systemctl --user stop quickshell.service
             trap 'systemctl --user restart quickshell.service' EXIT
-            qs --debug=6767 --waitfordebug -p modules/programs/quickshell/shell.qml
+            ${getExe self'.packages.quickshell} --debug=6767 --waitfordebug -p modules/programs/quickshell/shell.qml
           '';
         };
         buildInputs = with pkgs; [

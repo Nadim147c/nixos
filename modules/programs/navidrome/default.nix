@@ -68,7 +68,7 @@ in
           inherit sha256 appId;
           bundle = toString <| pkgs.fetchurl { inherit sha256 url; };
         };
-        overrides.settings."${appId}" = {
+        overrides."${appId}" = {
           Context.filesystems = [ "xdg-music" ];
         };
       };

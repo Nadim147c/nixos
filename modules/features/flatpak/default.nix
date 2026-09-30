@@ -20,7 +20,7 @@ in
         enable = true;
         onCalendar = "weekly";
       };
-      overrides.settings = {
+      overrides = {
         global = {
           Context.filesystems = [
             "/nix/store:ro"
@@ -34,6 +34,7 @@ in
             "!xdg-videos"
             "!xdg-pictures"
             "!xdg-music"
+            "!xdg-download"
           ];
           Context.sockets = [
             "wayland"

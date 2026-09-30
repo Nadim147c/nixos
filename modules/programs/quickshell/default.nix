@@ -5,13 +5,14 @@
   ...
 }:
 let
+  inherit (lib.trivial) const;
   inherit (lib.attrsets) attrValues filterAttrs;
   inherit (lib.fixedPoints) fix;
   inherit (lib.lists) singleton;
   inherit (lib.strings) hasPrefix;
   inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf;
-  inherit (lib.strings) makeBinPath;
+  inherit (lib.strings) makeSearchPath makeBinPath;
 in
 {
   perSystem =
@@ -22,6 +23,8 @@ in
       ...
     }:
     let
+      inherit (pkgs.qt6.qtbase) qtQmlPrefix qtPluginPrefix;
+
       discord-voice-rpc = inputs'.discord-voice-rpc.packages.default;
 
       buildInputs = attrValues {
@@ -53,20 +56,6 @@ in
           inherit discord-voice-rpc;
         }
         ++ quickshellScripts;
-
-      quickshellConfig =
-        pkgs.runCommand "quickshell-config"
-          {
-            nativeBuildInputs = [ pkgs.qt6.qtshadertools ];
-          }
-          ''
-            mkdir -p $out
-            cp -r ${./modules} $out/modules
-            cp -r ${./shell.qml} $out/shell.qml
-            chmod -R +w $out
-
-            find $out/modules -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
-          '';
 
       /*
         Quickshell cannot natively execute `.desktop` files, and its
@@ -100,21 +89,27 @@ in
 
       packages.quickshell = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
-        package = (pkgs.lib.flakePackage inputs.quickshell).overrideAttrs (oldAttrs: {
-          buildInputs = buildInputs ++ oldAttrs.buildInputs;
-        });
+        package = pkgs.quickshell;
         env.FONTCONFIG_DIR = "${self'.packages.systemFonts}";
-        prefixVar = singleton [
-          "PATH"
-          ":"
-          (makeBinPath runtimeInputs)
-        ];
-        flags."--path" = toString quickshellConfig;
+        prefixVar =
+          let
+            makePathPrefix = name: paths: const [ name ":" paths ] "slop";
+          in
+          [
+            (makePathPrefix "PATH" (makeBinPath runtimeInputs))
+            (makePathPrefix "QML2_IMPORT_PATH" (makeSearchPath qtQmlPrefix buildInputs))
+            (makePathPrefix "QT_PLUGIN_PATH" (makeSearchPath qtPluginPrefix buildInputs))
+          ];
       };
     };
 
   flake.modules.nixos.gui =
-    { config, system, ... }:
+    {
+      config,
+      pkgs,
+      system,
+      ...
+    }:
     {
       packages = [
         self.packages.${system}.quickshell
@@ -158,7 +153,20 @@ in
         after = final.wants;
         reloadTriggers = singleton self.packages."${system}".quickshell;
         serviceConfig = {
-          ExecStart = getExe self.packages."${system}".quickshell;
+          ExecStart =
+            let
+              quickshell-config =
+                pkgs.runCommand "quickshell-config" { nativeBuildInputs = [ pkgs.qt6.qtshadertools ]; }
+                  ''
+                    mkdir -p $out
+                    cp -r ${./modules} $out/modules
+                    cp -r ${./shell.qml} $out/shell.qml
+                    chmod -R +w $out
+
+                    find $out/modules -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
+                  '';
+            in
+            "${getExe self.packages."${system}".quickshell} -p ${quickshell-config}";
           Restart = "on-failure";
           RestartSec = 10;
         };

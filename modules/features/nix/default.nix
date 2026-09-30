@@ -1,8 +1,4 @@
 { lib, ... }:
-let
-  inherit (lib) singleton;
-
-in
 {
   flake.modules.nixos.base = {
     nix.settings = {
@@ -20,8 +16,14 @@ in
         "@admin"
       ];
       warn-dirty = false;
-      substituters = singleton "https://cache.nixos.org/";
-      trusted-public-keys = singleton "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=";
+      substituters = [
+        "https://cache.nixos.org"
+        "https://nvf.cachix.org"
+      ];
+      trusted-public-keys = [
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+        "nvf.cachix.org-1:GMQWiUhZ6ux9D5CvFFMwnc2nFrUHTeGaXRlVBXo+naI="
+      ];
 
       builders-use-substitutes = true;
       flake-registry = "";

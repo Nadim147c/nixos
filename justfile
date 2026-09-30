@@ -1,14 +1,14 @@
 switch:
-    nh os switch .
+    nh os switch --accept-flake-config .
 
 nixos:
-    sudo nixos-rebuild switch --flake . -L
+    sudo nixos-rebuild switch --flake . -L --accept-flake-config
 
 build:
-    nh os build .
+    nh os build --accept-flake-config .
 
 boot:
-    nh os boot .
+    nh os boot --accept-flake-config .
 
 check:
     nix flake check
