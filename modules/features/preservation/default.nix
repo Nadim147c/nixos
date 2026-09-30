@@ -48,8 +48,6 @@ in
           directories = [
             ".cache"
             ".local/bin"
-            ".local/share/bani"
-            ".local/state/bani"
           ];
         };
       };
