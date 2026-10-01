@@ -14,16 +14,22 @@ QtObject {
     property bool isTalking: false
     property bool isBot: false
     property int status: 0
+    property int volume: 100
 
-    readonly property int statusMute: 1 << 0
-    readonly property int statusSelfMute: 1 << 1
-    readonly property int statusDeaf: 1 << 2
-    readonly property int statusSelfDeaf: 1 << 3
-    readonly property int statusSuppress: 1 << 4
+    readonly property int statusMyMute: 1 << 0
+    readonly property int statusMute: 1 << 1
+    readonly property int statusSelfMute: 1 << 2
+    readonly property int statusDeaf: 1 << 3
+    readonly property int statusSelfDeaf: 1 << 4
+    readonly property int statusSuppress: 1 << 5
+
+    function isMyMute() {
+        return (status & statusMyMute) !== 0;
+    }
 
     // checks if user is muted or self muted.
     function isMute() {
-        return (status & (statusMute | statusSelfMute)) !== 0;
+        return (status & (statusMyMute | statusMute | statusSelfMute)) !== 0;
     }
 
     // checks if user is deaf or self deaf.

@@ -7,12 +7,12 @@
         ]
       },
       "locked": {
-        "lastModified": 1790846640,
-        "narHash": "sha256-eZUyx6e2+VMIcojhLCUCIkwEFgMwfq2LFB9OKry3sDE=",
-        "rev": "45203d1c0319f0a825f48e6f9e0f2928b42a6e4c",
-        "revCount": 18,
+        "lastModified": 1791034432,
+        "narHash": "sha256-SQA9djGhIINOCgh8zGcfmKo9XKyjdSnxssb4OE52cik=",
+        "rev": "1c4a0e9888381c1d1284a8013c862e694d694904",
+        "revCount": 23,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/Nadim147c/discord-voice-rpc/0.1.18%2Brev-45203d1c0319f0a825f48e6f9e0f2928b42a6e4c/01a0f6c7-e8f1-78c1-81a4-7c4a5baf624f/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/Nadim147c/discord-voice-rpc/0.1.23%2Brev-1c4a0e9888381c1d1284a8013c862e694d694904/01a101f9-67b7-7b52-ad39-0cbfbdef8d67/source.tar.gz"
       },
       "original": {
         "type": "tarball",
