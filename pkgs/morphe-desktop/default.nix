@@ -17,13 +17,13 @@ let
   inherit (lib.licenses) gpl3Only;
   inherit (lib.sourceTypes) binaryBytecode;
 in
-stdenv.mkDerivation (finalAttr: {
+stdenv.mkDerivation (finalAttrs: {
   pname = "morphe-desktop";
-  version = "1.17.0";
+  version = "1.18.0";
 
   src = fetchurl {
-    url = "https://github.com/MorpheApp/morphe-desktop/releases/download/v${finalAttr.version}/morphe-desktop-${finalAttr.version}-all.jar";
-    hash = "sha256-jPap6rTunasUa93CRoGJeFFWT1MRa67BHza6L6L1ib4=";
+    url = "https://github.com/MorpheApp/${finalAttrs.pname}/releases/download/v${finalAttrs.version}/morphe-desktop-${finalAttrs.version}-all.jar";
+    hash = "sha256-NuINehj2VftYKa5Qqt1hIX4iCFNsB0HfX3eZMA91j1Y=";
   };
 
   strictDeps = true;
@@ -86,7 +86,7 @@ stdenv.mkDerivation (finalAttr: {
     homepage = "https://github.com/MorpheApp/morphe-desktop";
     license = gpl3Only;
     sourceProvenance = singleton binaryBytecode;
-    maintainers = singleton lib.maintainers.hetraeus;
+    maintainers = singleton lib.maintainers.Nadim147c;
     mainProgram = "morphe-desktop";
   };
 })
