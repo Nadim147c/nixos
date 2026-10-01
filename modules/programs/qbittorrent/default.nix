@@ -73,9 +73,9 @@ in
   flake.modules.nixos.gui =
     { pkgs, ... }:
     {
-      packages =
-        singleton
-        <| pkgs.makeDesktopItem {
+      packages = [
+        (pkgs.makeIcons "qbittorrent" "${pkgs.vuetorrent}/share/vuetorrent/public/favicon.ico")
+        (pkgs.makeDesktopItem {
           name = "qbittorrent-nox";
           desktopName = "qBittorrent Web UI";
           genericName = "Downloader";
@@ -87,6 +87,7 @@ in
           ];
           icon = "qbittorrent";
           type = "Application";
-        };
+        })
+      ];
     };
 }

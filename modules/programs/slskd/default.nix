@@ -28,9 +28,9 @@ in
   flake.modules.nixos.gui =
     { config, pkgs, ... }:
     {
-      packages =
-        singleton
-        <| pkgs.makeDesktopItem {
+      packages = [
+        (pkgs.makeIcons "slskd" "${pkgs.slskd}/lib/slskd/wwwroot/favicon.ico")
+        (pkgs.makeDesktopItem {
           name = "slskd";
           desktopName = "Soulseek Client";
           genericName = "Downloader";
@@ -44,6 +44,7 @@ in
           ];
           icon = "slskd";
           type = "Application";
-        };
+        })
+      ];
     };
 }

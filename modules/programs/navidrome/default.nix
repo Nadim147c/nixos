@@ -20,22 +20,31 @@ in
   flake.modules.nixos.gui = { config, pkgs, ... }: {
     imports = [ nixos.navidrome ];
     packages =
-      singleton
-      <| pkgs.makeDesktopItem {
-        name = "navidrome";
-        desktopName = "Navidrome";
-        genericName = "Media Server";
-        comment = "Navidrome Media Server";
-        exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://127.0.0.1:${toString config.services.navidrome.settings.Port}";
-        terminal = false;
-        categories = [
-          "AudioVideo"
-          "Audio"
-          "Player"
-        ];
-        icon = "navidrome";
-        type = "Application";
-      };
+
+      let
+        ico = pkgs.fetchurl {
+          url = "https://github.com/navidrome/navidrome/raw/0e1893530b844898cbf87825fdefd4b13e1ff3cc/ui/public/favicon.ico";
+          hash = "sha256-RVrsX6Qj5RYM4/eOPx1B7VIXrxFOqyLRaEJlZUJoWrk=";
+        };
+      in
+      [
+        (pkgs.makeIcons "navidrome" ico)
+        (pkgs.makeDesktopItem {
+          name = "navidrome";
+          desktopName = "Navidrome";
+          genericName = "Media Server";
+          comment = "Navidrome Media Server";
+          exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://127.0.0.1:${toString config.services.navidrome.settings.Port}";
+          terminal = false;
+          categories = [
+            "AudioVideo"
+            "Audio"
+            "Player"
+          ];
+          icon = "navidrome";
+          type = "Application";
+        })
+      ];
   };
 
   flake.modules.nixos.navidrome =
@@ -83,6 +92,7 @@ in
           MusicFolder = config.xdg-dirs.music;
           DataFolder = "/var/lib/navidrome";
           Port = 4533;
+          Scanner.PurgeMissing = "always";
         };
       };
 
