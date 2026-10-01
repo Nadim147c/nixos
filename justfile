@@ -17,8 +17,9 @@ fmt:
     nix fmt
 
 quickshell-dev:
-    find ./modules -iname "*.frag" -exec sh -c \
-      'echo "Compiling $1..."; qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o "$1.qsb" "$1"' _ {} \;
+    find ./modules -iname "*.frag" -print0 | \
+      xargs -0 -P4 -I {} sh -c \
+      'echo "Compiling $1..."; qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o "$1.qsb" "$1"' _ {}
     quickshell-dev
 
 update-discord-settings:
