@@ -59,6 +59,10 @@ class OkLabSingleton : public QObject
 public:
     explicit OkLabSingleton(QObject *parent = nullptr);
 
+    Q_INVOKABLE OkLab oklab(double l, double a, double b) const {
+        return OkLab(l, a, b);
+    }
+
     Q_INVOKABLE OkLab fromColor(const QColor &c) const;
     Q_INVOKABLE OkLab blend(const OkLab &src, const OkLab &dst, double r) const;
     Q_INVOKABLE QColor blendToColor(const OkLab &src, const OkLab &dst, double r) const;
@@ -83,6 +87,10 @@ class OkLchSingleton : public QObject
 
 public:
     explicit OkLchSingleton(QObject *parent = nullptr);
+
+    Q_INVOKABLE OkLch oklch(double l, double c, double h) const {
+        return OkLch(l, c, h);
+    }
 
     Q_INVOKABLE OkLch fromColor(const QColor &c) const;
     Q_INVOKABLE OkLch fromLab(const OkLab &lab) const;

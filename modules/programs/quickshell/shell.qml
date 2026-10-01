@@ -13,6 +13,7 @@ import qs.modules.wallpaper
 import qs.modules.discord
 import qs.modules.launcher
 import qs.modules.background
+import qs.modules.colorpicker
 
 import QtQuick
 import Quickshell
@@ -64,5 +65,9 @@ ShellRoot {
     LazyLoader {
         activeAsync: Toggle.background
         component: Background {}
+    }
+    LazyLoader {
+        activeAsync: Toggle.colorpicker
+        component: ColorPicker {}
     }
 }

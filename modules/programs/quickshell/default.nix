@@ -138,6 +138,13 @@ in
           ];
           exec = "${getExe self.packages.${system}.qs-toggle} wallpaper toggle";
         }
+        {
+          keys = [
+            "SUPER"
+            "P"
+          ];
+          exec = "${getExe self.packages.${system}.qs-toggle} colorpicker toggle";
+        }
       ];
 
       hj.systemd.services.quickshell = fix (final: {
