@@ -1,15 +1,10 @@
 { lib, ... }:
 let
-  inherit (lib) singleton;
+  inherit (lib) singleton genAttrs const;
+  inherit (lib.x.generators) toGtkINI;
 in
 {
   flake.modules.nixos.gui = { config, pkgs, ... }: {
-    preserveHome.directories = [
-      ".config/gtk-3.0"
-      ".config/gtk-4.0"
-      ".config/nwg-look"
-    ];
-
     programs.rong.settings.themes = singleton {
       target = "gtk.css";
       links = [
@@ -30,10 +25,26 @@ in
       '';
     };
 
+    hj.xdg.config.files =
+      genAttrs [
+        "gtk-3.0/settings.ini"
+        "gtk-4.0/settings.ini"
+      ]
+      <| const {
+        generator = toGtkINI;
+        value.Settings = {
+          theme-name = "Adwaita";
+          icon-theme-name = "Adwaita";
+          font-name = "${config.custom.font.sans} ${toString config.custom.font.size}";
+          cursor-theme-name = config.cursor.name;
+          cursor-theme-size = config.cursor.size;
+          application-prefer-dark-theme = 1;
+        };
+      };
+
     packages = with pkgs; [
       adw-gtk3
       adwaita-icon-theme
-      nwg-look
     ];
     sessionVariables = {
       GTK_THEME = "adw-gtk3-dark";

@@ -20,6 +20,7 @@ let
 in
 rec {
   opt = (import ./options.nix) final lib;
+  generators = import ./generators final lib;
 
   isEmpty = list: (builtins.length list) == 0;
   isNotEmpty = list: (builtins.length list) == 0;
