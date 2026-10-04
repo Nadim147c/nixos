@@ -21,6 +21,10 @@ in
         enable = true;
         onCalendar = "Fri,Wed 22:00:00";
       };
+      remotes = singleton {
+        name = "flathub";
+        location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
+      };
       overrides = {
         global = {
           Context.filesystems = [
