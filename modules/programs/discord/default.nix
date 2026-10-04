@@ -49,6 +49,17 @@ in
         };
       };
 
+      hj.xdg.config.files."rong/templates/discord.css.tmpl".source = pkgs.replaceVars ./theme.css {
+        font = "Pixelify Sans";
+        code-font = "JetBrainsMono Nerd Font";
+        colors = "off";
+      };
+
+      programs.rong.settings.themes = singleton {
+        target = "discord.css";
+        links = "~/.config/Equicord/settings/quickCss.css";
+      };
+
       systemd.services.install-equicord-discord = {
         enable = true;
         serviceConfig = {

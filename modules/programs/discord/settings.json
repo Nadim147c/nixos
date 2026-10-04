@@ -735,7 +735,7 @@
     },
     "FontLoader": {
       "enabled": true,
-      "selectedFont": ""
+      "selectedFont": "Pixelify Sans"
     },
     "FrequentQuickSwitcher": {
       "enabled": false
