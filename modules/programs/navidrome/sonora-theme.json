@@ -1,0 +1,21 @@
+{
+  "name": "Rong",
+  "author": "Ephemeral",
+  "version": 1,
+  "theme": {
+    "background": "{{ .Background }}",
+    "foreground": "{{ .OnBackground }}",
+    "sidebar": "{{ .SurfaceContainerLow }}",
+    "popover": "{{ .SurfaceContainer }}",
+    "secondary": "{{ .SecondaryContainer }}",
+    "muted": "{{ .SurfaceVariant }}",
+    "muted_foreground": "{{ .OnSurfaceVariant }}",
+    "border": "{{ .OutlineVariant }}",
+    "primary": "{{ .Primary }}",
+    "primary_foreground": "{{ .OnPrimary }}",
+    "progress_bar": "{{ .Primary }}",
+    "selection": "{{ .PrimaryContainer }}",
+    "table_active": "{{ .SecondaryContainer }}",
+    "table_active_border": "{{ .Outline }}"
+  }
+}

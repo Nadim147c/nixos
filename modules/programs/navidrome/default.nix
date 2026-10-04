@@ -52,6 +52,7 @@ in
     }:
     {
       preserve.directories = singleton "/var/lib/navidrome";
+      preserveHome.directories = singleton ".config/sonora";
 
       hj.programs.hyprland = {
         windowRules = singleton {
@@ -68,13 +69,24 @@ in
           exec = "${getExe self.packages.${system}.control} flatpak run -- ${escapeShellArg appId}";
         };
       };
+
+      hj.xdg.config.files."rong/templates/sonora.json.tmpl".source = ./sonora-theme.json;
+
+      programs.rong.settings.themes = singleton {
+        target = "sonora.json";
+        links = "~/.config/sonora/themes/rong.json";
+      };
+
       services.flatpak = {
         packages = singleton {
           flatpakref = "https://sonorahq.github.io/sonora/sonora.flatpakref";
           sha256 = "sha256-nlOzictk6E3Ikt2XVn/twG9JVrFb3Vm5tAyVlHz1CP4=";
         };
         overrides."${appId}" = {
-          Context.filesystems = [ "xdg-music" ];
+          Context.filesystems = [
+            "xdg-config/sonora"
+            "xdg-music"
+          ];
         };
       };
 
