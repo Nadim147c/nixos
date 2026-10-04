@@ -13,6 +13,7 @@ in
         nixos.hack
         nixos.pc
         nixos.wireless
+        nixos.game
       ];
 
       preserveHome.directories = [
@@ -33,9 +34,9 @@ in
         "DP-1" = {
           enable = true;
           primary = true;
-          refreshRate = 59.79;
-          width = 1366;
-          height = 768;
+          refreshRate = 60.00;
+          width = 1920;
+          height = 1080;
           x = 0;
           y = 0;
         };
