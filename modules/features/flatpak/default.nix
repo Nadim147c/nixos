@@ -16,9 +16,10 @@ in
     services.flatpak = {
       enable = true;
       packages = [ "com.github.tchx84.Flatseal" ];
+      uninstallUnmanaged = true;
       update.auto = {
         enable = true;
-        onCalendar = "weekly";
+        onCalendar = "Fri,Wed 22:00:00";
       };
       overrides = {
         global = {
