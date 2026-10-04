@@ -16,12 +16,6 @@ in
         nixos.game
       ];
 
-      preserveHome.directories = [
-        ".steam"
-        ".local/share/Steam"
-      ];
-      programs.steam.enable = true;
-
       services.git-sync.enable = true;
 
       programs.gpu-screen-recorder.enable = true;
@@ -59,10 +53,6 @@ in
       environment.systemPackages = with pkgs; [
         libva
         libva-utils
-
-        libxcb-cursor
-        libxcb
-        xcb-util-cursor
       ];
 
       environment.sessionVariables = {
