@@ -13,14 +13,11 @@ let
   inherit (lib.strings) escapeShellArg;
 
   appId = "io.github.nolight132.sonora";
-  url = "https://github.com/sonorahq/sonora/releases/download/v0.42.0/sonora-v0.42.0-x86_64.flatpak";
-  sha256 = "sha256-Vl4NKLv94ttp5YrFSrAo7tBt77ehIZMUuQDhO7UkTwg=";
 in
 {
   flake.modules.nixos.gui = { config, pkgs, ... }: {
     imports = [ nixos.navidrome ];
     packages =
-
       let
         ico = pkgs.fetchurl {
           url = "https://github.com/navidrome/navidrome/raw/0e1893530b844898cbf87825fdefd4b13e1ff3cc/ui/public/favicon.ico";
@@ -50,7 +47,6 @@ in
   flake.modules.nixos.navidrome =
     {
       config,
-      pkgs,
       system,
       ...
     }:
@@ -74,8 +70,8 @@ in
       };
       services.flatpak = {
         packages = singleton {
-          inherit sha256 appId;
-          bundle = toString <| pkgs.fetchurl { inherit sha256 url; };
+          flatpakref = "https://sonorahq.github.io/sonora/sonora.flatpakref";
+          sha256 = "sha256-nlOzictk6E3Ikt2XVn/twG9JVrFb3Vm5tAyVlHz1CP4=";
         };
         overrides."${appId}" = {
           Context.filesystems = [ "xdg-music" ];
