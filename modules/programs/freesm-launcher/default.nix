@@ -29,7 +29,13 @@ in
           name = "freesmlauncher";
           location = "https://flatpak.freesmlauncher.org/freesmlauncher.flatpakrepo";
         };
-        # overrides."${appId}" = { };
+        overrides."${appId}" = {
+          Context.sockets = [ "x11" ];
+          Environment = {
+            GDK_BACKEND = "x11";
+            QT_QPA_PLATFORM = "xcb";
+          };
+        };
       };
 
     };
