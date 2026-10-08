@@ -48,7 +48,6 @@ in
       };
     in
     {
-      preserveHome.directories = singleton ".local/state/qBittorrent";
       systemd.user.tmpfiles.rules = [
         "d ${profileDir}/qBittorrent 0700 - - -"
         "d ${profileDir}/qBittorrent/config 0700 - - -"

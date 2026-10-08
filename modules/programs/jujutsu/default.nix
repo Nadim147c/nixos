@@ -12,8 +12,6 @@ in
       packages = with pkgs; [
         jujutsu
       ];
-      # Should we???
-      preserveHome.directories = singleton ".config/jj/repos";
 
       hj.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jujutsu.toml";
       hj.xdg.config.files."jj/config.toml".value = {

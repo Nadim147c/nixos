@@ -64,7 +64,6 @@ in
     in
     {
       imports = singleton inputs.noctalia-greeter.nixosModules.default;
-      preserve.directories = singleton "/var/lib/noctalia-greeter";
 
       programs.rong.settings.themes = singleton {
         target = "colors.json";

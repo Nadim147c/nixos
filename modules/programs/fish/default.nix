@@ -15,7 +15,6 @@ in
     {
       options.programs.fish.init = opt.attrs.block { };
       config = {
-        preserveHome.directories = singleton ".local/share/fish";
         environment.pathsToLink = singleton "/share/fish";
 
         programs.fish = {

@@ -52,13 +52,6 @@ in
       };
 
       config = {
-        preserveHome.directories = [
-          "downloads"
-          "files"
-          "media"
-          "git"
-        ];
-
         # Create directories automatically using systemd-tmpfiles on rebuild/boot
         systemd.tmpfiles.rules = map (dir: "d ${dir} 0755 ${username} users -") allDirs;
 

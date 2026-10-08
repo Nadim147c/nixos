@@ -5,14 +5,9 @@ let
 in
 {
   flake.modules.nixos.gui = { config, pkgs, ... }: {
-    preserveHome.directories = [
-      ".config/qt5ct"
-      ".config/qt6ct"
-    ];
-
     programs.rong.settings.themes = [
       {
-        target = "qt6ct.conf";
+        target = "qtct.conf";
         links = [
           "${config.hj.xdg.config.directory}/qt5ct/colors/rong.conf"
           "${config.hj.xdg.config.directory}/qt6ct/colors/rong.conf"

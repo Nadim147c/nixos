@@ -9,8 +9,6 @@ let
 in
 {
   flake.modules.nixos.base = { config, ... }: {
-    preserve.directories = singleton "/var/lib/slskd";
-
     systemd.services.slskd.serviceConfig.ProtectHome = mkForce false;
 
     services.slskd = {

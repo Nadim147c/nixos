@@ -27,11 +27,6 @@ in
   flake.modules.nixos.gui = { system, ... }: {
     packages = singleton self.packages.${system}.yankd-impure;
 
-    preserveHome.directories = [
-      ".local/share/yankd"
-      ".duckdb"
-    ];
-
     hj.systemd.services.yankd = fix (final: {
       enable = true;
       description = "yankd wayland clipboard daemon";

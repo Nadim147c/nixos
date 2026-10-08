@@ -97,8 +97,6 @@ in
   flake.modules.nixos.gui =
     { system, ... }:
     {
-      preserveHome.directories = singleton ".local/state/rong";
-
       hj.systemd.services.rong-generate = {
         enable = true;
         description = "Generate rong colors";

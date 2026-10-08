@@ -12,11 +12,6 @@ in
       inherit (self.packages.${system}) control;
     in
     {
-      preserveHome.directories = [
-        ".config/discord"
-        ".config/Equicord"
-      ];
-
       services.flatpak = {
         packages = singleton appId;
         overrides."${appId}" = {
@@ -75,7 +70,7 @@ in
           set -euo pipefail
           TARGET="/var/lib/flatpak/app/com.discordapp.Discord/current/active/files/discord"
 
-          [[ ! -d "$TARGET" ]] && exit 1
+          [[ ! -d "$TARGET" ]] && exit 0
 
           if [[ -f "$TARGET/resources/app.asar" && ! -e "$TARGET/resources/_app.asar" ]]; then
             mv -vf "$TARGET/resources/app.asar" "$TARGET/resources/_app.asar"

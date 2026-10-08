@@ -4,7 +4,6 @@ let
 in
 {
   flake.modules.nixos.dev = {
-    preserveHome.directories = singleton ".local/share/direnv";
     programs.direnv = {
       enable = true;
       silent = true;

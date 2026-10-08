@@ -59,8 +59,6 @@ in
     };
 
   flake.modules.nixos.base = { system, ... }: {
-    preserveHome.directories = singleton ".local/share/tmux-list-repo";
-
     packages = singleton self.packages.${system}.tmux;
 
     programs.fish.interactiveShellInit = /* fish */ ''

@@ -8,11 +8,6 @@ in
       (mkAliasOptionModule [ "packages" ] [ "environment" "systemPackages" ])
       (mkAliasOptionModule [ "sessionVariables" ] [ "environment" "sessionVariables" ])
       (mkAliasOptionModule [ "hj" ] [ "hjem" "users" config.username ])
-      (mkAliasOptionModule [ "preserve" ] [ "preservation" "preserveAt" "/persistent" ])
-      (mkAliasOptionModule
-        [ "preserveHome" ]
-        [ "preservation" "preserveAt" "/persistent" "users" config.username ]
-      )
     ];
   };
 }

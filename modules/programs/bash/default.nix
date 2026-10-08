@@ -16,7 +16,6 @@ in
       options.programs.bash.init = opt.attrs.block { };
 
       config = {
-        preserveHome.directories = singleton ".local/share/bash-completions";
         environment.pathsToLink = singleton "/share/bash-completions";
         programs.bash = {
           enable = true;

@@ -30,8 +30,6 @@ in
           nimble
         ];
 
-        preserveHome.directories = singleton ".local/share/nimble";
-
         hj.xdg.config.files."nimble/nimble.ini" = {
           generator = generateNimINI;
           value = {

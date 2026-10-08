@@ -51,9 +51,6 @@ in
       ...
     }:
     {
-      preserve.directories = singleton "/var/lib/navidrome";
-      preserveHome.directories = singleton ".config/sonora";
-
       hj.programs.hyprland = {
         windowRules = singleton {
           name = "music player workspace 4";

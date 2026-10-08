@@ -9,15 +9,6 @@ in
 {
   flake.modules.nixos.gui = { config, pkgs, ... }: {
     packages = singleton pkgs.brave-origin;
-    preserveHome.directories = [
-      ".config/net.imput.helium"
-      ".config/BraveSoftware"
-    ];
-    preserve.directories = [
-      "/etc/chromium/policies/managed"
-      "/etc/brave/policies/managed"
-    ];
-
     programs.rong.settings.themes = singleton {
       target = "chromium.json";
       installs = "/tmp/chromium.json";

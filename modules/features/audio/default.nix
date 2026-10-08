@@ -4,7 +4,6 @@ let
 in
 {
   flake.modules.nixos.base = {
-    preserveHome.directories = singleton ".local/state/wireplumber";
     services.pipewire = {
       enable = true;
       pulse.enable = true; # replace PulseAudio

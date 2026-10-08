@@ -6,8 +6,6 @@ let
 in
 {
   flake.modules.nixos.gui = { pkgs, ... }: {
-    preserveHome.directories = singleton ".config/kdeconnect";
-
     programs.kdeconnect.enable = true;
 
     hj.systemd.services.kdeconnect-indicator = fix (final: {

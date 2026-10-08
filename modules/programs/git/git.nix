@@ -24,8 +24,6 @@ in
         gh
       ];
 
-      preserveHome.directories = singleton ".config/gh";
-
       programs.git = {
         enable = true;
         config = {

@@ -31,9 +31,6 @@
     use-xdg-base-directories = true;
   };
   inputs = {
-    disko.url = "github:nix-community/disko";
-    disko.inputs.nixpkgs.follows = "nixpkgs";
-    preservation.url = "github:nix-community/preservation";
     discord-voice-rpc = {
       url = "https://flakehub.com/f/Nadim147c/discord-voice-rpc/*";
       inputs.nixpkgs.follows = "nixpkgs";

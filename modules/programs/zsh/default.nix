@@ -30,10 +30,6 @@ in
     {
       options.programs.zsh.init = opt.attrs.block { };
 
-      config = {
-        preserveHome.directories = singleton ".local/share/zsh";
-        environment.pathsToLink = singleton "/share/zsh";
-      };
       config.programs.zsh = {
         enable = true;
         histFile = "${config.hj.xdg.data.directory}/zsh/history";

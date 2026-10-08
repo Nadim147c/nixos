@@ -10,7 +10,6 @@ in
       init = "${getExe pkgs.zoxide} init --cmd=cd";
     in
     {
-      preserveHome.directories = singleton ".local/share/zoxide";
       packages = singleton pkgs.zoxide;
       programs = {
         bash.init.zoxide = ''

@@ -116,8 +116,6 @@ in
         inputs.discord-voice-rpc.packages.${system}.default
       ];
 
-      preserveHome.directories = singleton ".local/state/quickshell";
-
       programs.rong.settings.installs = {
         "quickshell.json" = "${config.hj.xdg.state.directory}/quickshell/colors.json";
       };

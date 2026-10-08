@@ -21,10 +21,6 @@ in
     imports = [ nixos.steam ];
   };
   flake.modules.nixos.steam = { pkgs, ... }: {
-    preserveHome.directories = [
-      ".steam"
-      ".local/share/Steam"
-    ];
     programs.steam = {
       enable = true;
       extraPackages = with pkgs; [
