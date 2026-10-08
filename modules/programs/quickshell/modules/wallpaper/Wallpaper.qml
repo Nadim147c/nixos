@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import qs.modules.common
-import qs.modules.widgets
+import qs.modules.end4
+import qs.modules.end4.functions
 
 import QtQuick
 import QtQuick.Layouts
@@ -8,7 +9,6 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
-import Quickshell.Widgets
 
 PanelWindow {
     id: root
@@ -18,35 +18,18 @@ PanelWindow {
     Component {
         id: wallpaperData
         QtObject {
+            property color color: "white"
             property string preview: ""
             property string filename: ""
         }
     }
 
-    property string filename: ""
-    onFilenameChanged: generate(filename)
-    property var palette: []
-
-    function generate(filename) {
-        console.log("[Wallpaper]", "Generating colors for", filename);
-        rongColors.exec(["rong", "score", "-m2", filename]);
+    HyprlandFocusGrab {
+        windows: [root]
+        active: Toggle.wallpaper
+        onCleared: Toggle.wallpaper = false
     }
 
-    Process {
-        id: rongColors
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: {
-                try {
-                    const colors = JSON.parse(text);
-                    root.palette = colors;
-                } catch (e) {
-                    console.log(text);
-                    console.error(e);
-                }
-            }
-        }
-    }
     Process {
         id: wallpaperFinder
         running: true
@@ -57,149 +40,135 @@ PanelWindow {
                 const qtWallpapers = [];
                 for (const wallpaper of wallpapers) {
                     const obj = wallpaperData.createObject(root, {
-                        preview: wallpaper.preview,
-                        filename: wallpaper.filename
+                        preview: wallpaper.preview || "",
+                        filename: wallpaper.filename || "",
+                        color: wallpaper.color || "white"
                     });
                     qtWallpapers.push(obj);
                 }
                 root.wallpapers = qtWallpapers;
-                root.filename = qtWallpapers[0].filename;
             }
         }
     }
 
     anchors.bottom: true
-    margins.bottom: 10
+    margins.bottom: 20
 
-    implicitWidth: body.width
-    implicitHeight: body.height + popupBody.expandedHeight + Appearance.space.big
+    implicitWidth: 1000
+    implicitHeight: 500
 
     WlrLayershell.namespace: "quickshell:wallpaper"
     aboveWindows: true
     exclusiveZone: 0
     color: "transparent"
 
-    HyprlandFocusGrab {
-        windows: [root]
-        active: Toggle.wallpaper
-        onCleared: Toggle.wallpaper = false
-    }
-
-    Rectangle {
-        id: popupBody
-        anchors.horizontalCenter: parent.horizontalCenter
-        property real expandedHeight: 30 + (Appearance.space.medium * 2)
-        implicitHeight: root.palette.length > 0 ? expandedHeight : 0
-        implicitWidth: popupRow.width + (Appearance.space.medium * 2)
-        Behavior on implicitWidth {
-            animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
-        }
-        radius: Appearance.round.big
-        color: Appearance.material.myBackground
-        RowLayout {
-            id: popupRow
-            anchors.centerIn: parent
-            Repeater {
-                model: root.palette
-                MaterialLoading {
-                    id: palette
-                    required property string modelData
-                    property int value: parseInt(modelData.substring(1), 16)
-                    shape: shapes[value % shapes.length]
-                    color: modelData
-                    animate: false
-                    implicitHeight: 30
-                    implicitWidth: implicitHeight
-                    MouseArea {
-                        anchors.fill: parent
-                        cursorShape: Qt.PointingHandCursor
-                        hoverEnabled: true
-                        onClicked: {
-                            console.log("app-launcher", "wallpaper", `--color=${palette.modelData}`, root.filename);
-                            Quickshell.execDetached(["app-launcher", "wallpaper", `--color=${palette.modelData}`, root.filename]);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     Rectangle {
         id: body
-        anchors.bottom: parent.bottom
-        implicitHeight: content.height + (Appearance.space.big * 2)
-        implicitWidth: content.width + (Appearance.space.big * 2)
-        radius: Appearance.round.huge
-        color: Appearance.material.myBackground
-        ClippingRectangle {
-            id: content
-            x: Appearance.space.big
-            y: Appearance.space.big
-            implicitHeight: row.height
-            implicitWidth: row.width
-            radius: Appearance.round.larger
-            color: "transparent"
 
-            ListView {
-                id: row
-                height: 150
-                width: 750
+        anchors.fill: parent
+        color: Appearance.material.mySurfaceContainer
+        RowLayout {
+            anchors.fill: parent
+            GridView {
+                id: grid
+                Layout.margins: spacing * 2
+                Layout.fillWidth: true
+                Layout.fillHeight: true
                 model: root.wallpapers
-                orientation: ListView.Horizontal
-                spacing: Appearance.space.big
+                property real spacing: Appearance.space.medium
+                cellWidth: width / 4
+                cellHeight: cellWidth / (16 / 9)
+
                 delegate: Item {
-                    id: listItem
-                    required property string preview
-                    required property string filename
-                    required property int index
-                    width: 150
-                    height: 150
-                    readonly property real visibleAmount: {
-                        let start = row.contentX;
-                        if (start < 0 && index === 0) {
-                            return -start + width;
-                        }
-                        let end = row.contentX + row.width;
-                        if (end > row.contentWidth && index === row.model.length - 1) {
-                            return row.contentWidth - end - width;
-                        }
-                        let imageStart = x;
-                        let imageEnd = x + width;
-                        if (imageStart > start && imageEnd > end) {
-                            return imageStart - end; // returns negative
-                        }
-                        if (imageStart < start && imageStart < end) {
-                            return imageEnd - start;
-                        }
-                        return width; // we use to default to avoid weirdness
-                    }
+                    id: delegateItem
+                    required property var modelData
+                    width: grid.cellWidth
+                    height: grid.cellHeight
                     Item {
-                        height: parent.height
-                        width: Math.abs(listItem.visibleAmount)
-                        x: listItem.visibleAmount > 0 ? listItem.width - listItem.visibleAmount : 0
-                        ClippingRectangle {
+                        anchors.fill: parent
+                        anchors.margins: grid.spacing / 2
+
+                        Item {
+                            id: preview
                             anchors.fill: parent
-                            radius: Appearance.round.big
                             Image {
+                                id: previewImage
+                                asynchronous: true
+                                cache: true
                                 anchors.fill: parent
+                                source: delegateItem.modelData.preview
                                 fillMode: Image.PreserveAspectCrop
-                                source: listItem.preview
                             }
+                            Rectangle {
+                                anchors.fill: parent
+                                opacity: mouseArea.containsMouse * 1
+                                Behavior on opacity {
+                                    animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+                                }
+                                color: ColorUtils.transparentize(Appearance.material.myOnBackground, 0.9)
+                            }
+                        }
+
+                        ShaderEffectSource {
+                            id: imageSource
+                            sourceItem: preview
+                            hideSource: true
+                            live: true
+                        }
+
+                        ShaderEffect {
+                            anchors.fill: parent
+                            visible: previewImage.status === Image.Ready
+
+                            property variant imageTexture: imageSource
+                            property color borderColor: delegateItem.modelData.color ?? "white"
+                            property real imagePixelSize: 2.0
+                            property real borderPixelSize: 4.0
+                            property real radius: 3
+                            property real borderWidth: 1.0
+                            property vector2d shadowOffset: Qt.vector2d(3, 3)
+                            property vector2d size: Qt.vector2d(width, height)
+
+                            fragmentShader: "./pixel_image_border.frag.qsb"
                         }
 
                         MouseArea {
+                            id: mouseArea
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onEntered: root.filename = listItem.filename
-                            onClicked: {
-                                console.log("app-launcher", "wallpaper", listItem.filename);
-                                Quickshell.execDetached(["app-launcher", "wallpaper", listItem.filename]);
+                            onClicked: mouse => {
+                                console.log("app-launcher", "wallpaper", delegateItem.modelData.filename);
+                                Quickshell.execDetached(["app-launcher", "wallpaper", delegateItem.modelData.filename]);
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    ShaderEffectSource {
+        id: bodySource
+        sourceItem: body
+        hideSource: true
+        live: true
+    }
+
+    ShaderEffect {
+        anchors.fill: parent
+
+        property variant imageTexture: bodySource
+
+        property color borderColor: Appearance.material.myOutline
+
+        property real imagePixelSize: 1.0
+        property real borderPixelSize: 5.0
+        property real radius: 4
+        property real borderWidth: 1.0
+        property vector2d shadowOffset: Qt.vector2d(3, 3)
+        property vector2d size: Qt.vector2d(width, height)
+
+        fragmentShader: "./pixel_image_border.frag.qsb"
     }
 }
