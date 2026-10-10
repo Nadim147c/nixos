@@ -10,6 +10,7 @@ let
   config.allowUnfreePredicate =
     pkg:
     builtins.elem (getName pkg) [
+      "mpv-cut"
       "discord"
       "discord-unwrapped"
       "steam"

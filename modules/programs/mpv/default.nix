@@ -24,6 +24,7 @@ in
             quality-menu
             sponsorblock
             thumbfast
+            cut
           ])
           ++ optional pkgs.stdenv.hostPlatform.isLinux pkgs.mpvScripts.mpris
         );
