@@ -11,6 +11,7 @@ let
   inherit (lib.meta) getExe getExe';
   inherit (lib.modules) mkForce;
   inherit (lib.strings) escapeShellArg;
+  inherit (config.flake.flatpak.apps.sonora) url sha256;
 
   appId = "io.github.nolight132.sonora";
 in
@@ -48,6 +49,7 @@ in
     {
       config,
       system,
+      pkgs,
       ...
     }:
     {
@@ -76,8 +78,8 @@ in
 
       services.flatpak = {
         packages = singleton {
-          flatpakref = "https://sonorahq.github.io/sonora/sonora.flatpakref";
-          sha256 = "sha256-nlOzictk6E3Ikt2XVn/twG9JVrFb3Vm5tAyVlHz1CP4=";
+          inherit appId sha256;
+          bundle = toString <| pkgs.fetchurl { inherit url sha256; };
         };
         overrides."${appId}" = {
           Context.filesystems = [

@@ -1,9 +1,23 @@
 { inputs, lib, ... }:
 let
-  inherit (lib) singleton;
+  inherit (lib)
+    importJSON
+    singleton
+    mkOption
+    types
+    ;
+
+  readonly =
+    values:
+    mkOption {
+      type = types.attrs;
+      readOnly = true;
+      default = values;
+    };
 in
 {
-  flake.modules.nixos.gui = { config, ... }: {
+  options.flake.flatpak.apps = readonly <| importJSON ./apps.json;
+  config.flake.modules.nixos.gui = { config, ... }: {
     imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
 
     services.flatpak = {

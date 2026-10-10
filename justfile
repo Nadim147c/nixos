@@ -22,5 +22,8 @@ quickshell-dev:
       'echo "Compiling $1..."; qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o "$1.qsb" "$1"' _ {}
     quickshell-dev
 
+update-flatpak:
+   nu ./modules/features/flatpak/update.nu
+
 update-discord-settings:
     jq . ~/.config/Equicord/settings/settings.json > ./modules/programs/discord/settings.json
