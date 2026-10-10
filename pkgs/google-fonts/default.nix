@@ -14,6 +14,7 @@ stdenvNoCC.mkDerivation {
         ./Gabarito
         ./Space_Grotesk
         ./Pixelify_Sans
+        ./Silkscreen
       ];
     }
   );

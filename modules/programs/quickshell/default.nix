@@ -10,7 +10,7 @@ let
   inherit (lib.fixedPoints) fix;
   inherit (lib.lists) singleton;
   inherit (lib.strings) hasPrefix;
-  inherit (lib.meta) getExe;
+  inherit (lib.meta) getExe getExe';
   inherit (lib.modules) mkIf;
   inherit (lib.strings) makeSearchPath makeBinPath;
 in
@@ -162,6 +162,34 @@ in
             ${daemon} -socket "$XDG_RUNTIME_DIR"/qs-screen-recorder
           '';
       });
+
+      hj.systemd.paths.rong-resize-image = fix (final: {
+        enable = true;
+        description = "Watch for rong cache changes";
+        partOf = singleton "graphical-session.target";
+        wantedBy = final.partOf;
+        pathConfig = {
+          PathChanged = "${config.xdg-dirs.videos}/wallpapers";
+        };
+      });
+
+      hj.systemd.services.rong-resize-image = {
+        enable = true;
+        description = "Resize rong cache images";
+        serviceConfig = {
+          Type = "oneshot";
+          ExecStart =
+            getExe
+            <| pkgs.writeNuApplication {
+              name = "rong-resize-image";
+              runtimeInputs = builtins.attrValues {
+                inherit (pkgs) fd coreutils imagemagick;
+                inherit (self.packages.${system}) rong-impure xdg-base-dir;
+              };
+              source = ./rong-resize-image.nu;
+            };
+        };
+      };
 
       hj.systemd.services.quickshell = fix (final: {
         enable = true;

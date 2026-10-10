@@ -9,16 +9,17 @@ SequentialAnimation {
     property color highlightColor
 
     property int totalDuration: 2000
-    property int stepDuration: 100
+    property int stepDuration: totalDuration / (loops * 2)
+    property var easingType: Easing.InOutQuad
 
-    loops: Math.floor(totalDuration / (stepDuration * 2))
+    loops: 5
 
     ColorAnimation {
         target: anim.target
         property: anim.property
         to: anim.highlightColor
         duration: anim.stepDuration
-        easing.type: Easing.InOutQuad
+        easing.type: anim.easingType
     }
 
     ColorAnimation {
@@ -26,6 +27,6 @@ SequentialAnimation {
         property: anim.property
         to: anim.baseColor
         duration: anim.stepDuration
-        easing.type: Easing.InOutQuad
+        easing.type: anim.easingType
     }
 }

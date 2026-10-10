@@ -6,7 +6,7 @@ Item {
 
     property color color: Appearance.material.myBackground ?? "#222222"
     property real pixelSize: 3.0
-    property real colorsPerChannel: 0
+    property real levels: 0
 
     default property alias data: contentItem.data
     property alias children: contentItem.children
@@ -30,7 +30,7 @@ Item {
         property variant imageTexture: bodySource
         property color fallbackColor: root.color
         property real imagePixelSize: root.pixelSize
-        property real colorsPerChannel: root.colorsPerChannel
+        property real levels: root.levels
         property vector2d size: Qt.vector2d(width, height)
 
         fragmentShader: Qt.resolvedUrl("./pixelate.frag.qsb")

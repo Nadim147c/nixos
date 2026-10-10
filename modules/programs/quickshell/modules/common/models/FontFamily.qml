@@ -11,5 +11,6 @@ QtObject {
     property string reading: "Readex Pro"
     property string expressive: "Space Grotesk"
     property string pixel: "Pixelify Sans"
+    property string pixel2: "Silkscreen"
     property string clock: "DSEG7 Classic Mini"
 }

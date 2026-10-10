@@ -57,7 +57,7 @@ PanelWindow {
         root.counter++;
         // different type of transition
         const effects = ["./pixel_rand.frag.qsb", "./diamon_sweep.frag.qsb", "./circle_expand.frag.qsb", "./circle_shrink.frag.qsb", "./hexagon_expand.frag.qsb", "./hexagon_shrink.frag.qsb", "./dissolve.frag.qsb"];
-        effect.fragmentShader = effects[root.counter % effects.length];
+        effect.fragmentShader = "./pixel_rand.frag.qsb";
 
         effect.progress = root.inverse * 1.0;
         anim.restart();
@@ -90,14 +90,20 @@ PanelWindow {
 
     Component.onCompleted: wallpaperFileView.reload()
 
-    NumberAnimation {
+    SequentialAnimation {
         id: anim
-        duration: Appearance.time.slow
-        easing.type: Easing.OutQuart
-        from: root.inverse * 1.0
-        to: (!root.inverse) * 1.0
-        target: effect
-        property: "progress"
+        PauseAnimation {
+            duration: 100
+        }
+        NumberAnimation {
+            duration: Appearance.time.slow
+            easing.type: Easing.OutQuart
+            from: root.inverse * 1.0
+            to: (!root.inverse) * 1.0
+            target: effect
+            property: "progress"
+        }
+
         onFinished: {
             if (root.inverse) {
                 top.wallpaper = "";

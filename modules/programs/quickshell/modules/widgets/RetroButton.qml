@@ -24,6 +24,7 @@ Item {
     property alias contentWidth: body.width
     default property alias dataContent: body.data
 
+    property alias propagateComposedEvents: mouseArea.propagateComposedEvents
     property alias containsMouse: mouseArea.containsMouse
     signal clicked(var mouse)
     signal rightClicked(var mouse)
