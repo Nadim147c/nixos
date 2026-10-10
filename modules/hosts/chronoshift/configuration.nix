@@ -18,8 +18,6 @@ in
 
       services.git-sync.enable = true;
 
-      programs.gpu-screen-recorder.enable = true;
-
       # Small ahh display
       cursor.size = 22;
 

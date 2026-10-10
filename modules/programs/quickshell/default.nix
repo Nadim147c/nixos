@@ -144,6 +144,25 @@ in
         }
       ];
 
+      programs.gpu-screen-recorder.enable = true;
+
+      hj.systemd.services.qs-gpu-screen-record = fix (finalAttrs: {
+        enable = true;
+        description = "GPU screen recorder daemon";
+        partOf = singleton "graphical-session.target";
+        after = finalAttrs.partOf;
+        wantedBy = finalAttrs.partOf;
+        path = singleton pkgs.gpu-screen-recorder;
+        reloadTriggers = singleton <| getExe self.packages.${system}.qs-gpu-screen-record;
+        script =
+          let
+            daemon = getExe self.packages.${system}.qs-gpu-screen-record;
+          in
+          /* bash */ ''
+            ${daemon} -socket "$XDG_RUNTIME_DIR"/qs-screen-recorder
+          '';
+      });
+
       hj.systemd.services.quickshell = fix (final: {
         enable = true;
         description = "mpvpaper control daemon";
