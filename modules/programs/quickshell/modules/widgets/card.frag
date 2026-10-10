@@ -8,10 +8,10 @@ layout(binding = 1) uniform sampler2D imageTexture;
 layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
-    vec2 size;
     vec4 borderColor;
+    vec4 fallbackColor;
+    vec2 size;
     float radius;
-    float imagePixelSize;
     float borderPixelSize;
     float borderWidth;
 };
@@ -24,24 +24,27 @@ float sdOctagonalBox(vec2 p, vec2 b, float r) {
 }
 
 void main() {
-    float effectiveGrid = max(borderPixelSize, 1.0);
-    vec2 pos = (floor((qt_TexCoord0 * size) / effectiveGrid) + 0.5) * effectiveGrid;
+    vec2 pos = (floor((qt_TexCoord0 * size) / borderPixelSize) + 0.5) * borderPixelSize;
 
     vec2 boxCenter = size * 0.5;
     vec2 pMain = pos - boxCenter;
 
-    float effectiveRadius = floor(radius) * effectiveGrid;
-    float effectiveBorder = floor(borderWidth) * effectiveGrid;
+    float effectiveRadius = floor(radius) * borderPixelSize;
+    float effectiveBorder = floor(borderWidth) * borderPixelSize;
 
     float dist = sdOctagonalBox(pMain, boxCenter, effectiveRadius);
-
-    vec2 pixelizedUV = (floor((qt_TexCoord0 * size) / imagePixelSize) + 0.5) * (imagePixelSize / size);
 
     vec4 color = vec4(0.0);
 
     if (dist <= 0.0) {
         if (dist <= -effectiveBorder) {
-            color = texture(imageTexture, pixelizedUV);
+            vec4 texColor = texture(imageTexture, qt_TexCoord0);
+
+            vec3 blendedRGB = mix(fallbackColor.rgb, texColor.rgb, texColor.a);
+            float blendedAlpha = max(fallbackColor.a, texColor.a);
+            color = vec4(blendedRGB, blendedAlpha);
+
+            color = texColor * texColor.a + fallbackColor * (1.0 - texColor.a);
         } else {
             color = borderColor;
         }
@@ -49,3 +52,4 @@ void main() {
 
     fragColor = color * qt_Opacity;
 }
+

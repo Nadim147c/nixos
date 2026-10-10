@@ -1,8 +1,9 @@
 pragma ComponentBehavior: Bound
 import qs.modules.common
-import qs.modules.end4
 import qs.modules.end4.functions
+import qs.modules.widgets
 
+import OkLab
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -55,18 +56,22 @@ PanelWindow {
     margins.bottom: 20
 
     implicitWidth: 1000
-    implicitHeight: 500
+    implicitHeight: 330
 
     WlrLayershell.namespace: "quickshell:wallpaper"
     aboveWindows: true
     exclusiveZone: 0
     color: "transparent"
 
-    Rectangle {
-        id: body
-
+    Card {
         anchors.fill: parent
-        color: Appearance.material.mySurfaceContainer
+
+        borderColor: Appearance.material.myOutline
+        color: Appearance.material.myBackground
+        radius: 6
+        borderWidth: 2
+        borderPixelSize: 3
+
         RowLayout {
             anchors.fill: parent
             GridView {
@@ -88,16 +93,40 @@ PanelWindow {
                         anchors.fill: parent
                         anchors.margins: grid.spacing / 2
 
-                        Item {
+                        Card {
                             id: preview
                             anchors.fill: parent
-                            Image {
-                                id: previewImage
-                                asynchronous: true
-                                cache: true
+
+                            borderColor: delegateItem.modelData.color
+                            property color highlightColor: {
+                                const ok = OkLab.fromColor(delegateItem.modelData.color);
+                                ok.l += 0.2;
+                                return OkLab.toColor(ok);
+                            }
+                            FlickerAnimation {
+                                id: flicker
+                                target: preview
+                                property: "borderColor"
+                                baseColor: preview.borderColor
+                                highlightColor: preview.highlightColor
+                                totalDuration: 1000
+                                stepDuration: totalDuration / 3
+                            }
+                            radius: 3
+                            borderWidth: 1
+                            borderPixelSize: 4
+                            Pixelate {
                                 anchors.fill: parent
-                                source: delegateItem.modelData.preview
-                                fillMode: Image.PreserveAspectCrop
+                                pixelSize: 2
+                                colorsPerChannel: 16
+                                Image {
+                                    id: previewImage
+                                    asynchronous: true
+                                    cache: true
+                                    anchors.fill: parent
+                                    source: delegateItem.modelData.preview
+                                    fillMode: Image.PreserveAspectCrop
+                                }
                             }
                             Rectangle {
                                 anchors.fill: parent
@@ -108,36 +137,13 @@ PanelWindow {
                                 color: ColorUtils.transparentize(Appearance.material.myOnBackground, 0.9)
                             }
                         }
-
-                        ShaderEffectSource {
-                            id: imageSource
-                            sourceItem: preview
-                            hideSource: true
-                            live: true
-                        }
-
-                        ShaderEffect {
-                            anchors.fill: parent
-                            visible: previewImage.status === Image.Ready
-
-                            property variant imageTexture: imageSource
-                            property color borderColor: delegateItem.modelData.color ?? "white"
-                            property real imagePixelSize: 2.0
-                            property real borderPixelSize: 4.0
-                            property real radius: 3
-                            property real borderWidth: 1.0
-                            property vector2d shadowOffset: Qt.vector2d(3, 3)
-                            property vector2d size: Qt.vector2d(width, height)
-
-                            fragmentShader: "./pixel_image_border.frag.qsb"
-                        }
-
                         MouseArea {
                             id: mouseArea
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: mouse => {
+                                flicker.restart();
                                 console.log("app-launcher", "wallpaper", delegateItem.modelData.filename);
                                 Quickshell.execDetached(["app-launcher", "wallpaper", delegateItem.modelData.filename]);
                             }
@@ -146,29 +152,5 @@ PanelWindow {
                 }
             }
         }
-    }
-
-    ShaderEffectSource {
-        id: bodySource
-        sourceItem: body
-        hideSource: true
-        live: true
-    }
-
-    ShaderEffect {
-        anchors.fill: parent
-
-        property variant imageTexture: bodySource
-
-        property color borderColor: Appearance.material.myOutline
-
-        property real imagePixelSize: 1.0
-        property real borderPixelSize: 5.0
-        property real radius: 4
-        property real borderWidth: 1.0
-        property vector2d shadowOffset: Qt.vector2d(3, 3)
-        property vector2d size: Qt.vector2d(width, height)
-
-        fragmentShader: "./pixel_image_border.frag.qsb"
     }
 }

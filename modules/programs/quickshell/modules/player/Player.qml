@@ -1,5 +1,6 @@
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Layouts
@@ -35,39 +36,10 @@ PanelWindow {
         item: body
     }
 
-    Item {
-        id: sourceItem
-        implicitHeight: body.height
-        implicitWidth: body.width
-    }
-
-    ShaderEffectSource {
-        id: contentTexture
-        sourceItem: sourceItem
-        hideSource: true
-        live: true
-    }
-
-    ShaderEffect {
-        anchors.fill: sourceItem
-
-        property variant source: contentTexture
-        property color borderCol: Appearance.material.myOutline
-        property color shadowCol: Appearance.material.myShadow
-        property color fillBG: Appearance.material.myBackground
-        property real pixelSize: 3
-        property real radius: 8
-        property real borderWidth: 1.0
-        property vector2d shadowOffset: Qt.vector2d(1.4, 2.0)
-        property vector2d size: Qt.vector2d(width, height)
-        fragmentShader: "./pixel_mask.frag.qsb"
-    }
-
-    Item {
+    Card {
         id: body
         implicitWidth: 450
         implicitHeight: content.height + (Appearance.space.large * 2)
-
         ColumnLayout {
             id: content
             width: parent.width - (Appearance.space.large * 2)
@@ -78,55 +50,31 @@ PanelWindow {
             RowLayout {
                 Item {
                     property real size: 150
-                    implicitHeight: size
-                    implicitWidth: size
-
-                    Image {
-                        id: coverArt
+                    Layout.preferredWidth: size
+                    Layout.preferredHeight: size
+                    Card {
                         anchors.fill: parent
-                        source: WaybarLyric.cover
-                        fillMode: Image.PreserveAspectCrop
-                        visible: false
-                    }
-
-                    ShaderEffectSource {
-                        id: imageSource
-                        sourceItem: coverArt
-                        hideSource: true
-                        live: true
-                    }
-
-                    ShaderEffect {
-                        anchors.fill: parent
-
-                        property variant imageTexture: imageSource
-
-                        property color borderColor: Appearance.material.myOutline
-                        property color shadowColor: Appearance.material.myShadow
-                        property color targetColor: Appearance.material.myPrimary
-                        Behavior on targetColor {
-                            animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
+                        radius: 3
+                        borderWidth: 1
+                        borderPixelSize: 3
+                        KuwaharaFilter {
+                            anchors.fill: parent
+                            kuwaharaStrength: 0.67
+                            bitDepth: 4
+                            pixelSize: 2.0
+                            Image {
+                                source: WaybarLyric.cover
+                                anchors.fill: parent
+                                fillMode: Image.PreserveAspectCrop
+                            }
                         }
-                        property real kuwaharaStrength: 0.67
-
-                        property real bitDepth: 4
-                        property real pixelSize: 2.0
-                        property real radius: 8
-                        property real borderWidth: 1.0
-                        property vector2d shadowOffset: Qt.vector2d(3, 3)
-                        property vector2d size: Qt.vector2d(width, height)
-
-                        // there are two version
-                        // - pixel_image_border.frag will create pixel borders
-                        // - pixel_image_border2.frag will create pixel borders and also pixelate the image
-                        fragmentShader: "./pixel_image_border2.frag.qsb"
                     }
                 }
                 spacing: Appearance.space.large
 
                 Item {
-                    implicitWidth: content.width - coverArt.width - Appearance.space.large
                     Layout.fillHeight: true
+                    Layout.fillWidth: true
 
                     ColumnLayout {
                         anchors {
@@ -245,18 +193,22 @@ PanelWindow {
                                 }
                             }
 
-                            handle: Rectangle {
-                                id: handle
+                            handle: Pixelate {
                                 implicitHeight: slider.handleSize
                                 implicitWidth: slider.handleSize
-
                                 x: slider.offset
                                 y: (parent.height - height) / 2
 
-                                color: Appearance.material.mySurfaceVariant
-                                border {
-                                    width: 2
-                                    color: Appearance.material.myPrimary
+                                Rectangle {
+                                    id: handle
+                                    anchors.fill: parent
+                                    radius: width / 2
+
+                                    color: Appearance.material.mySurfaceVariant
+                                    border {
+                                        width: 2
+                                        color: Appearance.material.myPrimary
+                                    }
                                 }
                             }
                         }

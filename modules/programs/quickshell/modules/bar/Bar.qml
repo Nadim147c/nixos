@@ -48,6 +48,7 @@ PanelWindow {
             BarMemory {}
             BarCPU {}
             BarDiscord {}
+            BarKdeconnect {}
             BarClock {}
             BarPanel {}
         }

@@ -23,5 +23,5 @@ ls --all $wallpaper_dir
 | where type == file
 | sort-by modified --reverse
 | get name
-| par-each $format
+| each $format
 | to json --raw

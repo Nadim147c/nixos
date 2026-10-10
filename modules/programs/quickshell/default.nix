@@ -34,28 +34,27 @@ in
       };
 
       quickshellScripts = self'.packages |> filterAttrs (name: _: hasPrefix "qs-" name) |> attrValues;
-      runtimeInputs =
-        attrValues {
-          inherit (pkgs)
-            hyprshutdown
-            pavucontrol
-            bash
-            fortune
-            coreutils
-            findutils
-            ;
-          inherit (self'.packages)
-            hyprscreenshot
-            rong-impure
-            wallpaper
-            waybar-lyric-impure
-            yankd-impure
-            control
-            app-launcher
-            ;
-          inherit discord-voice-rpc;
-        }
-        ++ quickshellScripts;
+      runtimeInputs = attrValues {
+        inherit (pkgs)
+          hyprshutdown
+          pavucontrol
+          bash
+          fortune
+          coreutils
+          findutils
+          ;
+        inherit (self'.packages)
+          hyprscreenshot
+          rong-impure
+          wallpaper
+          waybar-lyric-impure
+          yankd-impure
+          control
+          app-launcher
+          ;
+        inherit (pkgs.kdePackages) kdeconnect-kde;
+        inherit discord-voice-rpc;
+      };
 
       /*
         Quickshell cannot natively execute `.desktop` files, and its
@@ -96,7 +95,7 @@ in
             makePathPrefix = name: paths: const [ name ":" paths ] "slop";
           in
           [
-            (makePathPrefix "PATH" (makeBinPath runtimeInputs))
+            (makePathPrefix "PATH" <| makeBinPath (runtimeInputs ++ quickshellScripts))
             (makePathPrefix "QML2_IMPORT_PATH" (makeSearchPath qtQmlPrefix buildInputs))
             (makePathPrefix "QT_PLUGIN_PATH" (makeSearchPath qtPluginPrefix buildInputs))
           ];
