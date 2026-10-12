@@ -6,14 +6,15 @@ layout(location = 0) out vec4 fragColor;
 layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
-    float progress;
-    bool inversed;
+    float t;
+    float angle;
     vec2 cursor;
-    vec2 resolution;
+    vec2 size;
+    float aspect;
 };
 
-layout(binding = 1) uniform sampler2D bottomTex;
-layout(binding = 2) uniform sampler2D topTex;
+layout(binding = 1) uniform sampler2D fromSource;
+layout(binding = 2) uniform sampler2D toSource;
 
 float hexDistance(vec2 p) {
     p = abs(p);
@@ -21,18 +22,17 @@ float hexDistance(vec2 p) {
 }
 
 void main() {
-    if (progress <= 0.0) {
-        fragColor = texture(bottomTex, qt_TexCoord0) * qt_Opacity;
+    if (t <= 0.0) {
+        fragColor = texture(fromSource, qt_TexCoord0) * qt_Opacity;
         return;
     }
-    if (progress >= 1.0) {
-        fragColor = texture(topTex, qt_TexCoord0) * qt_Opacity;
+    if (t >= 1.0) {
+        fragColor = texture(toSource, qt_TexCoord0) * qt_Opacity;
         return;
     }
 
-    float p = inversed ? clamp(progress, 0.0, 1.0) : 1.0 - clamp(progress, 0.0, 1.0);
+    float p = 1.0 - t;
 
-    float aspect = resolution.x / resolution.y;
     vec2 st = qt_TexCoord0;
     st.x *= aspect;
 
@@ -46,15 +46,8 @@ void main() {
 
     float mask = step(radius, dist);
 
-    if (inversed) {
-        vec4 fromColor = texture(bottomTex, qt_TexCoord0);
-        vec4 toColor = texture(topTex, qt_TexCoord0);
+    vec4 toColor = texture(fromSource, qt_TexCoord0);
+    vec4 fromColor = texture(toSource, qt_TexCoord0);
 
-        fragColor = mix(toColor, fromColor, mask) * qt_Opacity;
-    } else {
-        vec4 toColor = texture(bottomTex, qt_TexCoord0);
-        vec4 fromColor = texture(topTex, qt_TexCoord0);
-
-        fragColor = mix(toColor, fromColor, mask) * qt_Opacity;
-    }
+    fragColor = mix(toColor, fromColor, mask) * qt_Opacity;
 }

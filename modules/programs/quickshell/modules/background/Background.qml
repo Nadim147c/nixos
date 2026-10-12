@@ -1,7 +1,5 @@
 pragma ComponentBehavior: Bound
 
-import qs.modules.common
-
 import QtMultimedia
 import QtQuick
 import Quickshell
@@ -35,31 +33,35 @@ PanelWindow {
     }
     property bool inverse: false
     property point cursorNormalized: Qt.point(0.5, 0.5)
+    property real angle: Math.PI / 4 // 45 deg
 
     property int counter: 0
 
     function setWallpaper(path: string) {
+        root.inverse = !root.inverse;
+        effect.t = 0;
         if (!path && anim.running)
             return;
 
         wallpaperFileView.setText(path);
 
-        if (root.inverse) {
-            if (bottom.wallpaper === path)
-                return;
-            bottom.wallpaper = path;
+        if (!root.inverse) {
+            if (bottom.wallpaper !== path) {
+                bottom.wallpaper = path;
+            }
         } else {
-            if (top.wallpaper === path)
-                return;
-            top.wallpaper = path;
+            if (top.wallpaper !== path) {
+                top.wallpaper = path;
+            }
         }
 
-        root.counter++;
         // different type of transition
-        const effects = ["./pixel_rand.frag.qsb", "./diamon_sweep.frag.qsb", "./circle_expand.frag.qsb", "./circle_shrink.frag.qsb", "./hexagon_expand.frag.qsb", "./hexagon_shrink.frag.qsb", "./dissolve.frag.qsb"];
-        effect.fragmentShader = "./pixel_rand.frag.qsb";
+        const effects = ["./slide.frag.qsb", "./pixel_rand.frag.qsb", "./diamon_sweep.frag.qsb", "./circle_expand.frag.qsb", "./circle_shrink.frag.qsb", "./hexagon_expand.frag.qsb", "./hexagon_shrink.frag.qsb", "./fade.frag.qsb"];
+        effect.fragmentShader = effects[root.counter % effects.length];
+        root.counter++;
 
-        effect.progress = root.inverse * 1.0;
+        console.log(effect.fragmentShader);
+
         anim.restart();
     }
 
@@ -74,6 +76,9 @@ PanelWindow {
         }
         function setCursor(x: real, y: real): void {
             root.setCursorPosition(x, y);
+        }
+        function setAngle(deg: real): void {
+            root.angle = deg * Math.PI / 180;
         }
     }
 
@@ -96,21 +101,25 @@ PanelWindow {
             duration: 100
         }
         NumberAnimation {
-            duration: Appearance.time.slow
+            duration: 2000
             easing.type: Easing.OutQuart
-            from: root.inverse * 1.0
-            to: (!root.inverse) * 1.0
+            from: 0
+            to: 1
             target: effect
-            property: "progress"
+            property: "t"
+        }
+        PropertyAction {
+            target: effect
+            property: "t"
+            value: 1
         }
 
         onFinished: {
-            if (root.inverse) {
+            if (!root.inverse) {
                 top.wallpaper = "";
             } else {
                 bottom.wallpaper = "";
             }
-            root.inverse = !root.inverse;
         }
     }
 
@@ -146,12 +155,12 @@ PanelWindow {
         id: effect
         anchors.fill: parent
 
-        property variant bottomTex: bottomTexture
-        property variant topTex: topTexture
-        property real progress: 0.0
-        property bool inversed: root.inverse
+        property variant fromSource: root.inverse ? bottomTexture : topTexture
+        property variant toSource: root.inverse ? topTexture : bottomTexture
+        property real t: 0.0
         property point cursor: root.cursorNormalized
-        property point resolution: Qt.point(root.width, root.height)
+        property real angle: root.angle
+        property point size: Qt.point(root.width, root.height)
         property real aspect: root.width / root.height
 
         fragmentShader: "./template.frag.qsb"
