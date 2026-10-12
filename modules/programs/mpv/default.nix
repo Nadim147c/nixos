@@ -38,10 +38,11 @@ in
           blend-subtitles=yes
           sub-auto=fuzzy
           slang=en,eng,enUS,en-US
+          alang=en,eng,enUS,en-US
           user-agent=Mozilla/5.0
 
           # script-opts and ytdl-raw-options require specific formatting
-          script-opts=ytdl_hook-ytdl_path=yt-dlp,ytdl_hook-try_ytdl_first=yes
+          script-opts=ytdl_hook-ytdl_path=yt-dlp
           ytdl-raw-options=sub-lang="en,eng,enUS,en-US",write-sub=,write-auto-sub=,yes-playlist=,concurrent-fragments=4
         '';
         "mpv.input".content = /* sh */ ''
