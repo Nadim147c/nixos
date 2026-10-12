@@ -7,23 +7,29 @@ let
 in
 {
   flake.modules.nixos.gui =
-    { pkgs, system, ... }:
+    {
+      config,
+      pkgs,
+      system,
+      ...
+    }:
     let
       inherit (self.packages.${system}) control;
     in
     {
       services.flatpak = {
         packages = singleton appId;
-        overrides."${appId}" = {
+        overrides.settings."${appId}" = {
           Context.filesystems = [
             "xdg-config/discord"
             "xdg-config/Equicord"
+            "${config.hj.directory}/.portal"
             "!xdg-config"
             "!xdg-data"
-            "!xdg-videos"
-            "!xdg-pictures"
-            "!xdg-music"
             "!xdg-download"
+            "!xdg-music"
+            "!xdg-pictures"
+            "!xdg-videos"
           ];
         };
       };

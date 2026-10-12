@@ -81,7 +81,7 @@ in
           inherit appId sha256;
           bundle = toString <| pkgs.fetchurl { inherit url sha256; };
         };
-        overrides."${appId}" = {
+        overrides.settings."${appId}" = {
           Context.filesystems = [
             "xdg-config/sonora"
             "xdg-music"

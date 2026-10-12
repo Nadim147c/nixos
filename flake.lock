@@ -165,12 +165,12 @@
     },
     "nix-flatpak": {
       "locked": {
-        "lastModified": 1767983141,
-        "narHash": "sha256-7ZCulYUD9RmJIDULTRkGLSW1faMpDlPKcbWJLYHoXcs=",
-        "rev": "440818969ac2cbd77bfe025e884d0aa528991374",
-        "revCount": 108,
+        "lastModified": 1790428548,
+        "narHash": "sha256-OsZ/I7v3ArCrk0XOUvkiU1dFtGtE1qZTHRGjvBXIKUU=",
+        "rev": "f1f045fc8b35ff59f88982c1752d3f3a42ca6a61",
+        "revCount": 123,
         "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/gmodena/nix-flatpak/0.7.0/019ba40a-29bd-75f8-bd37-e2b1d2c13015/source.tar.gz"
+        "url": "https://api.flakehub.com/f/pinned/gmodena/nix-flatpak/0.8.0/01a1264e-700a-7780-af50-c7a07fe185fa/source.tar.gz"
       },
       "original": {
         "type": "tarball",

@@ -33,14 +33,17 @@ in
         location = "https://dl.flathub.org/repo/flathub.flatpakrepo";
       };
       overrides = {
-        global = {
+        pruneUnmanagedOverrides = true;
+        writeMode = "replace";
+        settings.global = {
           Context.filesystems = [
             "/nix/store:ro"
             "/run/current-system/sw/share:ro"
-            "xdg-download"
             "xdg-config/gtkrc-2.0"
             "xdg-config/gtk-3.0"
             "xdg-config/gtk-4.0"
+            "${config.hj.directory}/.portal"
+            "!xdg-download"
             "!xdg-config"
             "!xdg-data"
             "!xdg-videos"
