@@ -1,10 +1,12 @@
 pragma ComponentBehavior: Bound
 import qs.modules.common
+import qs.modules.widgets
 import qs.modules.end4
 
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Widgets
 
@@ -14,8 +16,8 @@ PanelWindow {
     color: "transparent"
     property color bg: Appearance.material.myBackground
     anchors {
-        top: true
         left: true
+        top: true
         right: true
         bottom: true
     }
@@ -25,187 +27,306 @@ PanelWindow {
     exclusiveZone: 0
     aboveWindows: true
 
-    property int index: 0
-    property var applications: DesktopEntries.applications.values
-    readonly property var searchModel: DesktopEntries.applications.values.map(a => ({
-                name: Fuzzy.prepare(`${a.name} ${a.description} ${a.keywords}`),
-                entry: a
-            }))
+    component Entry: QtObject {
+        property string identifier
+        property string text
+        property string subtext
+        property string icon
+        property string provider
+        property var actions
+    }
 
+    Component {
+        id: entry
+        Entry {}
+    }
+
+    property int currentIndex: 0
+    onResultsChanged: currentIndex = 0
     function next() {
-        index = (index + 1) % applications.length;
+        currentIndex = (currentIndex + 1) % results.length;
     }
-
     function previous() {
-        index = (index - 1 + applications.length) % applications.length;
+        let idx = currentIndex - 1;
+        currentIndex = idx >= 0 ? idx : results.length - idx;
     }
-    function execute() {
-        const entry = applications[index];
-        Quickshell.execDetached(["app-launcher", entry.id + ".desktop"]);
+    function nextProvider() {
+        providerIndex = (providerIndex + 1) % providers.length;
+        for (const result of root.results) {
+            result.destroy();
+        }
+        results = [];
     }
 
-    function search(query: string) {
-        const options = {
-            all: true,
-            key: "name"
+    property list<Entry> results: []
+    property list<Entry> tempResults: []
+
+    function search(q: string) {
+        searcher.exec(["elephant", "query", "--json", `${provider};${q};100;false`]);
+    }
+
+    function primaryAction() {
+        action(0);
+    }
+    function secondaryAction() {
+        action(1);
+    }
+    function tertiaryAction() {
+        action(2);
+    }
+
+    function action(idx: int) {
+        const {
+            provider,
+            identifier,
+            actions
+        } = results[currentIndex];
+        console.log(JSON.stringify(["elephant", "activate", `${provider};${identifier};${actions[idx]};;`]));
+        Quickshell.execDetached(["elephant", "activate", `${provider};${identifier};${actions[idx]};;`]);
+    }
+
+    Component.onCompleted: search("")
+
+    Process {
+        id: searcher
+        onRunningChanged: {
+            if (running) {
+                root.tempResults = [];
+            } else {
+                for (const result of root.results) {
+                    result.destroy();
+                }
+                root.results = root.tempResults;
+            }
+        }
+        stdout: SplitParser {
+            onRead: data => {
+                if (!data) {
+                    return;
+                }
+                const e = JSON.parse(data.toString());
+
+                root.tempResults.push(entry.createObject(root, {
+                    identifier: e.item.identifier,
+                    text: e.item.text,
+                    subtext: e.item.subtext ?? "",
+                    icon: e.item.icon ?? "",
+                    provider: e.item.provider,
+                    actions: e.item.actions
+                }));
+            }
+        }
+    }
+
+    // readonly property list<string> providers: ["desktopapplications", "websearch", "files", "bookmarks", "symbols", "windows", "runner", "wireplumber", "unicode", "calc", "todo",]
+    readonly property list<string> providers: ["desktopapplications", "symbols", "calc", "files", "windows"]
+    property int providerIndex: 0
+
+    property string provider: providers[providerIndex]
+    property string providerName: {
+        const humanReadableNames = {
+            websearch: "Web Search",
+            files: "Files",
+            snippets: "Snippets",
+            playerctl: "Media Player Control",
+            clipboard: "Clipboard",
+            bookmarks: "Bookmarks",
+            symbols: "Symbols",
+            bluetooth: "Bluetooth",
+            windows: "Windows",
+            runner: "Runner",
+            wireplumber: "Audio Control",
+            unicode: "Unicode",
+            calc: "Calculator",
+            todo: "To-Do",
+            desktopapplications: "Applications"
         };
-        const res = Fuzzy.go(query, searchModel, options).map(r => {
-            return r.obj.entry;
-        });
-        root.applications = res;
+        return humanReadableNames[provider];
     }
 
-    // hidden mouse area over entire screen
-    MouseArea {
-        enabled: true
-        anchors.fill: parent
-        onClicked: {
-            Toggle.launcher = false;
-        }
-    }
-
-    ClippingRectangle {
-        id: body
-        opacity: 0.85
-        implicitHeight: column.height
-        implicitWidth: column.width
-        color: root.bg
-        radius: Appearance.round.larger
+    Card {
         anchors.centerIn: parent
+        implicitWidth: body.width
+        implicitHeight: body.height
         Behavior on implicitHeight {
             animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
         }
+        color: Appearance.material.myBackground
         ColumnLayout {
-            id: column
-            spacing: Appearance.space.little
-            Input {}
-            Entries {}
-            Item {
-                visible: root.applications.length !== 0
-                implicitHeight: Appearance.space.big
-                Layout.fillWidth: true
-            }
-        }
-    }
+            id: body
+            spacing: 0
+            Card {
+                Layout.preferredWidth: 500
+                Layout.preferredHeight: 50
+                Layout.margins: Appearance.space.big
 
-    component Entries: ClippingRectangle {
-        color: "transparent"
-        implicitHeight: list.height
-        Behavior on implicitHeight {
-            animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
-        }
-        implicitWidth: parent.width
-        visible: root.applications.length > 0
-        ListView {
-            id: list
-            implicitHeight: Math.min(300, contentHeight)
-            implicitWidth: parent.width - 20
-            anchors.centerIn: parent
-            model: root.applications
-            currentIndex: root.index
-            delegate: Item {
-                id: entry
-                width: list.width
-                height: row.height + 5
-                required property string name
-                required property string icon
-                required property string execString
-                property bool isCurrent: ListView.isCurrentItem
+                radius: 5
+                borderWidth: 1
+                borderPixelSize: 2
+
                 RowLayout {
-                    id: row
-                    width: entry.width - 10
-                    anchors.centerIn: parent
-                    height: 30
-                    spacing: 10
-                    Item {
-                        implicitWidth: 30
-                        IconImage {
-                            implicitSize: 24
-                            anchors.centerIn: parent
-                            source: Quickshell.iconPath(entry.icon, true)
-                        }
-                        MaterialSymbol {
-                            visible: Quickshell.iconPath(entry.icon, true) === ""
-                            iconSize: 24
-                            anchors.centerIn: parent
-                            color: Appearance.material.myPrimary
-                            text: "apps"
-                        }
-                    }
-                    Item {
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        StyledText {
-                            anchors.fill: parent
-                            color: Appearance.material.myOnBackground
-                            elide: Text.ElideRight
-                            textFormat: Text.PlainText
-                            text: `${entry.name}`
-                        }
-                    }
-                }
-                Rectangle {
                     anchors.fill: parent
-                    visible: entry.isCurrent
-                    color: "transparent"
-                    radius: 5
-                    border {
-                        width: 2
-                        color: Appearance.material.myOutline
+
+                    Rectangle {
+                        Layout.fillHeight: true
+                        Layout.preferredWidth: providerText.width + (Appearance.space.big * 2)
+                        color: Appearance.material.mySurfaceContainerHighest
+                        StyledText {
+                            id: providerText
+                            anchors.centerIn: parent
+                            text: root.providerName
+                            font {
+                                pixelSize: Appearance.font.pixelSize.normal
+                                family: Appearance.font.family.pixel
+                            }
+                        }
+                    }
+
+                    ClippingRectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+                        TextInput {
+                            anchors.fill: parent
+                            anchors.margins: Appearance.space.medium
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            color: Appearance.material.myOnSurface
+                            focus: true
+                            font {
+                                family: root.provider === "calc" ? Appearance.font.family.numbers : Appearance.font.family.pixel
+                                pixelSize: Appearance.font.pixelSize.larger
+                            }
+                            onTextChanged: root.search(text)
+                            Keys.onPressed: event => {
+                                if (event.key === Qt.Key_Escape) {
+                                    Toggle.launcher = false;
+                                    return;
+                                }
+
+                                if (event.key === Qt.Key_Tab) {
+                                    root.nextProvider();
+                                    event.accepted = true;
+                                    return;
+                                }
+
+                                // Ctrl+N or Down Arrow → move forward
+                                if ((event.key === Qt.Key_N && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Down) {
+                                    root.next();
+                                    event.accepted = true;
+                                    return;
+                                }
+
+                                // Ctrl+P or Up Arrow → move backward
+                                if ((event.key === Qt.Key_P && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Up) {
+                                    root.previous();
+                                    event.accepted = true;
+                                    return;
+                                }
+
+                                // Enter → trigger action
+                                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                    if (event.modifiers === (Qt.ShiftModifier | Qt.ControlModifier)) {
+                                        console.log("tertiary action");
+                                        root.tertiaryAction();
+                                    } else if (event.modifiers === Qt.ControlModifier) {
+                                        root.secondaryAction();
+                                    } else {
+                                        root.primaryAction();
+                                    }
+                                    Toggle.launcher = false;
+                                    return;
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
 
-    component Input: Item {
-        implicitWidth: 500
-        implicitHeight: 50
-        Rectangle {
-            implicitWidth: parent.width - 10
-            implicitHeight: parent.height - 10
-            anchors.centerIn: parent
-            radius: 18
-            bottomLeftRadius: root.applications.length === 0 ? radius : 5
-            bottomRightRadius: root.applications.length === 0 ? radius : 5
-            Behavior on bottomLeftRadius {
-                animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
-            }
-            Behavior on bottomRightRadius {
-                animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
-            }
-            color: Appearance.material.mySurfaceContainer
-            TextInput {
-                color: Appearance.material.myOnSurface
-                width: parent.width - 20
-                anchors.centerIn: parent
-                focus: true
-                onTextChanged: root.search(text)
-                Keys.onPressed: event => {
-                    if (event.key === Qt.Key_Escape) {
-                        Toggle.launcher = false;
-                        return;
-                    }
+            ClippingRectangle {
+                Layout.fillWidth: true
+                Layout.preferredHeight: Math.min(view.contentHeight, 500)
+                Layout.leftMargin: Appearance.space.big
+                Layout.rightMargin: Appearance.space.big
+                Layout.bottomMargin: Appearance.space.big
+                visible: root.results.length
+                color: "transparent"
+                ListView {
+                    id: view
+                    anchors.fill: parent
+                    model: root.results
+                    currentIndex: root.currentIndex
+                    spacing: 2
+                    delegate: Item {
+                        id: item
+                        required property string provider
+                        required property string text
+                        required property string icon
+                        required property string subtext
+                        property bool isCurrent: ListView.isCurrentItem
+                        implicitWidth: view.width
+                        implicitHeight: 50
 
-                    // Ctrl+N or Down Arrow → move forward
-                    if ((event.key === Qt.Key_N && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Down) {
-                        root.next();
-                        event.accepted = true;
-                        return;
-                    }
+                        Rectangle {
+                            anchors.fill: parent
+                            color: item.isCurrent ? Appearance.material.mySurfaceContainerHighest : "transparent"
 
-                    // Ctrl+P or Up Arrow → move backward
-                    if ((event.key === Qt.Key_P && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Up) {
-                        root.previous();
-                        event.accepted = true;
-                        return;
-                    }
+                            RowLayout {
+                                id: viewRow
+                                anchors.fill: parent
+                                anchors.margins: Appearance.space.small
 
-                    // Enter → trigger action
-                    if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                        root.execute();
-                        Toggle.launcher = false;
-                        return;
+                                Pixelate {
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: height
+                                    visible: !["symbols", "calc"].includes(item.provider) && !!item.icon
+                                    pixelSize: 2
+                                    color: "transparent"
+                                    Image {
+                                        anchors.fill: parent
+                                        source: Quickshell.iconPath(item.icon)
+                                        fillMode: Image.PreserveAspectCrop
+                                    }
+                                }
+
+                                StyledText {
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: height
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    text: item.icon
+                                    visible: item.provider === "symbols" && !!item.icon
+                                    font.pixelSize: Appearance.font.pixelSize.hugeass
+                                }
+
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.fillHeight: true
+                                    spacing: 2
+
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        horizontalAlignment: Text.AlignLeft
+                                        text: item.text
+                                        font {
+                                            family: item.provider === "calc" ? Appearance.font.family.numbers : Appearance.font.family.pixel
+                                            pixelSize: Appearance.font.pixelSize.large
+                                        }
+                                    }
+                                    StyledText {
+                                        Layout.fillWidth: true
+                                        horizontalAlignment: Text.AlignLeft
+                                        text: item.subtext
+                                        visible: text !== ""
+                                        color: Appearance.material.myOnSurfaceVariant
+                                        font {
+                                            family: item.provider === "calc" ? Appearance.font.family.numbers : Appearance.font.family.pixel
+                                            pixelSize: Appearance.font.pixelSize.smallie
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

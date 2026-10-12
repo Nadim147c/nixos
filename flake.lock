@@ -19,6 +19,26 @@
         "url": "https://flakehub.com/f/Nadim147c/discord-voice-rpc/%2A"
       }
     },
+    "elephant": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792254254,
+        "narHash": "sha256-4rEQ61+Bk+ZgUAPe2cGzs4j0k23cyrF4xiCuvXHpXOk=",
+        "owner": "Nadim147c",
+        "repo": "elephant",
+        "rev": "d721f44e7513db832a4f8a2ca673de8521a42f92",
+        "type": "github"
+      },
+      "original": {
+        "owner": "Nadim147c",
+        "repo": "elephant",
+        "type": "github"
+      }
+    },
     "flake-compat": {
       "flake": false,
       "locked": {
@@ -330,6 +350,7 @@
     "root": {
       "inputs": {
         "discord-voice-rpc": "discord-voice-rpc",
+        "elephant": "elephant",
         "flake-parts": "flake-parts",
         "flake-utils": "flake-utils",
         "hjem": "hjem",

@@ -103,6 +103,10 @@
       url = "github:Nadim147c/yankd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    elephant = {
+      url = "github:Nadim147c/elephant";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

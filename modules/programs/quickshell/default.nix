@@ -26,6 +26,7 @@ in
       inherit (pkgs.qt6.qtbase) qtQmlPrefix qtPluginPrefix;
 
       discord-voice-rpc = inputs'.discord-voice-rpc.packages.default;
+      elephant = inputs'.elephant.packages.default;
 
       buildInputs = attrValues {
         inherit (pkgs.kdePackages) qt5compat qtdeclarative;
@@ -53,7 +54,7 @@ in
           app-launcher
           ;
         inherit (pkgs.kdePackages) kdeconnect-kde;
-        inherit discord-voice-rpc;
+        inherit discord-voice-rpc elephant;
       };
 
       /*
@@ -113,6 +114,7 @@ in
       packages = [
         self.packages.${system}.quickshell
         inputs.discord-voice-rpc.packages.${system}.default
+        inputs.elephant.packages.${system}.default
       ];
 
       programs.rong.settings.installs = {
@@ -163,6 +165,16 @@ in
           '';
       });
 
+      hj.systemd.services.elephant = fix (finalAttrs: {
+        enable = true;
+        description = "Elephant daemon";
+        partOf = singleton "graphical-session.target";
+        after = finalAttrs.partOf;
+        wantedBy = finalAttrs.partOf;
+        path = singleton "/run/current-system/sw/bin";
+        serviceConfig.ExecStart = "${inputs.elephant.packages.${system}.default}/bin/elephant";
+      });
+
       hj.systemd.paths.rong-resize-image = fix (final: {
         enable = true;
         description = "Watch for rong cache changes";
@@ -191,36 +203,36 @@ in
         };
       };
 
-      hj.systemd.services.quickshell = fix (final: {
-        enable = true;
-        description = "mpvpaper control daemon";
-        partOf = singleton "graphical-session.target";
-        wantedBy = final.partOf;
-        wants = [
-          "tray.target"
-          "pipewire.service"
-          "wireplumber.service"
-        ];
-        after = final.wants;
-        reloadTriggers = singleton self.packages."${system}".quickshell;
-        serviceConfig = {
-          ExecStart =
-            let
-              quickshell-config =
-                pkgs.runCommand "quickshell-config" { nativeBuildInputs = [ pkgs.qt6.qtshadertools ]; }
-                  ''
-                    mkdir -p $out
-                    cp -r ${./modules} $out/modules
-                    cp -r ${./shell.qml} $out/shell.qml
-                    chmod -R +w $out
+      hj.systemd.services.quickshell =
+        let
+          quickshell-config =
+            pkgs.runCommand "quickshell-config" { nativeBuildInputs = [ pkgs.qt6.qtshadertools ]; }
+              ''
+                mkdir -p $out
+                cp -r ${./modules} $out/modules
+                cp -r ${./shell.qml} $out/shell.qml
+                chmod -R +w $out
 
-                    find $out/modules -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
-                  '';
-            in
-            "${getExe self.packages."${system}".quickshell} -p ${quickshell-config}";
-          Restart = "on-failure";
-          RestartSec = 10;
-        };
-      });
+                find $out/modules -iname "*.frag" -exec qsb --glsl "100 es,120,150" --hlsl 50 --msl 200 -o {}.qsb {} \;
+              '';
+        in
+        fix (final: {
+          enable = true;
+          description = "mpvpaper control daemon";
+          partOf = singleton "graphical-session.target";
+          wantedBy = final.partOf;
+          wants = [
+            "tray.target"
+            "pipewire.service"
+            "wireplumber.service"
+          ];
+          after = final.wants;
+          reloadTriggers = singleton quickshell-config;
+          serviceConfig = {
+            ExecStart = "${getExe self.packages."${system}".quickshell} -p ${quickshell-config}";
+            Restart = "on-failure";
+            RestartSec = 10;
+          };
+        });
     };
 }
