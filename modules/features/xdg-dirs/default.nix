@@ -32,14 +32,7 @@ in
 
       xdg = mapAttrs' (name: value: nameValuePair "XDG_${toUpper name}_DIR" value) dirs;
 
-      # Even though flatpak supposed to be a sandbox. Most of it software
-      # Default to xdg-pictures/video readonly. Which means potentially
-      # untrusted software can read your private videos. Thus, it better
-      # to not save private media in them.
       extra = {
-        private-pictures = media "private-pictures";
-        private-videos = media "private-videos";
-        private-audios = media "private-audios";
         torrents = files "torrents";
       };
       allDirs = attrValues (dirs // extra);
@@ -80,29 +73,14 @@ in
             path = dirs.music;
           }
           {
-            name = "private-audios";
-            icon = "folder-music";
-            path = extra.private-audios;
-          }
-          {
             name = "videos";
             icon = "folder-videos";
             path = dirs.videos;
           }
           {
-            name = "private-videos";
-            icon = "folder-videos";
-            path = extra.private-videos;
-          }
-          {
             name = "pictures";
             icon = "folder-pictures";
             path = dirs.pictures;
-          }
-          {
-            name = "private-pictures";
-            icon = "folder-pictures";
-            path = extra.private-pictures;
           }
           {
             name = "desktop";

@@ -14,7 +14,7 @@ def main [] {
     let out = $image
       | path parse
       | upsert parent $quickshell_cache
-      | upsert ext "jpg"
+      | upsert extension "jpg"
       | path join
 
     printf '%q -[120p]-> %q\n' $image $out

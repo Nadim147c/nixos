@@ -98,7 +98,8 @@ MouseArea {
                         }
                         font {
                             family: Appearance.font.family.pixel
-                            pixelSize: Appearance.font.pixelSize.small
+                            pixelSize: Appearance.font.pixelSize.normal
+                            bold: true
                         }
                     }
                 }

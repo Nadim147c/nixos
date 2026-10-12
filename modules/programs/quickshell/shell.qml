@@ -14,6 +14,7 @@ import qs.modules.discord
 import qs.modules.launcher
 import qs.modules.background
 import qs.modules.colorpicker
+import qs.modules.collection
 
 import QtQuick
 import Quickshell
@@ -69,5 +70,9 @@ ShellRoot {
     LazyLoader {
         activeAsync: Toggle.colorpicker
         component: ColorPicker {}
+    }
+    LazyLoader {
+        activeAsync: Toggle.collection
+        component: Collection {}
     }
 }

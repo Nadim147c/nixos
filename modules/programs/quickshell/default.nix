@@ -10,7 +10,7 @@ let
   inherit (lib.fixedPoints) fix;
   inherit (lib.lists) singleton;
   inherit (lib.strings) hasPrefix;
-  inherit (lib.meta) getExe getExe';
+  inherit (lib.meta) getExe;
   inherit (lib.modules) mkIf;
   inherit (lib.strings) makeSearchPath makeBinPath;
 in
