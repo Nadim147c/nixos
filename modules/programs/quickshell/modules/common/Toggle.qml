@@ -17,6 +17,7 @@ Singleton {
     property bool background: true
     property bool colorpicker: false
     property bool collection: true
+    property bool gamemode: false
 
     IpcHandler {
         target: "toggle"

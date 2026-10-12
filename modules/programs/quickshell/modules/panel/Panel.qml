@@ -141,6 +141,11 @@ PanelWindow {
                     onClicked: Toggle.clipboard = true
                 }
                 PanelIcon {
+                    tooltip: "Game mode"
+                    icon: "stadia_controller"
+                    onClicked: Toggle.gamemode = !Toggle.gamemode
+                }
+                PanelIcon {
                     tooltip: "Wallpaper"
                     icon: "wallpaper"
                     onClicked: Toggle.wallpaper = true

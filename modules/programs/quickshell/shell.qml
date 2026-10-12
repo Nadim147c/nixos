@@ -64,7 +64,7 @@ ShellRoot {
         component: Launcher {}
     }
     LazyLoader {
-        activeAsync: Toggle.background
+        activeAsync: Toggle.background && !Toggle.gamemode
         component: Background {}
     }
     LazyLoader {

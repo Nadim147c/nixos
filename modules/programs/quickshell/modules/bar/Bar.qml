@@ -40,7 +40,9 @@ PanelWindow {
             spacing: Appearance.space.medium
 
             BarWorkspaces {}
-            BarCava {}
+            BarCava {
+                visible: !Toggle.gamemode
+            }
             BarLyrics {}
             BarNetwork {}
             BarVolume {}
