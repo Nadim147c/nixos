@@ -8,7 +8,6 @@ layout(binding = 1) uniform sampler2D imageTexture;
 layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
-    vec4 fallbackColor;
     vec2 size;
     float imagePixelSize;
     float levels;
@@ -55,16 +54,13 @@ void main() {
     vec2 pixelizedUV = (floor((qt_TexCoord0 * size) / effectiveGrid) + 0.5) * (effectiveGrid / size);
 
     vec4 texColor = texture(imageTexture, pixelizedUV);
-
-    vec3 unpremulTexRGB = texColor.a > 0.0 ? texColor.rgb / texColor.a : vec3(0.0);
-    vec3 blendedRGB = mix(fallbackColor.rgb, unpremulTexRGB, texColor.a);
-    float blendedAlpha = mix(fallbackColor.a, 1.0, texColor.a);
+    vec3 rgb = texColor.rgb;
 
     if (levels > 1.0) {
-      vec3 lab = oklab_from_linear(srgb_to_linear(blendedRGB));
+      vec3 lab = oklab_from_linear(srgb_to_linear(rgb));
       lab.x = round(lab.x * levels) / levels;
-      blendedRGB = linear_to_srgb(linear_from_oklab(lab));
+      rgb = linear_to_srgb(linear_from_oklab(lab));
     }
 
-    fragColor = vec4(blendedRGB * blendedAlpha, blendedAlpha) * qt_Opacity;
+    fragColor = vec4(rgb, texColor.a) * qt_Opacity;
 }

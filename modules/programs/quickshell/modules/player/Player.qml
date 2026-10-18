@@ -40,6 +40,7 @@ PanelWindow {
         id: body
         implicitWidth: 450
         implicitHeight: content.height + (Appearance.space.large * 2)
+        color: Appearance.material.myBackground
         ColumnLayout {
             id: content
             width: parent.width - (Appearance.space.large * 2)
@@ -198,6 +199,8 @@ PanelWindow {
                                 implicitWidth: slider.handleSize
                                 x: slider.offset
                                 y: (parent.height - height) / 2
+                                color: "transparent"
+                                pixelSize: 3
 
                                 Rectangle {
                                     id: handle

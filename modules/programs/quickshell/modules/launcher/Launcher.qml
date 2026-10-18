@@ -52,14 +52,12 @@ PanelWindow {
     }
     function nextProvider() {
         providerIndex = (providerIndex + 1) % providers.length;
-        for (const result of root.results) {
-            result.destroy();
-        }
-        results = [];
+        search(query);
     }
 
     property list<Entry> results: []
     property list<Entry> tempResults: []
+    property alias query: input.text
 
     function search(q: string) {
         searcher.exec(["elephant", "query", "--json", `${provider};${q};100;false`]);
@@ -81,8 +79,12 @@ PanelWindow {
             identifier,
             actions
         } = results[currentIndex];
-        console.log(JSON.stringify(["elephant", "activate", `${provider};${identifier};${actions[idx]};;`]));
-        Quickshell.execDetached(["elephant", "activate", `${provider};${identifier};${actions[idx]};;`]);
+        if (provider === "desktopapplications" && actions[idx] === "start") {
+            Quickshell.execDetached(["app-launcher", identifier]);
+        } else {
+            console.log(JSON.stringify(["elephant", "activate", `${provider};${identifier};${actions[idx]};;`]));
+            Quickshell.execDetached(["elephant", "activate", `${provider};${identifier};${actions[idx]};;`]);
+        }
     }
 
     Component.onCompleted: search("")
@@ -131,7 +133,7 @@ PanelWindow {
             playerctl: "Media Player Control",
             clipboard: "Clipboard",
             bookmarks: "Bookmarks",
-            symbols: "Symbols",
+            symbols: "Emojis",
             bluetooth: "Bluetooth",
             windows: "Windows",
             runner: "Runner",
@@ -163,6 +165,7 @@ PanelWindow {
                 radius: 5
                 borderWidth: 1
                 borderPixelSize: 2
+                color: Appearance.material.myBackground
 
                 RowLayout {
                     anchors.fill: parent
@@ -176,8 +179,9 @@ PanelWindow {
                             anchors.centerIn: parent
                             text: root.providerName
                             font {
-                                pixelSize: Appearance.font.pixelSize.normal
+                                pixelSize: Appearance.font.pixelSize.larger
                                 family: Appearance.font.family.pixel
+                                bold: true
                             }
                         }
                     }
@@ -187,6 +191,7 @@ PanelWindow {
                         Layout.fillHeight: true
                         color: "transparent"
                         TextInput {
+                            id: input
                             anchors.fill: parent
                             anchors.margins: Appearance.space.medium
                             horizontalAlignment: Text.AlignLeft
@@ -279,24 +284,35 @@ PanelWindow {
                                 Pixelate {
                                     Layout.fillHeight: true
                                     Layout.preferredWidth: height
-                                    visible: !["symbols", "calc"].includes(item.provider) && !!item.icon
                                     pixelSize: 2
                                     color: "transparent"
                                     Image {
+                                        id: icon
+                                        visible: !["symbols", "calc"].includes(item.provider) && Quickshell.iconPath(item.icon, true) !== ""
                                         anchors.fill: parent
-                                        source: Quickshell.iconPath(item.icon)
+                                        source: Quickshell.iconPath(item.icon, true)
                                         fillMode: Image.PreserveAspectCrop
                                     }
-                                }
 
-                                StyledText {
-                                    Layout.fillHeight: true
-                                    Layout.preferredWidth: height
-                                    horizontalAlignment: Text.AlignHCenter
-                                    verticalAlignment: Text.AlignVCenter
-                                    text: item.icon
-                                    visible: item.provider === "symbols" && !!item.icon
-                                    font.pixelSize: Appearance.font.pixelSize.hugeass
+                                    MaterialSymbol {
+                                        anchors.fill: parent
+                                        visible: !icon.visible
+                                        color: Appearance.material.myPrimary
+                                        fontSizeMode: Text.Fit
+                                        iconSize: 100
+                                        text: {
+                                            switch (item.provider) {
+                                            case "desktopapplications":
+                                                return "apps";
+                                            case "calc":
+                                                return "calculate";
+                                            case "files":
+                                                return "file_open";
+                                            case "symbols":
+                                                return item.icon;
+                                            }
+                                        }
+                                    }
                                 }
 
                                 ColumnLayout {
@@ -311,6 +327,7 @@ PanelWindow {
                                         font {
                                             family: item.provider === "calc" ? Appearance.font.family.numbers : Appearance.font.family.pixel
                                             pixelSize: Appearance.font.pixelSize.large
+                                            bold: true
                                         }
                                     }
                                     StyledText {
@@ -322,6 +339,7 @@ PanelWindow {
                                         font {
                                             family: item.provider === "calc" ? Appearance.font.family.numbers : Appearance.font.family.pixel
                                             pixelSize: Appearance.font.pixelSize.smallie
+                                            bold: true
                                         }
                                     }
                                 }

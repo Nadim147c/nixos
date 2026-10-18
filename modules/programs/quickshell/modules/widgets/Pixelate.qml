@@ -1,18 +1,17 @@
 import QtQuick
-import qs.modules.common
 
 Item {
     id: root
 
-    property color color: Appearance.material.myBackground ?? "#222222"
     property real pixelSize: 3.0
     property real levels: 0
 
+    property alias color: contentItem.color
     default property alias data: contentItem.data
     property alias children: contentItem.children
     readonly property alias contentItem: contentItem
 
-    Item {
+    Rectangle {
         id: contentItem
         anchors.fill: parent
     }

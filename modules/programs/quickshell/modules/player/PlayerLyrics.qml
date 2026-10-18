@@ -99,7 +99,6 @@ MouseArea {
                         font {
                             family: Appearance.font.family.pixel
                             pixelSize: Appearance.font.pixelSize.normal
-                            bold: true
                         }
                     }
                 }

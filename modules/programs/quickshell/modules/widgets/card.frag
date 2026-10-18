@@ -9,7 +9,6 @@ layout(std140, binding = 0) uniform buf {
     mat4 qt_Matrix;
     float qt_Opacity;
     vec4 borderColor;
-    vec4 fallbackColor;
     vec2 size;
     float radius;
     float borderPixelSize;
@@ -38,13 +37,7 @@ void main() {
 
     if (dist <= 0.0) {
         if (dist <= -effectiveBorder) {
-            vec4 texColor = texture(imageTexture, qt_TexCoord0);
-
-            vec3 blendedRGB = mix(fallbackColor.rgb, texColor.rgb, texColor.a);
-            float blendedAlpha = max(fallbackColor.a, texColor.a);
-            color = vec4(blendedRGB, blendedAlpha);
-
-            color = texColor * texColor.a + fallbackColor * (1.0 - texColor.a);
+            color = texture(imageTexture, qt_TexCoord0);
         } else {
             color = borderColor;
         }

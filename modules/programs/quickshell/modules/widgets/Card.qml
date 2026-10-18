@@ -5,16 +5,16 @@ Item {
     id: root
 
     property color borderColor: Appearance.material.myOutline ?? "#222222"
-    property color color: Appearance.material.myBackground ?? "#222222"
     property real radius: 5.0
     property real borderWidth: 2
     property real borderPixelSize: 3
 
+    property alias color: contentItem.color
     default property alias data: contentItem.data
     property alias children: contentItem.children
     readonly property alias contentItem: contentItem
 
-    Item {
+    Rectangle {
         id: contentItem
         anchors.fill: parent
     }
@@ -31,7 +31,6 @@ Item {
 
         property variant imageTexture: bodySource
         property color borderColor: root.borderColor
-        property color fallbackColor: root.color
         property real radius: root.radius
         property real borderWidth: root.borderWidth
         property real borderPixelSize: root.borderPixelSize
