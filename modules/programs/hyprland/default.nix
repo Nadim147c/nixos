@@ -217,7 +217,7 @@ in
             brightnessctl = getExe pkgs.brightnessctl;
           in
           [
-            (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=200% ${getExe pkgs.brave-origin}")
+            (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=300% ${getExe pkgs.brave-origin}")
             {
               keys = [
                 "SUPER"
