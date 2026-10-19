@@ -100,6 +100,11 @@ in
           DataFolder = "/var/lib/navidrome";
           Port = 4533;
           Scanner.PurgeMissing = "always";
+          EnableWebPEncoding = true;
+          Subsonic = {
+            ArtistParticipations = true;
+            AppendAlbumVersion = false;
+          };
         };
       };
 
