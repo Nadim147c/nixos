@@ -166,6 +166,7 @@ PanelWindow {
             id: body
             spacing: 0
             Card {
+                id: searchBar
                 Layout.preferredWidth: 500
                 Layout.preferredHeight: 50
                 Layout.margins: Appearance.space.big
@@ -174,6 +175,23 @@ PanelWindow {
                 borderWidth: 1
                 borderPixelSize: 2
                 color: Appearance.material.myBackground
+                borderColor: Appearance.material.myOutline
+                property alias isSearching: searcher.running
+                onIsSearchingChanged: {
+                    if (isSearching) {
+                        borderColor = Appearance.material.myOnBackground;
+                        searchAnimTimer.restart();
+                    }
+                }
+                Timer {
+                    id: searchAnimTimer
+                    interval: 500
+                    running: false
+                    onTriggered: searchBar.borderColor = Appearance.material.myOutline
+                }
+                Behavior on borderColor {
+                    animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
+                }
 
                 RowLayout {
                     anchors.fill: parent

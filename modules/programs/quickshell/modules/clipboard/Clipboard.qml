@@ -48,14 +48,33 @@ PanelWindow {
             spacing: 0
 
             Card {
+                id: searchBar
                 Layout.preferredWidth: 500
                 Layout.preferredHeight: 50
                 Layout.margins: Appearance.space.big
-                color: Appearance.material.myBackground
 
                 radius: 5
                 borderWidth: 1
                 borderPixelSize: 2
+                color: Appearance.material.myBackground
+                borderColor: Appearance.material.myOutline
+                property bool isSearching: Yankd.isSearching
+                onIsSearchingChanged: {
+                    if (isSearching) {
+                        borderColor = Appearance.material.myOnBackground;
+                        searchAnimTimer.restart();
+                    }
+                }
+                Timer {
+                    id: searchAnimTimer
+                    interval: 500
+                    running: false
+                    onTriggered: searchBar.borderColor = Appearance.material.myOutline
+                }
+                Behavior on borderColor {
+                    animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
+                }
+
                 RowLayout {
                     anchors.fill: parent
                     spacing: 0
@@ -87,10 +106,21 @@ PanelWindow {
                             verticalAlignment: Text.AlignVCenter
                             color: Appearance.material.myOnSurface
                             focus: true
+                            font {
+                                family: Appearance.font.family.pixel
+                                pixelSize: Appearance.font.pixelSize.larger
+                            }
                             onTextChanged: Yankd.search(text)
                             Keys.onPressed: event => {
                                 if (event.key === Qt.Key_Escape) {
                                     Toggle.clipboard = false;
+                                    return;
+                                }
+
+                                // Delete remove the current item
+                                if (event.key === Qt.Key_Delete) {
+                                    Yankd.remove();
+                                    event.accepted = true;
                                     return;
                                 }
 
@@ -122,7 +152,7 @@ PanelWindow {
 
             ClippingRectangle {
                 color: "transparent"
-                Layout.preferredHeight: 300
+                Layout.preferredHeight: Math.min(300, list.contentHeight)
                 Layout.fillWidth: true
                 ListView {
                     id: list
@@ -166,16 +196,34 @@ PanelWindow {
             }
 
             Card {
+                id: previewBox
                 Layout.fillWidth: true
                 Layout.preferredHeight: 200
                 Layout.margins: Appearance.space.big
                 Layout.topMargin: 0
-                visible: Yankd.preview !== ""
 
                 radius: 5
                 borderWidth: 1
                 borderPixelSize: 2
                 color: Appearance.material.mySurfaceContainer
+                borderColor: Appearance.material.myOutline
+                property bool isSearching: Yankd.isPreviewLoading
+                onIsSearchingChanged: {
+                    if (isSearching) {
+                        borderColor = Appearance.material.myOnBackground;
+                        previewAnimTimer.restart();
+                    }
+                }
+                Timer {
+                    id: previewAnimTimer
+                    interval: 500
+                    running: false
+                    onTriggered: previewBox.borderColor = Appearance.material.myOutline
+                }
+                Behavior on borderColor {
+                    animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
+                }
+
                 Loader {
                     anchors.fill: parent
                     active: Yankd.previewMimeType.startsWith("image/")
@@ -185,8 +233,31 @@ PanelWindow {
                         fillMode: Image.PreserveAspectCrop
                     }
                 }
+
+                ColumnLayout {
+                    visible: Yankd.preview === "" && !Yankd.isPreviewLoading
+                    anchors.centerIn: parent
+                    StyledText {
+                        Layout.alignment: Qt.AlignHCenter
+                        text: "robot"
+                        color: Appearance.material.mySurfaceVariant
+                        font {
+                            family: Appearance.font.family.iconPixel
+                            pixelSize: Appearance.font.pixelSize.hugeass * 3
+                        }
+                    }
+                    StyledText {
+                        text: "Error 404: Not found"
+                        color: Appearance.material.mySurfaceVariant
+                        font {
+                            family: Appearance.font.family.pixel2
+                        }
+                    }
+                }
+
                 Loader {
                     anchors.fill: parent
+                    anchors.margins: Appearance.space.medium
                     active: !Yankd.previewMimeType.startsWith("image/")
                     sourceComponent: StyledText {
                         animateChange: true

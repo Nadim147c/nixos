@@ -26,7 +26,6 @@ in
       inherit (pkgs.qt6.qtbase) qtQmlPrefix qtPluginPrefix;
 
       discord-voice-rpc = inputs'.discord-voice-rpc.packages.default;
-      elephant = inputs'.elephant.packages.default;
 
       buildInputs = attrValues {
         inherit (pkgs.kdePackages) qt5compat qtdeclarative;
@@ -52,9 +51,10 @@ in
           yankd-impure
           control
           app-launcher
+          elephant
           ;
         inherit (pkgs.kdePackages) kdeconnect-kde;
-        inherit discord-voice-rpc elephant;
+        inherit discord-voice-rpc;
       };
 
       /*
@@ -87,6 +87,30 @@ in
         ln -s ${app-launcher}/bin/app-launcher $out/bin/app-launcher
       '';
 
+      packages.elephant = inputs'.elephant.packages.default.override {
+        excludedProviders = [
+          "1password"
+          "aptpackages"
+          "archlinuxpkgs"
+          "bitwarden"
+          "bluetooth"
+          "bookmarks"
+          "clipboard"
+          "dnfpackages"
+          "menus"
+          "niriactions"
+          "nirisessions"
+          "playerctl"
+          "providerlist"
+          "runner"
+          "snippets"
+          "todo"
+          "unicode"
+          "websearch"
+          "wireplumber"
+        ];
+      };
+
       packages.quickshell = inputs.wrappers.lib.wrapPackage {
         inherit pkgs;
         package = pkgs.quickshell;
@@ -111,11 +135,10 @@ in
       ...
     }:
     {
-      packages = [
-        self.packages.${system}.quickshell
-        inputs.discord-voice-rpc.packages.${system}.default
-        inputs.elephant.packages.${system}.default
-      ];
+      packages = attrValues {
+        inherit (self.packages.${system}) quickshell elephant;
+        inherit (inputs.discord-voice-rpc.packages.${system}) default;
+      };
 
       programs.rong.settings.installs = {
         "quickshell.json" = "${config.hj.xdg.state.directory}/quickshell/colors.json";
@@ -172,7 +195,7 @@ in
         after = finalAttrs.partOf;
         wantedBy = finalAttrs.partOf;
         path = singleton "/run/current-system/sw/bin";
-        serviceConfig.ExecStart = "${inputs.elephant.packages.${system}.default}/bin/elephant";
+        serviceConfig.ExecStart = "${self.packages.${system}.elephant}/bin/elephant";
       });
 
       hj.systemd.paths.rong-resize-image = fix (final: {

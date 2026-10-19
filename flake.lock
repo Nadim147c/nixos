@@ -26,11 +26,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792254254,
-        "narHash": "sha256-4rEQ61+Bk+ZgUAPe2cGzs4j0k23cyrF4xiCuvXHpXOk=",
+        "lastModified": 1792425076,
+        "narHash": "sha256-lQmm/mlcQ5i7KoHr+G9djqFZyQJPUj3qWhacIBG4vCY=",
         "owner": "Nadim147c",
         "repo": "elephant",
-        "rev": "d721f44e7513db832a4f8a2ca673de8521a42f92",
+        "rev": "d12d1c7e56844ef7439b12bda0fbc78d6f53513d",
         "type": "github"
       },
       "original": {
