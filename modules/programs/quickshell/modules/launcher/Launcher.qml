@@ -13,8 +13,12 @@ import Quickshell.Widgets
 PanelWindow {
     id: root
 
+    WlrLayershell.namespace: "quickshell:launcher"
+    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
+    exclusiveZone: 0
+    aboveWindows: true
+
     color: "transparent"
-    property color bg: Appearance.material.myBackground
     anchors {
         left: true
         top: true
@@ -22,10 +26,14 @@ PanelWindow {
         bottom: true
     }
 
-    WlrLayershell.namespace: "quickshell:launcher"
-    WlrLayershell.keyboardFocus: WlrKeyboardFocus.OnDemand
-    exclusiveZone: 0
-    aboveWindows: true
+    // hidden mouse area over entire screen
+    MouseArea {
+        enabled: true
+        anchors.fill: parent
+        onClicked: {
+            Toggle.launcher = false;
+        }
+    }
 
     component Entry: QtObject {
         property string identifier
@@ -284,7 +292,8 @@ PanelWindow {
                                 Pixelate {
                                     Layout.fillHeight: true
                                     Layout.preferredWidth: height
-                                    pixelSize: 2
+                                    visible: icon.visible || symbol.visible
+                                    pixelSize: 1.5
                                     color: "transparent"
                                     Image {
                                         id: icon
@@ -295,8 +304,9 @@ PanelWindow {
                                     }
 
                                     MaterialSymbol {
+                                        id: symbol
                                         anchors.fill: parent
-                                        visible: !icon.visible
+                                        visible: !icon.visible && text !== ""
                                         color: Appearance.material.myPrimary
                                         fontSizeMode: Text.Fit
                                         iconSize: 100
@@ -308,11 +318,21 @@ PanelWindow {
                                                 return "calculate";
                                             case "files":
                                                 return "file_open";
-                                            case "symbols":
-                                                return item.icon;
                                             }
+                                            return "";
                                         }
                                     }
+                                }
+
+                                // Pixelating this component cases lag :]
+                                Text {
+                                    Layout.fillHeight: true
+                                    Layout.preferredWidth: height
+                                    visible: item.provider === "symbols"
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    font.pixelSize: 32
+                                    text: item.icon
                                 }
 
                                 ColumnLayout {

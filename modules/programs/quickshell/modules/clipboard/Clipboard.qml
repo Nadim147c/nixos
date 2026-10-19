@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import M3Shapes
 import QtQuick
@@ -31,9 +32,8 @@ PanelWindow {
         }
     }
 
-    ClippingRectangle {
+    Card {
         id: body
-        opacity: 0.85
         implicitWidth: content.width
         implicitHeight: content.height
         Behavior on implicitHeight {
@@ -41,225 +41,182 @@ PanelWindow {
         }
         anchors.centerIn: parent
         color: Appearance.material.myBackground
-        radius: 20
-        Body {
+
+        ColumnLayout {
             id: content
-        }
-    }
-    component Body: ColumnLayout {
-        id: col
-        Component.onCompleted: Yankd.search("")
-        Input {}
-        Entries {}
-        Preview {}
-    }
+            Component.onCompleted: Yankd.search("")
+            spacing: 0
 
-    component Input: Item {
-        implicitWidth: 500
-        implicitHeight: 50
-        Rectangle {
-            implicitWidth: parent.width - 10
-            implicitHeight: parent.height - 10
-            anchors.centerIn: parent
-            radius: 18
-            bottomLeftRadius: 5
-            bottomRightRadius: 5
-            color: Appearance.material.mySurfaceContainer
-            RowLayout {
-                width: parent.width - 20
-                anchors.centerIn: parent
-                spacing: Appearance.space.big
-                Item {
-                    implicitHeight: parent.height
-                    implicitWidth: implicitHeight
-                    MaterialShape {
-                        id: materialShape
-                        implicitWidth: implicitHeight
-                        implicitHeight: parent.height + 10
-                        anchors.centerIn: parent
-                        shape: MaterialShape.Cookie7Sided
-                        color: animate ? Appearance.material.myPrimary : Appearance.material.mySurfaceVariant
-                        Behavior on color {
-                            animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
-                        }
-                        property bool isSearching: Yankd.isSearching
-                        onIsSearchingChanged: {
-                            animate = true;
-                            timer.restart();
-                        }
-                        property bool animate: false
-                        Timer {
-                            id: timer
-                            interval: 200
-                            repeat: false
-                            triggeredOnStart: false
-                            onTriggered: materialShape.animate = false
-                        }
-                        RotationAnimation on rotation {
-                            from: 0
-                            to: 360
-                            duration: 1500
-                            loops: Animation.Infinite
-                            running: materialShape.animate
-                        }
-                    }
-                    MaterialSymbol {
-                        code: 0xE8B6
-                        anchors.centerIn: parent
-                        color: materialShape.animate ? Appearance.material.myOnPrimary : Appearance.material.myOnSurfaceVariant
-                        Behavior on color {
-                            animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
-                        }
-                    }
-                }
-                Item {
-                    Layout.fillWidth: true
-                    implicitHeight: input.height
-                    TextInput {
-                        id: input
-                        width: parent.width
-                        color: Appearance.material.myOnSurface
-                        focus: true
-                        onTextChanged: Yankd.search(text)
-                        Keys.onPressed: event => {
-                            if (event.key === Qt.Key_Escape) {
-                                Toggle.clipboard = false;
-                                return;
-                            }
+            Card {
+                Layout.preferredWidth: 500
+                Layout.preferredHeight: 50
+                Layout.margins: Appearance.space.big
+                color: Appearance.material.myBackground
 
-                            // Ctrl+N or Down Arrow → move forward
-                            if ((event.key === Qt.Key_N && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Down) {
-                                Yankd.next();
-                                event.accepted = true;
-                                return;
-                            }
-
-                            // Ctrl+P or Up Arrow → move backward
-                            if ((event.key === Qt.Key_P && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Up) {
-                                Yankd.previous();
-                                event.accepted = true;
-                                return;
-                            }
-
-                            // Enter → trigger action
-                            if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                Yankd.set();
-                                Toggle.clipboard = false;
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    component Preview: Item {
-        visible: Yankd.preview !== ""
-        implicitWidth: 500
-        implicitHeight: 200
-        ClippingRectangle {
-            implicitWidth: parent.width - 10
-            implicitHeight: parent.height - 10
-            anchors.centerIn: parent
-            radius: 18
-            topLeftRadius: 5
-            topRightRadius: 5
-            color: Appearance.material.mySurfaceContainer
-            Loader {
-                anchors.fill: parent
-                active: Yankd.previewMimeType.startsWith("image/")
-                sourceComponent: Image {
-                    anchors.fill: parent
-                    source: `data:${Yankd.currentEntry.mimeType};base64,${Yankd.preview}`
-                    fillMode: Image.PreserveAspectCrop
-                }
-            }
-            Loader {
-                anchors.fill: parent
-                active: !Yankd.previewMimeType.startsWith("image/")
-                sourceComponent: StyledText {
-                    animateChange: true
-                    verticalAlignment: Text.AlignTop
-                    color: Appearance.material.myOnSurface
-                    width: parent.width - 10
-                    height: parent.height - 10
-                    x: 5
-                    y: 5
-                    function removeIndent(text) {
-                        const lines = text.split('\n');
-                        let minIndent = Infinity;
-                        for (const line of lines) {
-                            if (line.trim() === '')
-                                continue; // Skip empty lines
-                            const leadingSpaces = line.match(/^[ \t]*/)[0].length;
-                            minIndent = Math.min(minIndent, leadingSpaces);
-                        }
-                        if (minIndent === Infinity)
-                            return text;
-
-                        const result = lines.map(line => {
-                            if (line.trim() === '')
-                                return line; // Keep empty lines as-is
-                            return line.slice(minIndent);
-                        });
-
-                        return result.join('\n');
-                    }
-                    text: removeIndent(Yankd.preview)
-                }
-            }
-        }
-    }
-
-    component Entries: ClippingRectangle {
-        color: "transparent"
-        implicitHeight: 300
-        implicitWidth: parent.width
-        ListView {
-            id: list
-            implicitHeight: parent.height
-            implicitWidth: parent.width - 20
-            anchors.centerIn: parent
-            model: Yankd.searchResult
-            currentIndex: Yankd.searchIndex
-            delegate: Item {
-                id: entry
-                width: list.width
-                height: row.height + 5
-                required property int eventID
-                required property string preview
-                required property string mimeType
-                property bool isCurrent: ListView.isCurrentItem
+                radius: 5
+                borderWidth: 1
+                borderPixelSize: 2
                 RowLayout {
-                    id: row
-                    width: entry.width - 10
-                    anchors.centerIn: parent
-                    spacing: 10
-                    MaterialSymbol {
-                        text: entry.mimeType.startsWith("image/") ? "image" : "text_ad"
-                        color: Appearance.material.myPrimary
-                    }
-                    Item {
+                    anchors.fill: parent
+                    spacing: 0
+
+                    Rectangle {
                         Layout.fillHeight: true
-                        Layout.fillWidth: true
+                        Layout.preferredWidth: providerText.width + (Appearance.space.big * 2)
+                        color: Appearance.material.mySurfaceContainerHighest
                         StyledText {
+                            id: providerText
+                            anchors.centerIn: parent
+                            text: "Clipboard"
+                            font {
+                                pixelSize: Appearance.font.pixelSize.larger
+                                family: Appearance.font.family.pixel
+                            }
+                        }
+                    }
+
+                    ClippingRectangle {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        color: "transparent"
+                        TextInput {
+                            id: input
                             anchors.fill: parent
-                            color: Appearance.material.myOnBackground
-                            elide: Text.ElideRight
-                            textFormat: Text.PlainText
-                            text: `${entry.preview}` || `Unknown Content`
+                            anchors.margins: Appearance.space.medium
+                            horizontalAlignment: Text.AlignLeft
+                            verticalAlignment: Text.AlignVCenter
+                            color: Appearance.material.myOnSurface
+                            focus: true
+                            onTextChanged: Yankd.search(text)
+                            Keys.onPressed: event => {
+                                if (event.key === Qt.Key_Escape) {
+                                    Toggle.clipboard = false;
+                                    return;
+                                }
+
+                                // Ctrl+N or Down Arrow → move forward
+                                if ((event.key === Qt.Key_N && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Down) {
+                                    Yankd.next();
+                                    event.accepted = true;
+                                    return;
+                                }
+
+                                // Ctrl+P or Up Arrow → move backward
+                                if ((event.key === Qt.Key_P && event.modifiers === Qt.ControlModifier) || event.key === Qt.Key_Up) {
+                                    Yankd.previous();
+                                    event.accepted = true;
+                                    return;
+                                }
+
+                                // Enter → trigger action
+                                if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
+                                    Yankd.set();
+                                    Toggle.clipboard = false;
+                                    return;
+                                }
+                            }
                         }
                     }
                 }
-                Rectangle {
+            }
+
+            ClippingRectangle {
+                color: "transparent"
+                Layout.preferredHeight: 300
+                Layout.fillWidth: true
+                ListView {
+                    id: list
                     anchors.fill: parent
-                    visible: entry.isCurrent
-                    color: "transparent"
-                    radius: 5
-                    border {
-                        width: 2
-                        color: Appearance.material.myOutline
+                    anchors.leftMargin: 10
+                    anchors.rightMargin: 10
+                    model: Yankd.searchResult
+                    currentIndex: Yankd.searchIndex
+                    delegate: Rectangle {
+                        id: entry
+                        width: list.width
+                        height: row.height + 5
+                        required property int eventID
+                        required property string preview
+                        required property string mimeType
+                        property bool isCurrent: ListView.isCurrentItem
+                        color: entry.isCurrent ? Appearance.material.mySurfaceContainerHighest : "transparent"
+                        RowLayout {
+                            id: row
+                            width: entry.width - 10
+                            anchors.centerIn: parent
+                            spacing: 10
+                            MaterialSymbol {
+                                text: entry.mimeType.startsWith("image/") ? "image" : "text_ad"
+                                color: Appearance.material.myPrimary
+                            }
+                            Item {
+                                Layout.fillHeight: true
+                                Layout.fillWidth: true
+                                StyledText {
+                                    anchors.fill: parent
+                                    color: Appearance.material.myOnBackground
+                                    elide: Text.ElideRight
+                                    textFormat: Text.PlainText
+                                    text: `${entry.preview}` || `Unknown Content`
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            Card {
+                Layout.fillWidth: true
+                Layout.preferredHeight: 200
+                Layout.margins: Appearance.space.big
+                Layout.topMargin: 0
+                visible: Yankd.preview !== ""
+
+                radius: 5
+                borderWidth: 1
+                borderPixelSize: 2
+                color: Appearance.material.mySurfaceContainer
+                Loader {
+                    anchors.fill: parent
+                    active: Yankd.previewMimeType.startsWith("image/")
+                    sourceComponent: Image {
+                        anchors.fill: parent
+                        source: `data:${Yankd.currentEntry.mimeType};base64,${Yankd.preview}`
+                        fillMode: Image.PreserveAspectCrop
+                    }
+                }
+                Loader {
+                    anchors.fill: parent
+                    active: !Yankd.previewMimeType.startsWith("image/")
+                    sourceComponent: StyledText {
+                        animateChange: true
+                        verticalAlignment: Text.AlignTop
+                        color: Appearance.material.myOnSurface
+                        width: parent.width - 10
+                        height: parent.height - 10
+                        x: 5
+                        y: 5
+                        function removeIndent(text) {
+                            const lines = text.split('\n');
+                            let minIndent = Infinity;
+                            for (const line of lines) {
+                                if (line.trim() === '')
+                                    continue; // Skip empty lines
+                                const leadingSpaces = line.match(/^[ \t]*/)[0].length;
+                                minIndent = Math.min(minIndent, leadingSpaces);
+                            }
+                            if (minIndent === Infinity)
+                                return text;
+
+                            const result = lines.map(line => {
+                                if (line.trim() === '')
+                                    return line; // Keep empty lines as-is
+                                return line.slice(minIndent);
+                            });
+
+                            return result.join('\n');
+                        }
+                        text: removeIndent(Yankd.preview)
                     }
                 }
             }
