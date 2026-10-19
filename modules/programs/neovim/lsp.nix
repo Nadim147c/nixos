@@ -1,4 +1,4 @@
-{ lib, ... }:
+{ self, lib, ... }:
 let
   inherit (lib) singleton mkForce;
   inherit (lib.meta) getExe;
@@ -8,6 +8,7 @@ in
   flake.modules.neovim.base =
     {
       config,
+      system,
       pkgs,
       ...
     }:
@@ -106,6 +107,23 @@ in
             cmd = singleton <| getExe pkgs.nimlangserver;
           };
           servers.nimlsp.enable = mkForce false;
+          servers.qml-language-server = {
+            name = "qml-language-server";
+            filetypes = [ "qml" ];
+            rootDir = mkLuaInline ''
+              function(fname)
+                local root_patterns = { '.git', '.qml', 'qmldir' }
+                for _, pattern in ipairs(root_patterns) do
+                  local root = vim.fs.find(pattern, { path = fname, upward = true })[1]
+                  if root then
+                    return vim.fs.dirname(root)
+                  end
+                end
+                return vim.fs.dirname(fname)
+              end
+            '';
+            cmd = [ "${getExe self.packages.${system}.qml-language-server}" ];
+          };
           servers.nixd = {
             settings.options = {
               nixos.expr = /* nix */ ''
