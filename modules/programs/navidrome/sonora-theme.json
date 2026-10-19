@@ -3,9 +3,9 @@
   "author": "Ephemeral",
   "version": 1,
   "theme": {
-    "background": "{{ .Background }}",
-    "foreground": "{{ .OnBackground }}",
-    "sidebar": "{{ .SurfaceContainerLow }}",
+    "background": "{{ .Surface }}",
+    "foreground": "{{ .OnSurface }}",
+    "sidebar": "{{ .Background }}",
     "popover": "{{ .SurfaceContainer }}",
     "secondary": "{{ .SecondaryContainer }}",
     "muted": "{{ .SurfaceVariant }}",
