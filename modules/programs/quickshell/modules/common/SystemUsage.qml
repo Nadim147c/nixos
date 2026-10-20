@@ -34,6 +34,8 @@ Singleton {
     property string netTotalUpString
     property real netUp
     property string netUpString
+    property real uptime
+    property string uptimeString
 
     Process {
         id: net

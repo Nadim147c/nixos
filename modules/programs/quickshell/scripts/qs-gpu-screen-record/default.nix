@@ -20,7 +20,7 @@ in
         buildPhase = ''
           runHook preBuild
           cp $src ./main.go
-          go build -trimpath -o ${name} -ldflags="-X main.debug=true" main.go
+          go build -trimpath -o ${name} -ldflags="-X main.debug=false" main.go
           runHook postBuild
         '';
         installPhase = ''

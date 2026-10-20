@@ -2,8 +2,10 @@ pragma ComponentBehavior: Bound
 
 import qs.modules.common
 import qs.modules.end4.functions
+import qs.modules.end4
 
 import QtQuick
+import Quickshell
 
 Item {
     id: root
@@ -11,6 +13,7 @@ Item {
     property bool active: false
     property real shadowSize: 4
     property real maxOffset: 2
+    property string tooltip
 
     property color color: Qt.lighter(Appearance.material.mySurfaceContainer, 1.7)
     property color activeColor: Qt.lighter(color, 1.8)
@@ -55,6 +58,12 @@ Item {
         }
 
         onWheel: wheel => root.scrolled(wheel)
+
+        PopupTooltip {
+            extraVisibleCondition: root.tooltip !== "" && mouseArea.containsMouse && root.enabled
+            anchorEdges: Edges.Top
+            text: root.tooltip
+        }
 
         Rectangle {
             id: rect

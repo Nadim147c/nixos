@@ -2,11 +2,10 @@
 def main [] {
   let file = "/tmp/weather.json"
 
-  let time = date now | into int | $in / (15min | into int) | math floor
+  let time = date now | into int | $in / (30min | into int) | math floor
   if ($file | path exists) and (open $file | get time) == $time {
     print --stderr "Cached weather data"
-    cat $file
-    return
+    return (open --raw $file)
   }
 
   let uri = (

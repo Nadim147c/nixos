@@ -44,6 +44,7 @@ Item {
             text: root.text
             font.pixelSize: Appearance?.font.pixelSize.smaller ?? 14
             font.hintingPreference: Font.PreferNoHinting // Prevent shaky text
+            font.family: Appearance.font.family.pixel
             color: Appearance?.material.myOnBackground ?? "#FFFFFF"
             wrapMode: Text.Wrap
         }

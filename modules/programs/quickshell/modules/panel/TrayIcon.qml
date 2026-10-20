@@ -3,7 +3,6 @@ import qs.modules.end4
 import qs.modules.common
 
 import QtQuick
-import QtQuick.Effects
 import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 
@@ -13,7 +12,7 @@ Item {
     required property SystemTrayItem item
 
     property int size: 24
-    property color fg: Appearance.material.myPrimary
+    property color fg: Appearance.material.myOnBackground
 
     width: size
     height: size
@@ -33,7 +32,6 @@ Item {
             return "pending";
         }
 
-        // --- Wi-Fi signal handling ---
         if (iconName.startsWith("nm-signal-")) {
             const signal = parseInt(iconName.substring("nm-signal-".length), 10);
             if (isNaN(signal))
@@ -49,7 +47,6 @@ Item {
     function nerdSymbolFromIcon(icon) {
         const nerds = {
             "nm-device-wired": "󰈀",
-            // nm-device-wired-secure
             "kdeconnectindicatordark": "",
             "kdeconnectindicatorlight": "",
             "com.spotify.Client-symbolic": "󰓇",

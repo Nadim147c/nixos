@@ -30,8 +30,9 @@ const (
 )
 
 const (
-	CmdRecord command = "record"
-	CmdStop   command = "stop"
+	CmdRecord    command = "record"
+	CmdStop      command = "stop"
+	CmdTimelapse command = "timelapse"
 )
 
 const maxRetry = 3
@@ -123,6 +124,14 @@ func getUserVideoDirSafe() string {
 }
 
 func startRecording(tryNum int) error {
+	return startRecordingInternal(tryNum, false)
+}
+
+func startTimelapse(tryNum int) error {
+	return startRecordingInternal(tryNum, true)
+}
+
+func startRecordingInternal(tryNum int, isTimelapse bool) error {
 	if tryNum > maxRetry {
 		slog.Error("max retry limit reached for starting recording")
 		return errors.New("max retry reached")
@@ -145,8 +154,14 @@ func startRecording(tryNum int) error {
 	currentFile = fmt.Sprintf("%s/%d.mp4", videosDir, time.Now().Unix())
 	started = false
 
-	slog.Info("starting gpu-screen-recorder", "attempt", tryNum, "output_file", currentFile)
-	cmd = exec.Command("gpu-screen-recorder", "-w", "portal", "-a", "default_output", "-o", currentFile)
+	if isTimelapse {
+		slog.Info("starting gpu-screen-recorder in timelapse mode", "attempt", tryNum, "output_file", currentFile)
+		cmd = exec.Command("gpu-screen-recorder", "-w", "portal", "-f", "3", "-o", currentFile)
+	} else {
+		slog.Info("starting gpu-screen-recorder", "attempt", tryNum, "output_file", currentFile)
+		cmd = exec.Command("gpu-screen-recorder", "-w", "portal", "-f", "30", "-a", "default_output", "-o", currentFile)
+	}
+
 	stderr, err := cmd.StderrPipe()
 	if err != nil {
 		slog.Error("failed to create stderr pipe for recorder", "error", err)
@@ -202,7 +217,7 @@ func startRecording(tryNum int) error {
 				cmd.Process.Kill()
 			}
 			time.Sleep(time.Second)
-			return startRecording(tryNum + 1)
+			return startRecordingInternal(tryNum+1, isTimelapse)
 		}
 	case <-time.After(1500 * time.Millisecond):
 	}
@@ -212,23 +227,42 @@ func startRecording(tryNum int) error {
 	broadcast(EvtStart, currentFile)
 
 	go func() {
+		stop := func() {
+			broadcast(EvtStop, currentFile)
+			recMu.Lock()
+			recording = false
+			recMu.Unlock()
+			cmd = nil
+			broadcast(EvtIdle, nil)
+		}
+		defer stop()
+
 		err := cmd.Wait()
-		if err != nil {
-			if strings.Contains(err.Error(), "signal: killed") {
-				slog.Info("recorder process was killed")
-			} else {
-				slog.Warn("recorder process exited with error", "error", err)
-			}
+		if err == nil {
+			slog.Error("recorder process exited with unexpected exit code 0")
+			return
+		}
+		if strings.Contains(err.Error(), "signal: killed") {
+			slog.Info("recorder process was killed")
 		} else {
-			slog.Info("recorder process exited successfully")
+			slog.Warn("recorder process exited with error", "error", err)
+			return
 		}
 
-		recMu.Lock()
-		recording = false
-		recMu.Unlock()
-		cmd = nil
-		broadcast(EvtStop, currentFile)
-		broadcast(EvtIdle, nil)
+		stop()
+
+		if isTimelapse {
+			slog.Info("processing timelapse with ffmpeg", "file", currentFile)
+			fast := strings.TrimSuffix(currentFile, ".mp4") + "_fast.mp4"
+			ffmpegCmd := exec.Command("ffmpeg", "-y", "-i", currentFile, "-vf", "setpts=0.05*PTS,fps=30", fast)
+			ffmpegCmd.Stderr = os.Stderr
+			ffmpegErr := ffmpegCmd.Run()
+			if ffmpegErr != nil {
+				slog.Error("failed to process timelapse with ffmpeg", "error", ffmpegErr)
+			} else {
+				slog.Info("timelapse processing completed successfully")
+			}
+		}
 	}()
 
 	go func() {
@@ -287,6 +321,11 @@ func handleClient(conn net.Conn) {
 			err := startRecording(1)
 			if err != nil {
 				slog.Error("failed to start recording via client command", "error", err)
+			}
+		case CmdTimelapse:
+			err := startTimelapse(1)
+			if err != nil {
+				slog.Error("failed to start timelapse via client command", "error", err)
 			}
 		case CmdStop:
 			if cmd != nil {

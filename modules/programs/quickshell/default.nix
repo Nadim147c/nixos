@@ -177,7 +177,10 @@ in
         partOf = singleton "graphical-session.target";
         after = finalAttrs.partOf;
         wantedBy = finalAttrs.partOf;
-        path = singleton pkgs.gpu-screen-recorder;
+        path = with pkgs; [
+          gpu-screen-recorder
+          ffmpeg
+        ];
         reloadTriggers = singleton <| getExe self.packages.${system}.qs-gpu-screen-record;
         script =
           let

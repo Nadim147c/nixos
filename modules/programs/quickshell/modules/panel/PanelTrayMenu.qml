@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import qs.modules.common
 import qs.modules.end4
+import qs.modules.widgets
 
 import QtQuick
 import QtQuick.Controls
@@ -40,15 +41,16 @@ Item {
         Menu {
             id: menu
             background: Item {}
-            contentItem: Rectangle {
+            contentItem: Card {
+                radius: 3
+                borderWidth: 1
+                borderPixelSize: 3
                 color: Appearance.material.mySurface
-                radius: Appearance.space.big
-                implicitHeight: column.height + (Appearance.space.tiny * 2)
-                implicitWidth: column.width + (Appearance.space.tiny * 2)
+
+                implicitHeight: column.height
+                implicitWidth: column.width
                 ColumnLayout {
                     id: column
-                    x: Appearance.space.tiny
-                    y: Appearance.space.tiny
                     spacing: 1
                     Repeater {
                         id: repeater
@@ -80,13 +82,6 @@ Item {
                                     }
                                     return Appearance.material.mySurfaceContainer;
                                 }
-
-                                property real bigRound: Appearance.space.big - 2
-                                property real smallRound: Appearance.space.little
-                                topLeftRadius: menuItem.onTop ? bigRound : smallRound
-                                topRightRadius: menuItem.onTop ? bigRound : smallRound
-                                bottomLeftRadius: menuItem.onBottom ? bigRound : smallRound
-                                bottomRightRadius: menuItem.onBottom ? bigRound : smallRound
 
                                 MouseArea {
                                     id: mouseArea
@@ -139,7 +134,8 @@ Item {
                                             }
                                             return Appearance.material.myOnSurface;
                                         }
-                                        font.pixelSize: Appearance.font.pixelSize.smallie
+                                        font.family: Appearance.font.family.pixel
+                                        font.pixelSize: Appearance.font.pixelSize.small
                                     }
                                 }
                             }

@@ -16,6 +16,10 @@ Singleton {
         socket.write("record\n");
         socket.flush();
     }
+    function timelapse() {
+        socket.write("timelapse\n");
+        socket.flush();
+    }
 
     function stop() {
         socket.write("stop\n");
@@ -35,7 +39,6 @@ Singleton {
         path: `${Quickshell.env("XDG_RUNTIME_DIR")}/qs-screen-recorder`
         parser: SplitParser {
             onRead: data => {
-                console.log(data);
                 let idx = data.indexOf(":");
                 if (idx === -1)
                     return;

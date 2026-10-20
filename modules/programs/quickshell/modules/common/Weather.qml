@@ -7,8 +7,10 @@ import Quickshell.Io
 
 Singleton {
     id: root
+    property bool hasData: false
     property WeatherLocation location: WeatherLocation {}
     property CurrentWeather weather: CurrentWeather {}
+    property string icon
 
     Process {
         id: fetcher
@@ -68,5 +70,6 @@ Singleton {
 
         weather.visKm = obj.current.vis_km;
         weather.uv = obj.current.uv;
+        hasData = true;
     }
 }

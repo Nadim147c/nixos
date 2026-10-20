@@ -110,6 +110,41 @@ proc formatSpeed(bytesPerSec: uint64): string =
 
 var lastUptime, lastIdle: cdouble
 
+proc getUptimeState(outMap: var Table[string, JsonNode]) =
+  var f: File
+  if open(f, "/proc/uptime"):
+    var buf: array[128, char]
+    let bytesRead = readBuffer(f, addr buf[0], 128)
+    close(f)
+
+    var spaceIdx = -1
+    for i in 0 ..< bytesRead:
+      if buf[i] == ' ' or buf[i] == '\t':
+        spaceIdx = i
+        break
+
+    if spaceIdx > 0:
+      var intPart: uint64 = 0
+      for i in 0 ..< spaceIdx:
+        let c = buf[i]
+        if c >= '0' and c <= '9':
+          intPart = intPart * 10 + uint64(ord(c) - ord('0'))
+        elif c == '.':
+          break
+
+      let seconds = intPart
+      let days = seconds div 86400
+      let hours = (seconds mod 86400) div 3600
+      let minutes = (seconds mod 3600) div 60
+
+      outMap["uptime"] = %seconds
+      outMap["uptimeString"] =
+        %($days & " days, " & $hours & " hours, " & $minutes & " minutes")
+      return
+
+  outMap["uptime"] = %0
+  outMap["uptimeString"] = %"0 days, 0 hours, 0 minutes"
+
 proc getCPUState(outMap: var Table[string, JsonNode]) =
   let numCores {.global.} = sysconf(SC_NPROCESSORS_ONLN)
   var uptime, idle: cdouble
@@ -334,6 +369,7 @@ proc main() =
 
     getMemState(statsMap)
     getCPUState(statsMap)
+    getUptimeState(statsMap)
 
     var jsonObj = newJObject()
     for k, v in statsMap:
