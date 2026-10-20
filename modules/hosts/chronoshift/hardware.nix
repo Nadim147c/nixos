@@ -40,8 +40,8 @@
         device = "/dev/disk/by-uuid/DA50-BF87";
         fsType = "vfat";
         options = [
-          "fmask=0022"
-          "dmask=0022"
+          "fmask=0077"
+          "dmask=0077"
         ];
       };
 
