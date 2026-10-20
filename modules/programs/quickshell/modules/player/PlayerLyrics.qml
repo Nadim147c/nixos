@@ -61,7 +61,7 @@ MouseArea {
 
                         text: {
                             if (!active || !lyricLine.modelData.words.length) {
-                                return lyricLine.modelData.line || "󰎇";
+                                return lyricLine.modelData?.line || "󰎇";
                             }
                             let text = "";
                             for (const word of lyricLine.modelData.words) {

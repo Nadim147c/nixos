@@ -52,12 +52,21 @@ Singleton {
     property string album: player?.trackAlbum ?? "Single"
     property bool isPlaying: player?.isPlaying ?? false
 
+    property LyricLine currentLine
     property double position: player?.position ?? 0
+    onLineIndexChanged: {
+        if (currentLine) {
+            currentLine.destroy();
+        }
+        if (lines.length) {
+            currentLine = lines[lineIndex];
+        }
+    }
     onPositionChanged: {
         if (player && lines.length) {
             let i = 0;
             for (i = 0; i < lines.length; i++) {
-                if (lines[i].time > position) {
+                if (lines[i] && lines[i].time > position) {
                     break;
                 }
             }
