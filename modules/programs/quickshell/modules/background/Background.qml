@@ -23,7 +23,7 @@ PanelWindow {
 
     color: "transparent"
 
-    property bool filled: Hyprland.focusedWorkspace.hasFullscreen || Hyprland.focusedWorkspace.toplevels.values.some(x => !x.lastIpcObject.floating)
+    property bool filled: Hyprland.focusedWorkspace?.hasFullscreen || Hyprland.focusedWorkspace.toplevels.values.some(x => !x.lastIpcObject.floating)
     Connections {
         target: Hyprland
         function onRawEvent(event) {
@@ -33,9 +33,21 @@ PanelWindow {
     }
     property bool inverse: false
     property point cursorNormalized: Qt.point(0.5, 0.5)
-    property real angle: Math.PI / 4 // 45 deg
+    property real angle: Math.PI / 4
 
-    property int counter: 0
+    property var effectPool: []
+
+    function getNextEffect() {
+        if (root.effectPool.length === 0) {
+            let effects = ["./slide.frag.qsb", "./pixel_rand.frag.qsb", "./diamon_sweep.frag.qsb", "./circle_expand.frag.qsb", "./circle_shrink.frag.qsb", "./hexagon_expand.frag.qsb", "./hexagon_shrink.frag.qsb", "./fade.frag.qsb"];
+            for (let i = effects.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [effects[i], effects[j]] = [effects[j], effects[i]];
+            }
+            root.effectPool = effects;
+        }
+        return root.effectPool.pop();
+    }
 
     function setWallpaper(path: string) {
         root.inverse = !root.inverse;
@@ -55,12 +67,7 @@ PanelWindow {
             }
         }
 
-        // different type of transition
-        const effects = ["./slide.frag.qsb", "./pixel_rand.frag.qsb", "./diamon_sweep.frag.qsb", "./circle_expand.frag.qsb", "./circle_shrink.frag.qsb", "./hexagon_expand.frag.qsb", "./hexagon_shrink.frag.qsb", "./fade.frag.qsb"];
-        effect.fragmentShader = effects[root.counter % effects.length];
-        root.counter++;
-
-        console.log(effect.fragmentShader);
+        effect.fragmentShader = getNextEffect();
 
         anim.restart();
     }
