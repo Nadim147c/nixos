@@ -12,6 +12,7 @@ import qs.modules.common
 import qs.modules.discord
 import qs.modules.launcher
 import qs.modules.logout
+import qs.modules.notifications
 import qs.modules.osd
 import qs.modules.panel
 import qs.modules.player
@@ -76,5 +77,9 @@ ShellRoot {
     LazyLoader {
         activeAsync: Toggle.collection
         component: Collection {}
+    }
+    LazyLoader {
+        activeAsync: Toggle.notifications
+        component: Notifications {}
     }
 }
