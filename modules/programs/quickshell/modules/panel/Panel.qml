@@ -123,16 +123,12 @@ PanelWindow {
 
                     RowLayout {
                         visible: Weather.hasData
-                        Pixelate {
+                        StyledImage {
+                            visible: Weather.weather.condition.icon
                             Layout.preferredWidth: 25
                             Layout.preferredHeight: 25
-                            color: "transparent"
-                            pixelSize: 2
-                            StyledImage {
-                                anchors.fill: parent
-                                source: `https:${Weather.weather.condition.icon}`
-                                fillMode: Image.PreserveAspectCrop
-                            }
+                            source: `https:${Weather.weather.condition.icon}`
+                            fillMode: Image.PreserveAspectCrop
                         }
                         StyledText {
                             text: `${Weather.weather.condition.text}`

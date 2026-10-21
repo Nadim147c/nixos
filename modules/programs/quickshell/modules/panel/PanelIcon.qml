@@ -16,6 +16,7 @@ RetroButton {
         MaterialSymbol {
             id: icon
             anchors.centerIn: parent
+            fill: root.active * 1
             text: root.icon
             iconSize: root.size
         }

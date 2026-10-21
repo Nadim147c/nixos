@@ -1,9 +1,9 @@
 pragma ComponentBehavior: Bound
 import qs.modules.end4
 import qs.modules.common
+import qs.modules.widgets
 
 import QtQuick
-import Quickshell.Widgets
 import Quickshell.Services.SystemTray
 
 Item {
@@ -49,8 +49,7 @@ Item {
             "nm-device-wired": "󰈀",
             "kdeconnectindicatordark": "",
             "kdeconnectindicatorlight": "",
-            "com.spotify.Client-symbolic": "󰓇",
-            "steam_tray_mono": "󰓓"
+            "com.spotify.Client-symbolic": "󰓇"
         };
 
         const parts = icon.split("?")[0].split("/");
@@ -60,18 +59,7 @@ Item {
             return name;
         }
 
-        const tooltips = {
-            "Discord": "",
-            "Equibop": "",
-            "GoofCord": "",
-            "OBS Studio": ""
-        };
-
         const tooltipName = root.item.tooltipTitle;
-
-        if (!name && tooltips[tooltipName]) {
-            return tooltips[tooltipName];
-        }
 
         return "";
     }
@@ -102,11 +90,18 @@ Item {
     Loader {
         active: root.materialName === "" && root.nerdSymbol === ""
         anchors.centerIn: parent
-        sourceComponent: IconImage {
-            id: fallbackIcon
-            anchors.centerIn: root
-            implicitSize: root.size * 0.5
-            source: root.item.icon
+        sourceComponent: Monochrome {
+            anchors.centerIn: parent
+            implicitWidth: fallbackIcon.width
+            implicitHeight: fallbackIcon.height
+            color: Appearance.material.myOnBackground
+            Image {
+                id: fallbackIcon
+                anchors.centerIn: parent
+                height: root.size * 0.5
+                width: root.size * 0.5
+                source: root.item.icon
+            }
         }
     }
 }

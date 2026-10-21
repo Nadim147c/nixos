@@ -55,9 +55,6 @@ Singleton {
     property LyricLine currentLine
     property double position: player?.position ?? 0
     onLineIndexChanged: {
-        if (currentLine) {
-            currentLine.destroy();
-        }
         if (lines.length) {
             currentLine = lines[lineIndex];
         }
