@@ -3,7 +3,7 @@ let
   inherit (lib) toList;
 in
 {
-  flake.modules.nixos.hack = { system, ... }: {
+  flake.tree.nixos.hack.morphe = { system, ... }: {
     packages = toList self.packages.${system}.morphe-desktop;
   };
 }

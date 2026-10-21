@@ -5,7 +5,7 @@ let
 in
 {
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.loupe =
     { pkgs, ... }:
     {
       hj.packages = singleton pkgs.loupe;

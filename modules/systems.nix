@@ -4,7 +4,7 @@
     "aarch64-linux"
   ];
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.common =
     { pkgs, ... }:
     {
       _module.args.system = pkgs.stdenv.hostPlatform.system;

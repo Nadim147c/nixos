@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.pc =
+  flake.tree.nixos.gui.plymouth =
     { pkgs, ... }:
     {
       boot.plymouth = {

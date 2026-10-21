@@ -1,17 +1,9 @@
-{ config, lib, ... }:
-let
-  inherit (lib) singleton;
-  inherit (config.flake.modules.nixos) containerization;
-in
+{ config, ... }:
 {
-  flake.modules.nixos = {
-    dev.imports = singleton containerization;
-    server.imports = singleton containerization;
-    containerization = {
-      virtualisation.docker = {
-        enable = true;
-        enableOnBoot = false;
-      };
+  flake.tree.nixos.dev.docker = {
+    virtualisation.docker = {
+      enable = true;
+      enableOnBoot = false;
     };
   };
 }

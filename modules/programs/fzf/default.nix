@@ -26,7 +26,7 @@ in
       };
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.fzf = { system, ... }: {
     packages = singleton self.packages.${system}.fzf;
   };
 }

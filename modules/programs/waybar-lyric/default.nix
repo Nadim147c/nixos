@@ -22,7 +22,7 @@ in
     };
   };
 
-  flake.modules.nixos.gui = { system, ... }: {
+  flake.tree.nixos.gui.waybar-lyric = { system, ... }: {
     packages = singleton self.packages.${system}.waybar-lyric-impure;
   };
 }

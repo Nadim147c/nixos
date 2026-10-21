@@ -6,7 +6,7 @@ let
   inherit (config) username fullname email;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.jujutsu =
     { config, pkgs, ... }:
     {
       packages = with pkgs; [

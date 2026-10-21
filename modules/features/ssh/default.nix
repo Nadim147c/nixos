@@ -4,7 +4,7 @@ let
   inherit (lib.strings) concatMapAttrsStringSep;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.ssh =
     { config, pkgs, ... }:
     let
       keys = {

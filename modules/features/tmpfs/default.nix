@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.tmp = {
     boot.tmp = {
       useTmpfs = true;
       cleanOnBoot = true;

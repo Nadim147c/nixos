@@ -17,7 +17,7 @@ let
 in
 {
   options.flake.flatpak.apps = readonly <| importJSON ./apps.json;
-  config.flake.modules.nixos.gui = { config, ... }: {
+  config.flake.tree.nixos.gui.flatpak = { config, ... }: {
     imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
 
     services.flatpak = {

@@ -11,7 +11,7 @@ let
   inherit (lib.x) opt;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.common =
     { config, pkgs, ... }:
     let
       inherit (config.environment) shellAliases;
@@ -27,7 +27,6 @@ in
           [ "programs" "nushell" "interactiveShellInit" ]
           [ "programs" "nushell" "extraConfig" ]
         )
-        { programs.nushell.enable = mkDefault true; }
       ];
       options.programs.nushell = {
         extraConfig = opt.block "";
@@ -59,4 +58,8 @@ in
         ];
       };
     };
+
+  flake.tree.nixos.base.nushell = {
+    programs.nushell.enable = mkDefault true;
+  };
 }

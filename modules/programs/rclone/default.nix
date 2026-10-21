@@ -48,7 +48,7 @@ let
   inherit (lib.strings) optionalString escapeShellArgs escapeShellArg;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.rclone =
     { config, pkgs, ... }:
     let
       makeFlag =

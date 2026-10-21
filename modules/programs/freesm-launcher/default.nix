@@ -1,12 +1,10 @@
-{ self, lib, ... }:
+{ lib, ... }:
 let
-  inherit (lib.meta) getExe;
-  inherit (lib.strings) escapeShellArg;
   inherit (lib.lists) singleton;
   appId = "org.freesmlauncher.FreesmLauncher";
 in
 {
-  flake.modules.nixos.game =
+  flake.tree.nixos.game.minecraft =
     { pkgs, ... }:
     {
       # needed from freesmlauncher

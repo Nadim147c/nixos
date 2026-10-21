@@ -5,7 +5,7 @@ let
   inherit (lib.meta) getExe';
 in
 {
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.tree.nixos.gui.kdeconnect = { pkgs, ... }: {
     programs.kdeconnect.enable = true;
 
     hj.systemd.services.kdeconnect-indicator = fix (final: {

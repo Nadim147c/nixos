@@ -22,7 +22,7 @@ in
       };
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.tldr = { system, ... }: {
     packages = singleton self.packages.${system}.tealdeer;
   };
 }

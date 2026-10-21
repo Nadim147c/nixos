@@ -3,7 +3,7 @@ let
   inherit (lib.attrsets) attrValues;
 in
 {
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.portal =
     { pkgs, ... }:
     {
       environment.pathsToLink = [

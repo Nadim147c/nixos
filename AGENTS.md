@@ -104,7 +104,7 @@ pkgs.writeGo "hello" { runtimeInputs = [pkgs.ffmpeg]; } /* bash */ ''
 let
   inherit (lib.lists) head;
 in {
-  flake.modules.nixos.base = { ... }: { /* Do not use lib here */ };
+  flake.tree.<type>.<branch>.<module> = { ... }: { /* Do not use lib here */ };
 }
 ```
 

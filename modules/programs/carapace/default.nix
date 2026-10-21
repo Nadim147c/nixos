@@ -19,7 +19,7 @@ in
     };
   };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.carapace =
     { system, ... }:
     let
       inherit (self.packages.${system}) carapace;

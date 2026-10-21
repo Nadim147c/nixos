@@ -60,11 +60,7 @@ in
       '';
   };
 
-  flake.modules.nixos.gui = {
-    custom.font.enable = true;
-  };
-
-  flake.modules.nixos.base =
+  flake.tree.nixos.gui.font =
     {
       config,
       pkgs,
@@ -72,13 +68,11 @@ in
       ...
     }:
     let
-      cfg = config.custom.font;
-      inherit (self.packages.${system})
-        fontconfig
-        ;
+      cfg = config.font;
+      inherit (self.packages.${system}) fontconfig;
     in
     {
-      options.custom.font = {
+      options.font = {
         enable = opt.bool true;
         sans = opt.line "Rubik";
         serif = opt.line "Roboto Serif";

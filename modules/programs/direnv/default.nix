@@ -1,9 +1,5 @@
-{ lib, ... }:
-let
-  inherit (lib) singleton;
-in
 {
-  flake.modules.nixos.dev = {
+  flake.tree.nixos.dev.direnv = {
     programs.direnv = {
       enable = true;
       silent = true;

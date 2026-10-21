@@ -1,25 +1,34 @@
 { config, ... }:
 let
-  inherit (config.flake.modules) nixos;
+  inherit (builtins) attrValues;
+  inherit (config.flake.tree.nixos)
+    base
+    dev
+    gui
+    hack
+    network
+    wireless
+    game
+    server
+    ;
 in
 {
   configurations.nixos.chronoshift.module =
     { pkgs, ... }:
     {
       imports = [
-        nixos.base
-        nixos.dev
-        nixos.gui
-        nixos.hack
-        nixos.pc
-        nixos.wireless
-        nixos.game
-      ];
+        { }
+      ]
+      ++ attrValues dev
+      ++ attrValues gui
+      ++ attrValues hack
+      ++ attrValues network
+      ++ attrValues wireless
+      ++ attrValues game
+      ++ attrValues server
+      ++ attrValues base;
 
-      services.git-sync.enable = true;
-
-      # Small ahh display
-      cursor.size = 22;
+      cursor.size = 24;
 
       displays = {
         "eDP-1".enable = false;

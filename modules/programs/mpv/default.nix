@@ -71,7 +71,7 @@ in
       };
     };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.mpv =
     { pkgs, ... }:
     {
       packages = singleton self.packages.${pkgs.stdenv.hostPlatform.system}.mpv;

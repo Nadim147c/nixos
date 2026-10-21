@@ -1,6 +1,6 @@
 # Copied from https://github.com/NotAShelf/nyx/blob/d407b4d6e5ab7f60350af61a3d73a62a5e9ac660/modules/core/common/system/security/impurity-tracker.nix
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.impurity-tracker =
     { config, pkgs, ... }:
     let
       makeTracker =

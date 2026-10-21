@@ -1,9 +1,6 @@
 { lib, ... }:
-let
-  inherit (lib) singleton;
-in
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.gui.pipewire = {
     services.pipewire = {
       enable = true;
       pulse.enable = true; # replace PulseAudio

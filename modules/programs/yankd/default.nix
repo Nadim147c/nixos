@@ -24,7 +24,7 @@ in
     };
   };
 
-  flake.modules.nixos.gui = { system, ... }: {
+  flake.tree.nixos.gui.yankd = { system, ... }: {
     packages = singleton self.packages.${system}.yankd-impure;
 
     hj.systemd.services.yankd = fix (final: {

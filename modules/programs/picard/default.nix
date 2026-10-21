@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.tree.nixos.gui.picard = { pkgs, ... }: {
     packages = [ pkgs.picard ];
   };
 }

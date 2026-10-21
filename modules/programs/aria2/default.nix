@@ -52,7 +52,7 @@ in
       };
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.aria2 = { system, ... }: {
     packages = singleton self.packages.${system}.aria2;
   };
 }

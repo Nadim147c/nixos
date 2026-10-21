@@ -3,7 +3,7 @@ let
   inherit (lib) singleton getExe';
 in
 {
-  flake.modules.nixos.wireless = {
+  flake.tree.nixos.wireless.bluetooth = {
     hardware.bluetooth = {
       enable = true;
       powerOnBoot = true;
@@ -12,7 +12,7 @@ in
     services.blueman.enable = true;
   };
 
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.tree.nixos.gui.blueman = { pkgs, ... }: {
     hj.systemd.services.blueman-applet = rec {
       enable = true;
       description = "Blueman applet";

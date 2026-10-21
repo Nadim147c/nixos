@@ -6,7 +6,7 @@ let
   appId = "com.discordapp.Discord";
 in
 {
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.discord =
     {
       config,
       pkgs,

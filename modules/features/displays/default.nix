@@ -7,7 +7,7 @@ let
   inherit (lib.x) opt;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.gui.display =
     { config, ... }:
     let
       cfg = config.displays;

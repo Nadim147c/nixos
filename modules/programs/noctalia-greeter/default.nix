@@ -9,7 +9,7 @@ let
   inherit (lib) singleton;
 in
 {
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.noctalia-greeter =
     {
       config,
       pkgs,
@@ -22,7 +22,7 @@ in
           scheme = "Synced";
           password_style = "random";
           theme_mode = "dark";
-          font_family = config.custom.font.sans;
+          font_family = config.font.sans;
         };
         cursor = {
           theme = config.cursor.name;

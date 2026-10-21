@@ -4,7 +4,7 @@ let
   inherit (lib.meta) getExe;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.zoxide =
     { pkgs, ... }:
     let
       init = "${getExe pkgs.zoxide} init --cmd=cd";

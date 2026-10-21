@@ -8,7 +8,7 @@ let
   inherit (lib.x) opt;
 in
 {
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.cursor =
     {
       config,
       pkgs,

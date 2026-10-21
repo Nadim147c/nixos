@@ -1,10 +1,12 @@
 {
+  config,
   self,
   inputs,
   lib,
   ...
 }:
 let
+  inherit (config.flake.tree) hjem;
   inherit (builtins) attrNames readFile toJSON;
   inherit (lib) mkOption optionalString;
   inherit (lib.fixedPoints) fix;
@@ -31,7 +33,7 @@ in
     };
   };
 
-  flake.modules.hjem.base =
+  flake.tree.hjem.gui.hyprland =
     { config, ... }:
     let
       cfg = config.programs.hyprland;
@@ -126,7 +128,7 @@ in
       };
     };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.hyprland =
     {
       config,
       pkgs,
@@ -143,6 +145,8 @@ in
         ;
     in
     {
+      hjem.extraModules = singleton hjem.gui.hyprland;
+
       systemd.user.targets = {
         hyprland-session = {
           unitConfig = {
@@ -203,10 +207,6 @@ in
         programs =
           let
             launcher = getExe control;
-            makeProgram = keys: exec: {
-              inherit keys exec;
-              autostart = true;
-            };
             makeBind = keys: exec: { inherit keys exec; };
             lockedAndRepeat = {
               locked = true;
@@ -217,7 +217,6 @@ in
             brightnessctl = getExe pkgs.brightnessctl;
           in
           [
-            (makeProgram [ "SUPER" "B" ] "${launcher} --memory=2G --cpu=300% ${getExe pkgs.brave-origin}")
             {
               keys = [
                 "SUPER"

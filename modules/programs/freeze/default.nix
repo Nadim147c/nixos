@@ -79,7 +79,7 @@ in
 
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.dev.freeze = { system, ... }: {
     packages = with self.packages.${system}; [
       chroma
       freeze

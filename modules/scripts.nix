@@ -28,7 +28,7 @@ in
   };
 
   config = {
-    flake.modules.nixos.base =
+    flake.tree.nixos.base.common =
       { pkgs, ... }:
       {
         packages =

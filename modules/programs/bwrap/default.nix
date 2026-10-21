@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.base = { pkgs, ... }: {
+  flake.tree.nixos.base.bwrap = { pkgs, ... }: {
     security.wrappers.bwrap = {
       source = "${pkgs.bubblewrap}/bin/bwrap";
       owner = "root";

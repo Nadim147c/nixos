@@ -117,7 +117,7 @@ in
     };
   };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.starship =
     {
       config,
       system,

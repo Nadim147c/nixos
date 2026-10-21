@@ -24,7 +24,7 @@ in
       };
     };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.hypridle =
     { pkgs, system, ... }:
     let
       hyprctl = getExe' pkgs.hyprland "hyprctl";

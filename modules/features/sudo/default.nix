@@ -3,7 +3,7 @@ let
   inherit (lib.modules) mkForce;
 in
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.sudo = {
     security = {
       sudo = {
         enable = true;

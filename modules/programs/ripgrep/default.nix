@@ -31,7 +31,7 @@ in
       );
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.ripgrep = { system, ... }: {
     packages = singleton self.packages.${system}.ripgrep;
   };
 }

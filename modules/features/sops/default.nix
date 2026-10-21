@@ -18,7 +18,7 @@ in
       env.SOPS_AGE_KEY_FILE = "/nix/persist/var/lib/sops/age.txt";
     };
   };
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.sops =
     { config, pkgs, ... }:
     let
       copyPath = path: user // { inherit path; };

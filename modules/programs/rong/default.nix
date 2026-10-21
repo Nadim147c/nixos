@@ -36,7 +36,7 @@ in
     };
   };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.common =
     {
       config,
       system,
@@ -94,7 +94,7 @@ in
       };
     };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.rong =
     { system, ... }:
     {
       hj.systemd.services.rong-generate = {

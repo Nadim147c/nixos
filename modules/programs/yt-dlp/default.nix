@@ -68,7 +68,7 @@ in
       };
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.yt-dlp = { system, ... }: {
     packages = with self.packages.${system}; [
       yt-dlp
       yt-dlm

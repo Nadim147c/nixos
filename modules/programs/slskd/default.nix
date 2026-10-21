@@ -8,7 +8,7 @@ let
   inherit (lib.trivial) const;
 in
 {
-  flake.modules.nixos.base = { config, ... }: {
+  flake.tree.nixos.server.slskd = { config, ... }: {
     systemd.services.slskd.serviceConfig.ProtectHome = mkForce false;
 
     services.slskd = {
@@ -23,7 +23,7 @@ in
     };
   };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.slskd =
     { config, pkgs, ... }:
     {
       packages = [

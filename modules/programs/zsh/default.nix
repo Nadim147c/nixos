@@ -7,7 +7,7 @@ let
   inherit (lib.x) opt;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.common =
     { config, pkgs, ... }:
     let
       makeSource = name: value: "source ${pkgs.mkInitScript "init-${name}.zsh" value}";
@@ -30,27 +30,30 @@ in
     {
       options.programs.zsh.init = opt.attrs.block { };
 
-      config.programs.zsh = {
-        enable = true;
-        histFile = "${config.hj.xdg.data.directory}/zsh/history";
-        enableCompletion = true;
-        histSize = 100000;
-        interactiveShellInit = mkAfter /* bash */ ''
-          ${extraInit}
-
-          ${pluginFiles}
-
-          zstyle ':completion:*:git-checkout:*' sort false
-          zstyle ':completion:*:descriptions' format '[%d]'
-          zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
-          zstyle ':completion:*' menu no
-          zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
-          zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept --border=none
-          zstyle ':fzf-tab:*' use-fzf-default-opts yes
-          zstyle ':fzf-tab:*' switch-group '<' '>'
-          zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
-          zstyle ':fzf-tab:*' popup-min-size 80 12
-        '';
-      };
+      config.programs.zsh.interactiveShellInit = mkAfter /* bash */ ''
+        ${extraInit}
+        ${pluginFiles}
+      '';
     };
+
+  flake.tree.nixos.base.zsh = { config, ... }: {
+    programs.zsh = {
+      enable = true;
+      histFile = "${config.hj.xdg.data.directory}/zsh/history";
+      enableCompletion = true;
+      histSize = 100000;
+      interactiveShellInit = mkAfter /* bash */ ''
+        zstyle ':completion:*:git-checkout:*' sort false
+        zstyle ':completion:*:descriptions' format '[%d]'
+        zstyle ':completion:*' list-colors ''${(s.:.)LS_COLORS}
+        zstyle ':completion:*' menu no
+        zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
+        zstyle ':fzf-tab:*' fzf-flags --bind=tab:accept --border=none
+        zstyle ':fzf-tab:*' use-fzf-default-opts yes
+        zstyle ':fzf-tab:*' switch-group '<' '>'
+        zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+        zstyle ':fzf-tab:*' popup-min-size 80 12
+      '';
+    };
+  };
 }

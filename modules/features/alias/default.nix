@@ -3,7 +3,7 @@ let
   inherit (lib) mkAliasOptionModule;
 in
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.common = {
     imports = [
       (mkAliasOptionModule [ "packages" ] [ "environment" "systemPackages" ])
       (mkAliasOptionModule [ "sessionVariables" ] [ "environment" "sessionVariables" ])

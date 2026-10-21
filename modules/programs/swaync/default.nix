@@ -6,7 +6,7 @@ let
 in
 {
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.sway =
     { config, pkgs, ... }:
     let
       scss = "${config.hj.xdg.config.directory}/swaync/style.scss";

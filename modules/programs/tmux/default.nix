@@ -58,7 +58,7 @@ in
       };
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.tmux = { system, ... }: {
     packages = singleton self.packages.${system}.tmux;
 
     programs.fish.interactiveShellInit = /* fish */ ''

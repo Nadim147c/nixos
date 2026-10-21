@@ -1,9 +1,9 @@
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.man = {
     documentation.man = {
       enable = true;
-      man-db.enable = false;
-      cache.enable = false;
+      man-db.enable = true;
+      cache.enable = true;
     };
   };
 }

@@ -6,7 +6,7 @@
 }:
 let
   inherit (lib.lists) singleton;
-  inherit (lib.modules) mkIf;
+  inherit (lib.modules) mkIf mkDefault;
   inherit (lib.strings) concatMapStringsSep;
   inherit (builtins) isBool;
 in
@@ -51,7 +51,50 @@ in
         };
     };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.common = {
+    hj.xdg.data.files."user-places.xbel" = {
+      enable = mkDefault false;
+      type = "copy";
+      permissions = "644";
+      generator =
+        { bookmarks }:
+        let
+          renderBookmark =
+            {
+              name,
+              icon ? "inode-directory",
+              hidden ? false,
+              path ? null,
+              url ?
+                if (path != null) then
+                  "file://${path}"
+                else
+                  throw "makeUserPlaces: Either 'url' or 'path' must be specified for bookmark '${name}'",
+            }:
+            assert (isBool hidden);
+            ''
+              <bookmark href="${url}">
+                <title>${name}</title>
+                <info>
+                  <metadata owner="http://freedesktop.org">
+                    <bookmark:icon name="${icon}"/>
+                  <IsHidden>${builtins.toJSON hidden}</IsHidden>
+                  </metadata>
+                </info>
+              </bookmark>
+            '';
+
+        in
+        ''
+          <?xml version="1.0" encoding="UTF-8"?>
+          <xbel xmlns:bookmark="http://videoelan.org/xml/xbel/">
+            ${concatMapStringsSep "\n  " renderBookmark bookmarks}
+          </xbel>
+        '';
+    };
+  };
+
+  flake.tree.nixos.gui.dolphin =
     { system, ... }:
     {
       packages = singleton self.packages.${system}.dolphin;
@@ -62,45 +105,6 @@ in
       '';
 
       hj.xdg.mime-apps = lib.x.genMimes "org.kde.dolphin.desktop" [ "inode/directory" ];
-
-      hj.xdg.data.files."user-places.xbel" = {
-        type = "copy";
-        permissions = "644";
-        generator =
-          { bookmarks }:
-          let
-            renderBookmark =
-              {
-                name,
-                icon ? "inode-directory",
-                hidden ? false,
-                path ? null,
-                url ?
-                  if (path != null) then
-                    "file://${path}"
-                  else
-                    throw "makeUserPlaces: Either 'url' or 'path' must be specified for bookmark '${name}'",
-              }:
-              assert (isBool hidden);
-              ''
-                <bookmark href="${url}">
-                  <title>${name}</title>
-                  <info>
-                    <metadata owner="http://freedesktop.org">
-                      <bookmark:icon name="${icon}"/>
-                    <IsHidden>${builtins.toJSON hidden}</IsHidden>
-                    </metadata>
-                  </info>
-                </bookmark>
-              '';
-
-          in
-          ''
-            <?xml version="1.0" encoding="UTF-8"?>
-            <xbel xmlns:bookmark="http://videoelan.org/xml/xbel/">
-              ${concatMapStringsSep "\n  " renderBookmark bookmarks}
-            </xbel>
-          '';
-      };
+      hj.xdg.data.files."user-places.xbel".enable = true;
     };
 }

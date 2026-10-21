@@ -13,7 +13,7 @@ let
   appId = "io.github.nolight132.sonora";
 in
 {
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.sonora =
     { system, pkgs, ... }:
     {
       hj.programs.hyprland = {

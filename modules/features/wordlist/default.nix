@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.hack =
+  flake.tree.nixos.hack.wordlist =
     { pkgs, ... }:
     let
       dict = "${pkgs.scowl}/share/dict";

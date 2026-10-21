@@ -6,7 +6,7 @@ let
   inherit (lib.x) opt;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.common =
     { config, pkgs, ... }:
     let
       makeSource = name: value: "source ${pkgs.mkInitScript "init-${name}.bash" value}";
@@ -14,13 +14,11 @@ in
     in
     {
       options.programs.bash.init = opt.attrs.block { };
-
-      config = {
-        environment.pathsToLink = singleton "/share/bash-completions";
-        programs.bash = {
-          enable = true;
-          interactiveShellInit = mkAfter extraInit;
-        };
-      };
+      config.programs.bash.interactiveShellInit = mkAfter extraInit;
     };
+
+  flake.tree.nixos.base.bash = {
+    environment.pathsToLink = singleton "/share/bash-completions";
+    programs.bash.enable = true;
+  };
 }

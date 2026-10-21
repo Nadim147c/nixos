@@ -40,7 +40,7 @@ in
         |> builtins.listToAttrs;
     };
 
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.common = {
     nixpkgs = { inherit overlays config; };
   };
 }

@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.dev =
+  flake.tree.nixos.dev.js =
     { config, pkgs, ... }:
     {
       sessionVariables = {

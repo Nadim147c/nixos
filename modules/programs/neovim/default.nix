@@ -32,7 +32,7 @@ in
       packages = { inherit (nvfConfig) neovim; };
     };
 
-  flake.modules.nixos.base = { system, ... }: {
+  flake.tree.nixos.base.common = { system, ... }: {
     programs.nano.enable = mkForce false;
     sessionVariables.EDITOR = "nvim";
     packages = singleton self.packages.${system}.neovim;

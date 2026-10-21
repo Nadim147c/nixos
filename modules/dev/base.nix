@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.dev =
+  flake.tree.nixos.dev.base-devel = # Shoutout to archlinux
     { pkgs, ... }:
     {
       packages = with pkgs; [

@@ -1,6 +1,6 @@
 # This module is copied from https://github.com/RGBCube/ncc/blob/fd1860d09aaca345badff5f48b38c124b729fdf8/modules/linux-kernel.mod.nix
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.kernel-params = {
     # Credits:
     # - https://github.com/NotAShelf/nyx/blob/main/modules/core/common/system/security/kernel.nix
     boot.kernel.sysctl = {

@@ -16,6 +16,9 @@ check:
 fmt:
     nix fmt
 
+loop:
+  while true; do just build; done
+
 quickshell-dev:
     find ./modules -iname "*.frag" -print0 | \
       xargs -0 -P4 -I {} sh -c \

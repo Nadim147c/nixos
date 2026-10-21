@@ -1,6 +1,6 @@
 { lib, ... }:
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.base.nix = {
     nix.settings = {
       eval-cache = true;
       experimental-features = [

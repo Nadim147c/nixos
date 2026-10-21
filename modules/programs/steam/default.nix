@@ -1,11 +1,8 @@
 {
   inputs,
-  config,
   ...
 }:
-let
-  inherit (config.flake.modules) nixos;
-in
+
 {
 
   perSystem = { pkgs, ... }: {
@@ -17,10 +14,7 @@ in
       envDefault."MANGOHUD" = "1";
     };
   };
-  flake.modules.nixos.game = {
-    imports = [ nixos.steam ];
-  };
-  flake.modules.nixos.steam = { pkgs, ... }: {
+  flake.tree.nixos.game.steam = { pkgs, ... }: {
     programs.steam = {
       enable = true;
       extraPackages = with pkgs; [

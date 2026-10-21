@@ -11,7 +11,7 @@ let
   inherit (lib.x) quote;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.xdg-dirs =
     { config, ... }:
     let
       download = "${config.hj.directory}/downloads";

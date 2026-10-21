@@ -4,7 +4,7 @@ let
   inherit (lib.meta) getExe';
 in
 {
-  flake.modules.nixos.gui = { config, pkgs, ... }: {
+  flake.tree.nixos.gui.qt = { config, pkgs, ... }: {
     programs.rong.settings.themes = [
       {
         target = "qtct.conf";

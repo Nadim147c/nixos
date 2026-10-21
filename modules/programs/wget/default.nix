@@ -28,7 +28,7 @@ in
       };
     };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.wget =
     {
       config,
       system,
@@ -36,7 +36,7 @@ in
       ...
     }:
     {
-      hj.packages = singleton self.packages.${system}.wget;
+      packages = singleton self.packages.${system}.wget;
       sessionVariables.WGETRC = pkgs.writeText "wgetrc" /* ini */ ''
         hsts-file = ${config.hj.xdg.cache.directory}/wget-hsts
       '';

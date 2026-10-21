@@ -5,7 +5,7 @@ let
   inherit (config) fullname email;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.git =
     { pkgs, lib, ... }:
     let
       inherit (lib) getExe;

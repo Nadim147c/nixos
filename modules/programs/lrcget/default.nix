@@ -7,7 +7,7 @@ let
   appId = "net.lrclib.lrcget";
 in
 {
-  flake.modules.nixos.gui = {
+  flake.tree.nixos.gui.lrcget = {
     services.flatpak = {
       packages = singleton {
         inherit appId;

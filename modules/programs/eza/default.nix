@@ -24,7 +24,7 @@ in
       };
     };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.eza =
     { system, ... }:
     let
       inherit (self.packages.${system}) eza;

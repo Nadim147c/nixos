@@ -18,7 +18,7 @@ in
     };
   };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.cava =
     {
       config,
       pkgs,

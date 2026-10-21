@@ -152,7 +152,7 @@ in
       });
     };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.hyprlock =
     { pkgs, system, ... }:
     let
       inherit (self.packages.${system})

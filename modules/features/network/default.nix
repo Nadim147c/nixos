@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.base = {
+  flake.tree.nixos.network.networkmanager = {
     networking = {
       nameservers = [
         "127.0.0.1"
@@ -10,7 +10,9 @@
         dns = "none";
       };
     };
+  };
 
+  flake.tree.nixos.network.dnscrypt-proxy = {
     services.dnscrypt-proxy = {
       enable = true;
       # Settings reference:

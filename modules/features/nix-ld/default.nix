@@ -1,5 +1,5 @@
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.dev.nix-ld =
     { pkgs, ... }:
     {
       programs.nix-ld = {

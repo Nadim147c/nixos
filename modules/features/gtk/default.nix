@@ -4,7 +4,7 @@ let
   inherit (lib.x.generators) toGtkINI;
 in
 {
-  flake.modules.nixos.gui = { config, pkgs, ... }: {
+  flake.tree.nixos.gui.gtk = { config, pkgs, ... }: {
     programs.rong.settings.themes = singleton {
       target = "gtk.css";
       links = [
@@ -35,7 +35,7 @@ in
         value.Settings = {
           theme-name = "Adwaita";
           icon-theme-name = "Adwaita";
-          font-name = "${config.custom.font.sans} ${toString config.custom.font.size}";
+          font-name = "${config.font.sans} ${toString config.font.size}";
           cursor-theme-name = config.cursor.name;
           cursor-theme-size = config.cursor.size;
           application-prefer-dark-theme = 1;

@@ -7,10 +7,9 @@ let
   inherit (builtins) isAttrs;
 in
 {
-  flake.modules.nixos.dev =
+  flake.tree.nixos.dev.nim =
     { config, pkgs, ... }:
     let
-      cfg = config.dev.nim;
       isNotAttrs = value: (isAttrs value) == false;
       mkKeyValue = name: value: ''${name} = r"${value}"'';
       generateNimINI =
@@ -22,19 +21,15 @@ in
         toKeyValue { inherit mkKeyValue; } unnested + "\n" + toINI { inherit mkKeyValue; } nested;
     in
     {
-      options.dev.nim.enable = lib.x.opt.bool true;
+      packages = with pkgs; [
+        nim
+        nimble
+      ];
 
-      config = lib.mkIf cfg.enable {
-        packages = with pkgs; [
-          nim
-          nimble
-        ];
-
-        hj.xdg.config.files."nimble/nimble.ini" = {
-          generator = generateNimINI;
-          value = {
-            nimbleDir = "${config.hj.xdg.data.directory}/nimble";
-          };
+      hj.xdg.config.files."nimble/nimble.ini" = {
+        generator = generateNimINI;
+        value = {
+          nimbleDir = "${config.hj.xdg.data.directory}/nimble";
         };
       };
     };

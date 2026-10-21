@@ -9,7 +9,7 @@ let
   port = 1616;
 in
 {
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.qbittorrent =
     { config, pkgs, ... }:
     let
       iniNameValueSep = "=";
@@ -69,7 +69,7 @@ in
 
     };
 
-  flake.modules.nixos.gui =
+  flake.tree.nixos.gui.qbittorrent =
     { pkgs, ... }:
     {
       packages = [

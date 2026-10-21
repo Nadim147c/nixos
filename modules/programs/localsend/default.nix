@@ -3,7 +3,7 @@ let
   inherit (lib.lists) singleton;
 in
 {
-  flake.modules.nixos.gui = { pkgs, ... }: {
+  flake.tree.nixos.gui.localsend = { pkgs, ... }: {
     packages = singleton pkgs.localsend;
   };
 }

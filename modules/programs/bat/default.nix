@@ -71,7 +71,7 @@ in
     );
   };
 
-  flake.modules.nixos.base =
+  flake.tree.nixos.base.bat =
     { system, ... }:
     {
       environment.shellAliases.cat = getExe self.packages.${system}.bat;
