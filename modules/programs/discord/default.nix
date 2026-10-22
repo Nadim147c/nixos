@@ -34,6 +34,10 @@ in
         };
       };
 
+      systemd.tmpfiles.rules = [
+        "L+ /run/user/1000/discord-ipc-0 - - - - app/com.discordapp.Discord/discord-ipc-0"
+      ];
+
       hj.programs.hyprland = {
         windowRules = singleton {
           name = "discord workspace 3";
