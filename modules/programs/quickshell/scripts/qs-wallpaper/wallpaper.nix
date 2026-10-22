@@ -20,12 +20,11 @@ in
         inheritPath = true;
         runtimeInputs = builtins.attrValues {
           inherit (self.packages.${pkgs.stdenv.hostPlatform.system})
-            hyprland
             qs-wallpaper
             rong-impure
             xdg-base-dir
             ;
-          inherit (pkgs) fd;
+          inherit (pkgs) hyprland fd;
         };
         source = ./wallpaper.nu;
       };

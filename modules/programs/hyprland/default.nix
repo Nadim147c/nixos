@@ -24,15 +24,6 @@ let
   inherit (lib.x) opt;
 in
 {
-  perSystem = { pkgs, ... }: {
-    packages.hyprland = inputs.wrappers.lib.wrapPackage {
-      inherit pkgs;
-      package = pkgs.hyprland;
-      filesToExclude = singleton "share/wayland-sessions/hyprland-uwsm.desktop";
-      passthru.providedSessions = singleton "hyprland";
-    };
-  };
-
   flake.tree.hjem.gui.hyprland =
     { config, ... }:
     let
@@ -186,7 +177,6 @@ in
 
       programs.hyprland = {
         enable = true;
-        package = self.packages.${system}.hyprland;
         xwayland.enable = true;
         withUWSM = false;
       };

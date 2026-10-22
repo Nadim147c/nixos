@@ -9,12 +9,7 @@ let
 in
 {
   flake.tree.nixos.gui.cursor =
-    {
-      config,
-      pkgs,
-      system,
-      ...
-    }:
+    { config, pkgs, ... }:
     let
       cfg = config.cursor;
     in
@@ -45,7 +40,7 @@ in
             Type = "oneshot";
             ExecStart =
               let
-                hyprctl = getExe' self.packages.${system}.hyprland "hyprctl";
+                hyprctl = getExe' pkgs.hyprland "hyprctl";
               in
               "${hyprctl} setcursor ${escapeShellArg cfg.name} ${toString cfg.size}";
           };

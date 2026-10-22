@@ -11,7 +11,7 @@ in
         inherit name;
         runtimeInputs = [
           pkgs.dbus
-          self.packages.${pkgs.stdenv.hostPlatform.system}.hyprland
+          pkgs.hyprland
         ];
         source = ./qs-open-music-player.nu;
       };
