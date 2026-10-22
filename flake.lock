@@ -161,28 +161,6 @@
         "type": "github"
       }
     },
-    "nix-bwrapper": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ],
-        "nuschtosSearch": [],
-        "sscli": [],
-        "treefmt-nix": []
-      },
-      "locked": {
-        "lastModified": 1788639674,
-        "narHash": "sha256-yipllrIMetM0dSaP1d/OY10Gc6AuPxhaMkSHwNJF3Q8=",
-        "rev": "de0acdabb2f2f2c65458b1c6275190bfe0ac17c3",
-        "revCount": 114,
-        "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/Naxdy/nix-bwrapper/1.5.0/01a075db-c0c6-7df2-805c-d7fed1a8f31c/source.tar.gz"
-      },
-      "original": {
-        "type": "tarball",
-        "url": "https://flakehub.com/f/Naxdy/nix-bwrapper/1.%2A"
-      }
-    },
     "nix-flatpak": {
       "locked": {
         "lastModified": 1790428548,
@@ -308,26 +286,6 @@
         "type": "github"
       }
     },
-    "quickshell": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1790343625,
-        "narHash": "sha256-dLtjYGr1sTihGhsISR71LB17E6m0r18JhF+6BNAHy0M=",
-        "owner": "quickshell-mirror",
-        "repo": "quickshell",
-        "rev": "41651d7dcd62a9400eb6f4f8a8580efe00901efb",
-        "type": "github"
-      },
-      "original": {
-        "owner": "quickshell-mirror",
-        "repo": "quickshell",
-        "type": "github"
-      }
-    },
     "rong": {
       "inputs": {
         "nixpkgs": [
@@ -356,14 +314,12 @@
         "hjem": "hjem",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
-        "nix-bwrapper": "nix-bwrapper",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "noctalia-greeter": "noctalia-greeter",
         "nvf": "nvf",
-        "quickshell": "quickshell",
         "rong": "rong",
         "sops-nix": "sops-nix",
         "topiary-nushell": "topiary-nushell",

@@ -42,13 +42,6 @@
       url = "github:nix-community/nix-index-database";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-bwrapper = {
-      url = "https://flakehub.com/f/Naxdy/nix-bwrapper/1.*";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.nuschtosSearch.follows = "";
-      inputs.treefmt-nix.follows = "";
-      inputs.sscli.follows = "";
-    };
     hjem = {
       url = "https://flakehub.com/f/feel-co/hjem/0.*";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -69,10 +62,6 @@
     };
     noctalia-greeter = {
       url = "github:noctalia-dev/noctalia-greeter";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    quickshell = {
-      url = "github:quickshell-mirror/quickshell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     rong = {
