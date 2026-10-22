@@ -107,6 +107,7 @@ in
             cmd = singleton <| getExe pkgs.nimlangserver;
           };
           servers.nimlsp.enable = mkForce false;
+          servers.nimlsp.cmd = mkForce [ ];
           servers.qml-language-server = {
             name = "qml-language-server";
             filetypes = [ "qml" ];
