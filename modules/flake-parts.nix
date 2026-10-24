@@ -11,6 +11,7 @@ in
   imports = [
     inputs.flake-parts.flakeModules.modules
     inputs.treefmt-nix.flakeModule
+    inputs.wrappers.flakeModules.wrappers
   ];
   options = {
     flake.tree = mkOption {
