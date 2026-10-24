@@ -3,12 +3,12 @@ def main [] {
   mkdir $quickshell_cache
 
   let wallpapers: string = xdg-base-dir user-videos | path join "wallpapers"
+  rong cache --quiet $wallpapers | ignore
   let files = fd '\.(mp4|mkv|avi|mov|wmv|flv|webm|mpeg|mpg|3gp)$' $wallpapers | lines
   for file in $files {
     if ($"($quickshell_cache)/($file | hash md5).jpg" | path exists) {
       continue
     }
-
     let image = rong video --dry-run --template '{{.Image}}' $file
 
     let out = $image
@@ -16,6 +16,10 @@ def main [] {
       | upsert parent $quickshell_cache
       | upsert extension "jpg"
       | path join
+
+    if ($out | path exists) {
+      continue
+    }
 
     printf '%q -[120p]-> %q\n' $image $out
     magick $image -resize x120 $out

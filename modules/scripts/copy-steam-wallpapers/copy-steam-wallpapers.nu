@@ -15,13 +15,26 @@ def main [
       | upsert parent $output
       | path join
 
+    if ($out | path exists) {
+      let in_inode = stat -c "%i" $it
+      let out_inode = stat -c "%i" $out
+      if $in_inode == $out_inode {
+        print $"(print_path $it) and (print_path $out) are the same file!"
+        return
+      }
+    }
+
     try {
       ln $it $out
-      print (printf "linked %q -> %q\n" $it $out)
+      print $"linked (print_path $it) -> (print_path $out)."
     } catch {
       cp -f $it $out
-      print (printf "copied %q -> %q\n" $it $out)
+      print $"copied (print_path $it) -> (print_path $out)."
     }
   }
   | ignore
+}
+
+def print_path [path: string]: nothing -> string {
+  printf "%s%q%s" (ansi green3b) $path (ansi reset)
 }
