@@ -10,6 +10,7 @@
   unzip,
   imagemagick,
   wrapGAppsHook3,
+  nix-update-script,
 }:
 
 let
@@ -19,11 +20,11 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "morphe-desktop";
-  version = "1.18.0";
+  version = "1.19.0";
 
   src = fetchurl {
     url = "https://github.com/MorpheApp/${finalAttrs.pname}/releases/download/v${finalAttrs.version}/morphe-desktop-${finalAttrs.version}-all.jar";
-    hash = "sha256-NuINehj2VftYKa5Qqt1hIX4iCFNsB0HfX3eZMA91j1Y=";
+    hash = "sha256-3rXZMfOJmyChGWN0c9M4xSWF8MVhtdiyhWuRb+kBY7U=";
   };
 
   strictDeps = true;
