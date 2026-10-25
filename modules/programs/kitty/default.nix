@@ -1,28 +1,33 @@
-{
-  self,
-  inputs,
-  lib,
-  ...
-}:
+{ self, lib, ... }:
 let
-  inherit (lib.attrsets) attrValues;
   inherit (lib.lists) singleton;
   inherit (lib.meta) getExe;
+  inherit (lib.x) opt;
 in
 {
-  perSystem =
-    { pkgs, ... }:
+  flake.wrappers.kitty =
     {
-      packages.kitty = inputs.wrappers.wrappers.kitty.wrap {
-        inherit pkgs;
-        package = pkgs.kitty;
+      config,
+      wlib,
+      pkgs,
+      ...
+    }:
+    let
+      # fallback theme
+      tokyo-night = pkgs.fetchurl {
+        url = "https://raw.githubusercontent.com/folke/tokyonight.nvim/cdc07ac78467a233fd62c493de29a17e0cf2b2b6/extras/kitty/tokyonight_moon.conf";
+        hash = "sha256-F2mcDp1HI/RLRjEpAABRCfrCsJTcEhbsUE02bTKEBDA=";
+      };
+    in
+    {
+      imports = [ wlib.wrapperModules.kitty ];
+      options.theme = opt.str "${tokyo-night}";
+      config = {
         font = {
           name = "JetBrainsMono Nerd Font";
           size = 10;
         };
-        extraConfig = /* bash */ ''
-          include ~/.config/kitty/colors.conf
-        '';
+        extraConfig = "include ${config.theme}";
         settings = {
           shell = getExe pkgs.fish;
           bold_font = "auto";
@@ -47,24 +52,38 @@ in
     {
       config,
       pkgs,
-      system,
+      self',
       ...
     }:
     {
-      programs.rong.settings.themes = singleton {
-        target = "kitty-full.conf";
-        links = "${config.hj.xdg.config.directory}/kitty/colors.conf";
-        cmds = pkgs.writers.writeNu "reload-kitty" /* nu */ ''
-          let pids = ps | find kitty | get pid
-          if ($pids | is-not-empty) {
-            kill -s 10 ...$pids
-          }
-        '';
+      imports = [ self.wrappers.kitty.install ];
+
+      packages = singleton pkgs.nerd-fonts.jetbrains-mono;
+
+      hj.programs.hyprland = {
+        programs =
+          let
+            launcher = getExe self'.packages.control;
+            kitty = getExe config.wrappers.kitty.wrapper;
+          in
+          [
+            {
+              keys = [
+                "SUPER"
+                "Q"
+              ];
+              exec = "${launcher} ${kitty}";
+            }
+            {
+              autostart = true;
+              exec = "sleep 10 && ${launcher} ${kitty}";
+            }
+          ];
       };
 
-      packages = attrValues {
-        inherit (pkgs.nerd-fonts) jetbrains-mono;
-        inherit (self.packages.${system}) kitty;
+      wrappers.kitty = {
+        enable = true;
+        theme = "${config.hj.xdg.state.directory}/rong/kitty-full.conf";
       };
     };
 }

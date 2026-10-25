@@ -14,7 +14,7 @@ RetroButton {
         implicitWidth: height + 4
         Text {
             anchors.centerIn: parent
-            color: Appearance.material.myOnSurface
+            color: Appearance.material.myOnSecondaryContainer
             text: "menu-square"
             font.family: Appearance.font.family.iconPixel
             font.pixelSize: Appearance.font.pixelSize.large

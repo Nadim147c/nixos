@@ -64,7 +64,7 @@ RetroButton {
                     anchors.fill: parent
 
                     text: SystemUsage.memUsedString
-                    color: Appearance.material.myOnBackground
+                    color: Appearance.material.myOnSecondaryContainer
                     horizontalAlignment: Text.AlignRight
                     fontSizeMode: Text.Fit
                     font.family: Appearance.font.family.pixel

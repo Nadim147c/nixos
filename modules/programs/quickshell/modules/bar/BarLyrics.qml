@@ -63,7 +63,7 @@ RetroButton {
                     }
                 }
                 visible: text.length != 0
-                color: Appearance.material.myOnBackground
+                color: Appearance.material.myOnSecondaryContainer
                 iconSize: Appearance.font.pixelSize.large
                 fill: 1
             }
@@ -94,9 +94,6 @@ RetroButton {
 
                         const colored = rawText.replace(/<b>/g, `<span style="font-weight: 1000; color: ${highlight};">`).replace(/<\/b>/g, "</span>");
                         if (WaybarLyric.alt !== "getting") {
-                            if (WaybarLyric.currentLine?.words.length) {
-                                return `<span style="color: ${Appearance.material.myOnSurfaceVariant};">${colored}</span>`;
-                            }
                             return colored;
                         }
                         return `${colored} <span style="color: ${Appearance?.material?.mySurfaceVariant};">[Loading lyrics]</span>`;
@@ -105,7 +102,7 @@ RetroButton {
                     verticalAlignment: Text.AlignVCenter
                     elide: Text.ElideRight
                     textFormat: Text.RichText
-                    color: Appearance.material.myOnBackground
+                    color: Appearance.material.myOnSecondaryContainer
 
                     font {
                         family: Appearance.font.family.pixel

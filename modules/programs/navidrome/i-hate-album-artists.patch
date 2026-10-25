@@ -1,0 +1,23 @@
+diff --git i/server/subsonic/browsing.go w/server/subsonic/browsing.go
+index ac0edb69..9480faad 100644
+--- i/server/subsonic/browsing.go
++++ w/server/subsonic/browsing.go
+@@ -45,7 +45,8 @@ func (api *Router) getArtist(r *http.Request, libIds []int, ifModifiedSince time
+
+ 	var indexes model.ArtistIndexes
+ 	if lastScan.After(ifModifiedSince) {
+-		indexes, err = api.ds.Artist(ctx).GetIndex(false, libIds, model.RoleAlbumArtist)
++		indexes, err = api.ds.Artist(ctx).GetIndex(false, libIds, model.RoleArtist)
++		log.Info(ctx, "PATCH ACTIVE: Using RoleArtist")
+ 		if err != nil {
+ 			log.Error(ctx, "Error retrieving Indexes", err)
+ 			return nil, 0, err
+@@ -222,7 +223,6 @@ func (api *Router) GetAlbumInfo(r *http.Request) (*responses.Subsonic, error) {
+ 	}
+
+ 	album, err := api.provider.UpdateAlbumInfo(ctx, id)
+-
+ 	if err != nil {
+ 		return nil, err
+ 	}
+

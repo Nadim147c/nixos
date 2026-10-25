@@ -12,7 +12,7 @@ Item {
     required property SystemTrayItem item
 
     property int size: 24
-    property color fg: Appearance.material.myOnBackground
+    property color fg: Appearance.material.myOnSecondaryContainer
 
     width: size
     height: size

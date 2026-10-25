@@ -30,6 +30,9 @@ Item {
 
         property variant imageTexture: bodySource
         property color targetColor: root.targetColor
+        Behavior on targetColor {
+            animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
+        }
         property real bitDepth: root.bitDepth
         property real pixelSize: root.pixelSize
         property real kuwaharaStrength: root.kuwaharaStrength

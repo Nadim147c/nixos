@@ -34,7 +34,7 @@ RetroButton {
             spacing: Appearance.space.little
 
             Text {
-                color: Appearance.material.myOnBackground
+                color: Appearance.material.myOnSecondaryContainer
                 text: {
                     const vol = Pipewire.defaultAudioSink?.audio.volume;
                     if (vol === 0) {
@@ -47,7 +47,7 @@ RetroButton {
             }
             StyledText {
                 text: Math.round((Pipewire.defaultAudioSink?.audio.volume ?? 0) * 100).toString() + "% " // extra space is intention
-                color: Appearance.material.myOnBackground
+                color: Appearance.material.myOnSecondaryContainer
                 font.family: Appearance.font.family.pixel
                 font.pixelSize: Appearance.font.pixelSize.small
             }

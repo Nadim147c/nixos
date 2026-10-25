@@ -9,9 +9,7 @@ in
   flake.tree.nixos.base.jujutsu =
     { config, pkgs, ... }:
     {
-      packages = with pkgs; [
-        jujutsu
-      ];
+      packages = singleton pkgs.jujutsu;
 
       hj.xdg.config.files."jj/config.toml".generator = pkgs.writers.writeTOML "jujutsu.toml";
       hj.xdg.config.files."jj/config.toml".value = {

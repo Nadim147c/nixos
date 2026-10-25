@@ -1,6 +1,5 @@
 {
   config,
-  inputs,
   lib,
   ...
 }:
@@ -10,14 +9,9 @@ let
 in
 {
   flake.tree.nixos.gui.noctalia-greeter =
-    {
-      config,
-      pkgs,
-      system,
-      ...
-    }:
+    { config, pkgs, ... }:
     let
-      settings = {
+      settings = pkgs.writers.writeTOML "noctalia.toml" {
         appearance = {
           scheme = "Synced";
           password_style = "random";
@@ -34,8 +28,6 @@ in
         };
       };
 
-      package = inputs.noctalia-greeter.packages.${system}.default;
-
       script = pkgs.writers.writeNu "update-noctalia-colors" /* nu */ ''
         let colors = open /tmp/noctalia.json
 
@@ -48,9 +40,9 @@ in
           | upsert hover $colors.material.secondary.hex_rgb
           | upsert on_hover $colors.material.on_secondary.hex_rgb
 
-        let config = echo /var/lib/noctalia-greeter/greeter.toml
+        let config = "/var/lib/noctalia-greeter/greeter.toml"
 
-        open $config
+        open ${settings}
         | upsert appearance.palette $palette
         | collect
         | save --force $config
@@ -63,8 +55,6 @@ in
         if config.users.users.${user}.group != "" then config.users.users.${user}.group else "greeter";
     in
     {
-      imports = singleton inputs.noctalia-greeter.nixosModules.default;
-
       programs.rong.settings.themes = singleton {
         target = "colors.json";
         installs = target;
@@ -90,7 +80,7 @@ in
       services.greetd = {
         enable = true;
         settings.default_session.user = username;
-        settings.default_session.command = "${package}/bin/noctalia-greeter-session";
+        settings.default_session.command = "${pkgs.noctalia-greeter}/bin/noctalia-greeter-session";
       };
 
       services.accounts-daemon.enable = true;
@@ -101,7 +91,7 @@ in
           mode = "0750";
         };
         "/var/lib/noctalia-greeter/greeter.toml"."C" = {
-          argument = "${pkgs.writers.writeTOML "noctalia.toml" settings}";
+          argument = settings;
           inherit user group;
         };
       };

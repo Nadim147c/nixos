@@ -131,7 +131,6 @@ in
         qs-toggle
         dolphin
         hyprscreenshot
-        kitty
         control
         ;
     in
@@ -207,18 +206,6 @@ in
             brightnessctl = getExe pkgs.brightnessctl;
           in
           [
-            {
-              keys = [
-                "SUPER"
-                "Q"
-              ];
-              exec = "${launcher} ${getExe kitty}";
-            }
-            {
-              autostart = true;
-              exec = "sleep 10 && ${launcher} ${getExe kitty}";
-            }
-
             (makeBind [ "SUPER" "E" ] "${launcher} ${getExe' dolphin "dolphin"}")
             (makeBind [ "SUPER" "V" ] "${getExe qs-toggle} clipboard toggle")
             (makeBind [ "SUPER" "SPACE" ] "${getExe qs-toggle} launcher toggle")

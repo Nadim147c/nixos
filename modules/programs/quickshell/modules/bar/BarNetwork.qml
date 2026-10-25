@@ -19,11 +19,10 @@ RetroButton {
             spacing: Appearance.space.tiny
             implicitHeight: root.contentHeight
             anchors.centerIn: parent
-            Text {
-                color: Appearance.material.myOnBackground
-                text: SystemUsage.netUp > SystemUsage.netDown ? "arrow-big-up-dash" : "arrow-big-down-dash"
-                font.family: Appearance.font.family.iconPixel
+            MaterialSymbol {
+                text: SystemUsage.netUp > SystemUsage.netDown ? "arrow_upward" : "arrow_downward"
                 font.pixelSize: Appearance.font.pixelSize.large
+                color: Appearance.material.myOnSecondaryContainer
             }
             Item {
                 implicitWidth: 80
@@ -33,7 +32,7 @@ RetroButton {
                     text: SystemUsage.netTotalString || "--"
                     horizontalAlignment: Text.AlignRight
                     fontSizeMode: Text.Fit
-                    color: Appearance.material.myOnBackground
+                    color: Appearance.material.myOnSecondaryContainer
                     font {
                         family: Appearance.font.family.pixel
                         pixelSize: Appearance.font.pixelSize.small

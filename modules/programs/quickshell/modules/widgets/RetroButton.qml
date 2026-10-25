@@ -15,11 +15,11 @@ Item {
     property real maxOffset: 2
     property string tooltip
 
-    property color color: Qt.lighter(Appearance.material.mySurfaceContainer, 1.7)
-    property color activeColor: Qt.lighter(color, 1.8)
+    property color color: Appearance.material.mySecondaryContainer
+    property color activeColor: Qt.lighter(color, 1.5)
     property color disabledColor: color
     property color rippleColor: Appearance.material.myPrimary
-    property color hoverColor: Qt.lighter(color, 1.3)
+    property color hoverColor: Qt.lighter(activeColor, 1.3)
     property color shadowColor: Appearance.material.myShadow
 
     property Item contentItem

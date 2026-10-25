@@ -15,6 +15,7 @@ RetroButton {
         implicitHeight: icon.height + (Appearance.space.small * 2)
         MaterialSymbol {
             id: icon
+            color: Appearance.material.myOnSecondaryContainer
             anchors.centerIn: parent
             fill: root.active * 1
             text: root.icon

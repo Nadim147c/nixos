@@ -7,14 +7,14 @@
 
 buildGoModule (finalAttrs: {
   pname = "better-iferr";
-  version = "0-unstable-2026-07-23";
+  version = "0-unstable-2026-10-05";
   __structuredAttrs = true;
 
   src = fetchFromGitHub {
     owner = "Nadim147c";
     repo = "better-iferr";
-    rev = "670d9a7757ef44312885ce038badad4764b243f0";
-    hash = "sha256-1EjwdF8wAQa4GnUj1oEevryxiYFAF1GFXo34SNfbs+c=";
+    rev = "22660c6d8544f3dabc83c1a6dc32f5117e96a6ac";
+    hash = "sha256-hGqo2arGlqK4pJGY8jtDSL4VViMsvqsDC2Gr/LJae1I=";
   };
 
   vendorHash = "sha256-jmcgzdAC/3qCBPvgh/UgILDNpugl1e4s7OwvA9cRdoc=";

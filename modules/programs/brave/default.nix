@@ -21,6 +21,7 @@ let
       "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock
       "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
       "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader
+      "aleakchihdccplidncghkekgioiakgal" # H264ify
 
       # Ublock Origin
       "blockjmkbacgjkknlgpkjjiijinjdanf;https://raw.githubusercontent.com/imputnet/ublock-origin-crx/refs/heads/main/update.xml"
@@ -287,6 +288,9 @@ in
 
     hj.programs.hyprland = {
       windowRules = singleton {
+        name = "browser workspace 2";
+        match.class = "^(brave(-origin)|zen-(beta|browser)|[hH]elium)$";
+        workspace = "2 silent";
       };
       programs = singleton {
         keys = [

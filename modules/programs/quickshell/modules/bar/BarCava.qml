@@ -37,7 +37,7 @@ RetroButton {
             id: rect
             anchors.fill: parent
             anchors.margins: Appearance.space.tiny
-            color: Appearance.material.mySurfaceContainerHighest
+            color: "transparent"
             Loader {
                 active: root.mute
                 anchors.fill: parent

@@ -1,6 +1,8 @@
 # Split media file into chunks
 def main [
   ...files: string # video files
+  --filter: string
+  --extension: string
   --time (-t): duration = 20min # Length of each chunk
   --delete (-d) # delete original file after processing
 ] {
@@ -22,7 +24,7 @@ def main [
 
     let stem = ($fullpath | path parse | get stem)
     let parent = ($fullpath | path parse | get parent)
-    let output = ($parent | path join $"($stem).part%d.($ext)")
+    let output = ($parent | path join $"($stem).part%d.($extension | default --empty $ext)")
 
     print $"Processing \"($file)\""
 
@@ -30,7 +32,8 @@ def main [
       ffmpeg -hide_banner
       -i $fullpath
       -f segment
-      -c copy
+      ...(optional ($filter == null) [-c copy])
+      ...(optional ($filter != null) [-af $filter])
       -segment_time ($time / 1sec | into float)
       -reset_timestamps 1
       -y $output
@@ -40,4 +43,8 @@ def main [
       rm $fullpath
     }
   }
+}
+
+def optional [cond: bool list] {
+  if $cond { $list } else { [] }
 }

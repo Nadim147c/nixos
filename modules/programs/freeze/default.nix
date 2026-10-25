@@ -8,7 +8,8 @@ let
   inherit (lib.attrsets) attrValues;
   inherit (lib.lists) singleton;
   inherit (lib.meta) getExe;
-  inherit (lib.x) makeEnvFlag;
+  inherit (lib.modules) types;
+  inherit (lib.x) makeEnvFlag opt;
 in
 {
   perSystem =
@@ -79,8 +80,8 @@ in
 
     };
 
-  flake.tree.nixos.dev.freeze = { system, ... }: {
-    packages = with self.packages.${system}; [
+  flake.tree.nixos.dev.freeze = { self', ... }: {
+    packages = with self'.packages; [
       chroma
       freeze
       termshot

@@ -1,32 +1,15 @@
-{ config, ... }:
+{ config, lib, ... }:
 let
-  inherit (builtins) attrValues;
-  inherit (config.flake.tree.nixos)
-    base
-    dev
-    gui
-    hack
-    network
-    wireless
-    game
-    server
-    ;
+  inherit (lib.x) generateConfig;
+  inherit (config.flake.tree) nixos;
 in
 {
   configurations.nixos.chronoshift.module =
     { pkgs, ... }:
     {
-      imports = [
-        { }
-      ]
-      ++ attrValues dev
-      ++ attrValues gui
-      ++ attrValues hack
-      ++ attrValues network
-      ++ attrValues wireless
-      ++ attrValues game
-      ++ attrValues server
-      ++ attrValues base;
+      imports = generateConfig nixos {
+        gui.ghostty = false;
+      };
 
       cursor.size = 24;
 

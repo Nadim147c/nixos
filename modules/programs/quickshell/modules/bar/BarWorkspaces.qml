@@ -27,9 +27,9 @@ RowLayout {
             onClicked: modelData.activate()
 
             StyledText {
+                color: Appearance.material.myOnSecondaryContainer
                 text: workspaceButton.modelData.name
                 font.family: Appearance.font.family.pixel
-                color: Appearance.material.myOnBackground
             }
         }
     }

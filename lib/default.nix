@@ -2,15 +2,19 @@
 final: lib:
 let
   inherit (lib)
+    flatten
+    optional
     const
     genAttrs
     getExe
     getExe'
     toList
+    mapAttrsToList
     ;
 
   inherit (lib.strings) splitString toInt;
   inherit (builtins)
+    attrValues
     fromJSON
     head
     isFloat
@@ -21,6 +25,23 @@ in
 rec {
   opt = (import ./options.nix) final lib;
   generators = import ./generators final lib;
+
+  generateConfig =
+    moduleSet: filterSet:
+    let
+      filter =
+        category: module:
+        let
+          catFilter = filterSet.${category} or true;
+        in
+        optional (catFilter != false) (
+          if builtins.isAttrs catFilter then
+            mapAttrsToList (name: mod: optional (catFilter.${name} or true) mod) module
+          else
+            attrValues module
+        );
+    in
+    mapAttrsToList filter moduleSet |> flatten;
 
   isEmpty = list: (builtins.length list) == 0;
   isNotEmpty = list: (builtins.length list) == 0;

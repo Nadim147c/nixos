@@ -1,31 +1,22 @@
 {
   self,
-  inputs,
   lib,
   ...
 }:
 let
   inherit (lib) singleton;
+
 in
 {
-  perSystem = { pkgs, ... }: {
-    packages.cava = inputs.wrappers.wrappers.cava.wrap {
-      inherit pkgs;
-      package = pkgs.cava;
-      settings = {
-        color.theme = "rong";
-      };
-    };
+  flake.wrappers.cava = { wlib, ... }: {
+    imports = [ wlib.wrapperModules.cava ];
   };
 
   flake.tree.nixos.gui.cava =
+    { config, pkgs, ... }:
     {
-      config,
-      pkgs,
-      system,
-      ...
-    }:
-    {
+      imports = [ self.wrappers.cava.install ];
+
       programs.rong.settings.themes = singleton {
         target = "cava.ini";
         links = "${config.hj.xdg.config.directory}/cava/themes/rong";
@@ -37,6 +28,9 @@ in
         '';
       };
 
-      packages = singleton self.packages.${system}.cava;
+      wrappers.cava = {
+        enable = true;
+        settings.color.theme = "rong";
+      };
     };
 }

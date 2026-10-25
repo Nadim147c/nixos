@@ -29,7 +29,7 @@ in
     );
   };
 
-  flake.tree.nixos.base.fd = { system, ... }: {
-    packages = singleton self.packages.${system}.fd;
+  flake.tree.nixos.base.fd = { self', ... }: {
+    packages = singleton self'.packages.fd;
   };
 }

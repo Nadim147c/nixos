@@ -24,7 +24,7 @@ RetroButton {
             implicitHeight: root.contentHeight
             anchors.centerIn: parent
             Text {
-                color: Appearance.material.myOnBackground
+                color: Appearance.material.myOnSecondaryContainer
                 text: "clock"
                 font.family: Appearance.font.family.iconPixel
                 font.pixelSize: Appearance.font.pixelSize.large
@@ -37,7 +37,7 @@ RetroButton {
                     text: Qt.formatDateTime(clockData.date, "hh:mm:ss AP")
                     horizontalAlignment: Text.AlignRight
                     fontSizeMode: Text.Fit
-                    color: Appearance.material.myOnBackground
+                    color: Appearance.material.myOnSecondaryContainer
                     font {
                         family: Appearance.font.family.pixel
                         pixelSize: Appearance.font.pixelSize.small

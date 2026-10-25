@@ -12,7 +12,12 @@ let
 in
 {
   perSystem =
-    { pkgs, self', ... }:
+    {
+      pkgs,
+      self',
+      inputs',
+      ...
+    }:
     let
       playerInfo = getExe self'.packages.hyprlock-player-info;
       fancy = "Electroharmonix";
@@ -27,7 +32,12 @@ in
         ''${{ .Name.Snake -}}_hex = #{{ .Color.HexRGB }}
         {{ end -}}
       '';
-      rongBin = getExe self'.packages.rong-impure;
+      fallbackTheme =
+        pkgs.runCommand "hyprland-rong.conf" { nativeBuildInputs = [ inputs'.rong.packages.default ]; }
+          ''
+            echo {} > config.json
+            rong image --config=config.json --dry-run --template=${rongTemplate} ${./../../../wallpaper.png} > $out
+          '';
     in
     {
       packages.hyprlock = inputs.wrappers.wrappers.hyprlock.wrap (args: {
@@ -54,7 +64,7 @@ in
               cat "$rong_hyprland_config" "$base_hyprlock_config" > "$HYPRLOCK_CONFIG"
             else
               # Generate colors from wallpaper + use base config as fallback
-              cat <(${rongBin} image --dry-run --template=${rongTemplate} ${./../../../wallpaper.png}) "$base_hyprlock_config" > "$HYPRLOCK_CONFIG"
+              cat ${fallbackTheme} "$base_hyprlock_config" > "$HYPRLOCK_CONFIG"
             fi
           ''
         ];

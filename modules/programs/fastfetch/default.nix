@@ -49,7 +49,7 @@ in
     };
   };
 
-  flake.tree.nixos.base.fastfetch = { system, ... }: {
-    packages = singleton self.packages.${system}.fastfetch;
+  flake.tree.nixos.base.fastfetch = { self', ... }: {
+    packages = singleton self'.packages.fastfetch;
   };
 }
