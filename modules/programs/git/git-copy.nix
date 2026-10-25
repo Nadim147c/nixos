@@ -6,7 +6,8 @@ in
     completion = {
       inherit name;
       flags = {
-        "-d, --destination=" = "destination to clone the reposition";
+        "-d, --destination=" = "Destination directory (default: ~/git/<user>/<repo>)";
+        "-g, --git" = "Use `git clone --recursive` instead of `jj git clone`";
       };
       completion.positional = [
         [ "$files" ]
@@ -15,14 +16,15 @@ in
     inherit name;
     script =
       pkgs:
-      let
-        args.runtimeInputs = with pkgs; [
+      pkgs.writeNuApplication {
+        inherit name;
+        runtimeInputs = with pkgs; [
           openssh
           gh
           git
           jujutsu
         ];
-      in
-      pkgs.writers.writeGoBin name args (builtins.readFile ./git-copy.go);
+        source = ./git-copy.nu;
+      };
   };
 }
