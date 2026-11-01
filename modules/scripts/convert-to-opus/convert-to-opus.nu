@@ -8,7 +8,7 @@
 # File identification is done using magika to ensure only actual audio files are processed.
 # Processing happens in parallel for performance.
 def main [...dirs: string] {
-  let audios = fd --type file . ...$dirs | lines | each {|it|
+  let audios = ^find ...$dirs -type f | lines | each {|it|
       let res = magika --json $it | from json | first | get result
       if ($res.status == "ok") and ($res.value.output.group == "audio" or $res.value.output.group == "video") { $it }
     }

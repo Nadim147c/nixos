@@ -23,7 +23,7 @@ in
         (pkgs.makeDesktopItem {
           name = "navidrome";
           desktopName = "Navidrome";
-          genericName = "Media Server";
+          genericName = "Music Server";
           comment = "Navidrome Media Server";
           exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://127.0.0.1:${toString config.services.navidrome.settings.Port}";
           terminal = false;
@@ -45,9 +45,12 @@ in
         patches = [ ./i-hate-album-artists.patch ];
         doCheck = false;
       });
-      plugins = singleton pkgs.pkgsCross.wasi32.navidromePlugins.apple-music;
+      plugins = with pkgs.pkgsCross.wasi32.navidromePlugins; [
+        lyrics-plugin
+        apple-music
+      ];
       user = username;
-      # environmentFile = config.sops.secrets.navidrome.path;
+      environmentFile = config.sops.secrets.navidrome.path;
       settings = {
         MusicFolder = config.xdg-dirs.music;
         DataFolder = "/var/lib/navidrome";

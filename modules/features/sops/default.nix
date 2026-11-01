@@ -41,6 +41,7 @@ in
             neededForUsers = true;
           };
           slskd = { };
+          navidrome = { };
           "discord_client_id" = user;
           "freeimage_api" = user;
           "rclone/crypt/pass" = user;

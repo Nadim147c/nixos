@@ -15,7 +15,7 @@ in
       pkgs.writeNuApplication {
         inherit name;
         runtimeInputs = with pkgs; [
-          fd
+          findutils
           ffmpeg
           magika-cli
         ];
