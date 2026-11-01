@@ -17,12 +17,13 @@
     substituters = [
       "https://cache.nixos.org"
       "https://nvf.cachix.org"
+      "https://install.determinate.systems"
     ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nvf.cachix.org-1:GMQWiUhZ6ux9D5CvFFMwnc2nFrUHTeGaXRlVBXo+naI="
+      "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
     ];
-
     builders-use-substitutes = true;
     flake-registry = "";
     http-connections = 50;
@@ -31,17 +32,17 @@
     use-xdg-base-directories = true;
   };
   inputs = {
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     discord-voice-rpc = {
       url = "https://flakehub.com/f/Nadim147c/discord-voice-rpc/*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-utils.url = "github:numtide/flake-utils";
-    nix-flatpak.url = "https://flakehub.com/f/gmodena/nix-flatpak/*";
-    nix-index-database = {
-      url = "github:nix-community/nix-index-database";
+    elephant = {
+      url = "github:Nadim147c/elephant";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    flake-utils.url = "github:numtide/flake-utils";
     hjem = {
       url = "https://flakehub.com/f/feel-co/hjem/0.*";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -51,6 +52,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree.url = "github:vic/import-tree";
+    nix-flatpak.url = "https://flakehub.com/f/gmodena/nix-flatpak/*";
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nixos-hardware = {
       url = "github:NixOS/nixos-hardware/master";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -81,15 +87,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     wrappers = {
-      url = "github:BirdeeHub/nix-wrapper-modules";
+      url = "github:nix-community/nix-wrapper-modules";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     yankd = {
       url = "github:Nadim147c/yankd";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    elephant = {
-      url = "github:Nadim147c/elephant";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

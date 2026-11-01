@@ -91,7 +91,7 @@ in
           mode = "0750";
         };
         "/var/lib/noctalia-greeter/greeter.toml"."C" = {
-          argument = settings;
+          argument = "${settings}";
           inherit user group;
         };
       };
