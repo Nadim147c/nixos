@@ -20,11 +20,11 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "morphe-desktop";
-  version = "1.19.0";
+  version = "1.20.0";
 
   src = fetchurl {
     url = "https://github.com/MorpheApp/${finalAttrs.pname}/releases/download/v${finalAttrs.version}/morphe-desktop-${finalAttrs.version}-all.jar";
-    hash = "sha256-3rXZMfOJmyChGWN0c9M4xSWF8MVhtdiyhWuRb+kBY7U=";
+    hash = "sha256-Z59XmzrXQ6wMppfvceV0MNAL5ZQRsESUr9GEXEP7efA=";
   };
 
   strictDeps = true;
