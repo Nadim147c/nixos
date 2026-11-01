@@ -21,7 +21,6 @@ let
       "mnjggcdmjocbbbhaepdhchncahnbgone" # SponsorBlock
       "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
       "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader
-      "aleakchihdccplidncghkekgioiakgal" # H264ify
 
       # Ublock Origin
       "blockjmkbacgjkknlgpkjjiijinjdanf;https://raw.githubusercontent.com/imputnet/ublock-origin-crx/refs/heads/main/update.xml"
@@ -279,8 +278,8 @@ in
       };
     };
 
-    environment.etc."brave/policies/managed/policies.json".text = builtins.toJSON settings;
-
+    # Copied from https://github.com/RGBCube/ncc/blob/fd1860d09aaca345badff5f48b38c124b729fdf8/modules/web-browser.mod.nix
+    environment.etc."chromium/policies/managed/policies.json".text = builtins.toJSON settings;
   };
 
   flake.tree.nixos.gui.brave = { pkgs, system, ... }: {
@@ -324,7 +323,6 @@ in
       "x-scheme-handler/unknown"
     ];
 
-    # Copied from https://github.com/RGBCube/ncc/blob/fd1860d09aaca345badff5f48b38c124b729fdf8/modules/web-browser.mod.nix
-    environment.etc."chromium/policies/managed/policies.json".text = builtins.toJSON settings;
+    environment.etc."brave/policies/managed/policies.json".text = builtins.toJSON settings;
   };
 }
