@@ -2,35 +2,44 @@
 let
   inherit (config) username;
   inherit (lib.meta) getExe';
-  inherit (lib.attrsets) genAttrs;
   inherit (lib.lists) singleton;
   inherit (lib.modules) mkForce;
-  inherit (lib.trivial) const;
 in
 {
-  flake.tree.nixos.server.slskd = { config, ... }: {
-    systemd.services.slskd.serviceConfig.ProtectHome = mkForce false;
-
-    services.slskd = {
-      enable = true;
-      openFirewall = true;
-      environmentFile = config.sops.secrets.slskd.path;
-      user = username;
-      settings = {
-        directories = genAttrs [ "incomplete" "downloads" ] (const config.xdg-dirs.torrents);
-        shares.directories = singleton config.xdg-dirs.music;
-      };
-    };
-  };
-
-  flake.tree.nixos.gui.slskd =
-    { config, pkgs, ... }:
+  flake.tree.nixos.server.slskd =
     {
+      config,
+      pkgs,
+      ...
+    }:
+    {
+      systemd.services.slskd.serviceConfig = {
+        ProtectHome = mkForce "tmpfs";
+        BindPaths = singleton config.xdg-dirs.torrents; # read-write
+        BindReadOnlyPaths = singleton config.xdg-dirs.music; # read-only
+      };
+      services.slskd = {
+        enable = true;
+        openFirewall = true;
+        environmentFile = config.sops.secrets.slskd.path;
+        user = username;
+        settings = {
+          directories = {
+            downloads = config.xdg-dirs.torrents;
+            incomplete = "${config.xdg-dirs.torrents}/slskd-incomplete";
+          };
+          shares.directories = singleton config.xdg-dirs.music;
+        };
+      };
+      systemd.tmpfiles.rules = [
+        "d ${config.xdg-dirs.torrents}/slskd-incomplete 0755 ${username} users - -"
+      ];
+
       packages = [
         (pkgs.makeIcons "slskd" "${pkgs.slskd}/lib/slskd/wwwroot/favicon.ico")
         (pkgs.makeDesktopItem {
           name = "slskd";
-          desktopName = "Soulseek Client";
+          desktopName = "Soulseek";
           genericName = "Downloader";
           comment = "Soulseek daemon web interface";
           exec = "${getExe' pkgs.xdg-utils "xdg-open"} http://127.0.0.1:${toString config.services.slskd.settings.web.port}";
