@@ -1,16 +1,12 @@
-{ lib, ... }:
 {
   flake.tree.nixos.dev.go =
     { config, pkgs, ... }:
     {
       packages = with pkgs; [
-        go
+        go_1_27
         gotools
         gofumpt
         golangci-lint
-        golangci-lint-langserver
-        gopls
-        revive
       ];
 
       sessionVariables =
