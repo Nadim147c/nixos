@@ -4,6 +4,7 @@ let
   inherit (lib.meta) getExe';
   inherit (lib.lists) singleton;
   inherit (lib.modules) mkForce;
+  inherit (builtins) attrValues;
 in
 {
   flake.tree.nixos.server.slskd =
@@ -25,15 +26,16 @@ in
         user = username;
         settings = {
           directories = {
-            downloads = config.xdg-dirs.torrents;
+            downloads = "${config.xdg-dirs.torrents}/downloads";
             incomplete = "${config.xdg-dirs.torrents}/slskd-incomplete";
           };
           shares.directories = singleton config.xdg-dirs.music;
         };
       };
-      systemd.tmpfiles.rules = [
-        "d ${config.xdg-dirs.torrents}/slskd-incomplete 0755 ${username} users - -"
-      ];
+
+      systemd.tmpfiles.rules =
+        attrValues config.services.slskd.settings.directories
+        |> map (dir: "d ${dir} 0755 ${username} users - -");
 
       packages = [
         (pkgs.makeIcons "slskd" "${pkgs.slskd}/lib/slskd/wwwroot/favicon.ico")

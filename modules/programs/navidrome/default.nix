@@ -37,7 +37,11 @@ in
         })
       ];
 
-    systemd.services.navidrome.serviceConfig.ProtectHome = mkForce false;
+    systemd.services.navidrome.serviceConfig = {
+      ProtectHome = mkForce "tmpfs";
+      BindPaths = singleton config.xdg-dirs.music; # read-write
+    };
+
     services.navidrome = {
       enable = true;
       openFirewall = true;
