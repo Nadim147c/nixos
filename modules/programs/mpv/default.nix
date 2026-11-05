@@ -7,17 +7,25 @@
 let
   inherit (lib.attrsets) nameValuePair genAttrs';
   inherit (lib.lists) optional singleton;
+  inherit (lib.strings) makeBinPath;
 in
 {
   perSystem =
     { pkgs, ... }:
     let
       createScripts = scripts: genAttrs' scripts (script: nameValuePair script.pname { path = script; });
+      bin = singleton pkgs.yt-dlp;
+      paths = makeBinPath bin;
     in
     {
       packages.mpv = inputs.wrappers.wrappers.mpv.wrap {
         inherit pkgs;
         package = pkgs.mpv;
+        prefixVar = singleton [
+          "PATH"
+          ":"
+          paths
+        ];
         script = createScripts (
           (with pkgs.mpvScripts; [
             modernx
@@ -42,8 +50,8 @@ in
           user-agent=Mozilla/5.0
 
           # script-opts and ytdl-raw-options require specific formatting
-          script-opts=ytdl_hook-ytdl_path=yt-dlp
-          ytdl-raw-options=sub-lang="en,eng,enUS,en-US",write-sub=,write-auto-sub=,yes-playlist=,concurrent-fragments=4
+          script-opts=ytdl_hook-ytdl_path=yt-dlp,ytdl_hook-try_ytdl_first=yes
+          ytdl-raw-options=sub-lang="en,eng,enUS,en-US",yes-playlist=,concurrent-fragments=4
         '';
         "mpv.input".content = /* sh */ ''
           ctrl+f        script-binding quality_menu/video_formats_toggle
