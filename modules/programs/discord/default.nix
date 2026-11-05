@@ -66,30 +66,41 @@ in
       };
 
       systemd.services.install-equicord-discord = {
-        enable = true;
+        enable = false;
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = false;
+          ExecStart =
+            let
+              app_asar = pkgs.runCommand "app.asar" { } ''
+                mkdir -p "$out"
+                echo '{"name":"discord","main":"index.js"}' > "$out/package.json"
+                echo "require(\"${pkgs.equicord}/desktop/patcher.js\")" > "$out/index.js"
+              '';
+            in
+            pkgs.writers.writeNu "install-equicord-discord" /* nu */ ''
+              let target = "/var/lib/flatpak/app/com.discordapp.Discord/current/active/files/discord"
+
+              if not ($target | path exists) {
+                return
+              }
+
+              let app_asar = $"($target)/resources/app.asar"
+              let app_asar_copy = $"($target)/resources/_app.asar"
+
+              if (test -f $app_asar | complete | get exit_code) == 0 {
+                mv --verbose --force $app_asar $app_asar_copy
+              }
+
+              rm --recursive --force --verbose $app_asar
+              cp --recursive --force --verbose ${app_asar} $app_asar
+            '';
         };
         wantedBy = [
           "default.target"
           "sysinit-reactivation.target"
         ];
         before = singleton "sysinit-reactivation.target";
-        script = ''
-          set -euo pipefail
-          TARGET="/var/lib/flatpak/app/com.discordapp.Discord/current/active/files/discord"
-
-          [[ ! -d "$TARGET" ]] && exit 0
-
-          if [[ -f "$TARGET/resources/app.asar" && ! -e "$TARGET/resources/_app.asar" ]]; then
-            mv -vf "$TARGET/resources/app.asar" "$TARGET/resources/_app.asar"
-          fi
-
-          mkdir -p "$TARGET/resources/app.asar"
-          echo '{"name":"discord","main":"index.js"}' > "$TARGET/resources/app.asar/package.json"
-          echo "require(\"${pkgs.equicord}/desktop/patcher.js\")" > "$TARGET/resources/app.asar/index.js"
-        '';
       };
 
       hj.xdg.mime-apps = lib.x.genMimes "discord.desktop" [ "x-scheme-handler/discord" ];
