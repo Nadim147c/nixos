@@ -1,6 +1,6 @@
 {
   "sonora": {
-    "url": "https://github.com/sonorahq/sonora/releases/download/v0.47.0/sonora-v0.47.0-x86_64.flatpak",
-    "sha256": "sha256-3qwF9hw+5a7eYLEtCcjc9GzPrlbCyMJWD2A88dGACgI="
+    "url": "https://github.com/sonorahq/sonora/releases/download/v0.49.1/sonora-v0.49.1-x86_64.flatpak",
+    "sha256": "sha256-KcYIXZRpjhDb2Wa+P35FW6MGw1YsxA3a+c8bTOHmtzE="
   }
 }
