@@ -16,7 +16,7 @@ in
     in
     {
       packages = attrValues {
-        inherit (self.packages.${system}) field;
+        inherit (self.packages.${system}) ffcompress field;
         inherit (pkgs)
           chafa
           coreutils
