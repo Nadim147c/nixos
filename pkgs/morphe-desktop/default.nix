@@ -10,7 +10,6 @@
   unzip,
   imagemagick,
   wrapGAppsHook3,
-  nix-update-script,
 }:
 
 let
@@ -20,11 +19,11 @@ let
 in
 stdenv.mkDerivation (finalAttrs: {
   pname = "morphe-desktop";
-  version = "1.20.0";
+  version = "2.1.1";
 
   src = fetchurl {
     url = "https://github.com/MorpheApp/${finalAttrs.pname}/releases/download/v${finalAttrs.version}/morphe-desktop-${finalAttrs.version}-all.jar";
-    hash = "sha256-Z59XmzrXQ6wMppfvceV0MNAL5ZQRsESUr9GEXEP7efA=";
+    hash = "sha256-Oi7+/VZ7RN3hWXGljVqmSaMqujB4HTQA3AjWiMcgFo8=";
   };
 
   strictDeps = true;
@@ -66,6 +65,7 @@ stdenv.mkDerivation (finalAttrs: {
     makeWrapper ${jre}/bin/java "$out/bin/morphe-desktop" \
       --add-flags "-jar $out/share/morphe-desktop/morphe-desktop.jar" \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath [ libGL ]}" \
+      --set-default _JAVA_AWT_WM_NONREPARENTING 1
 
     unzip -p "$src" NOTICE > "$out/share/doc/morphe-desktop/NOTICE"
     unzip -p "$src" morphe_logo.png > logo.png
