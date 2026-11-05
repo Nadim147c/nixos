@@ -45,14 +45,16 @@ in
     services.navidrome = {
       enable = true;
       openFirewall = true;
-      package = pkgs.navidrome.overrideAttrs (old: {
-        patches = [ ./i-hate-album-artists.patch ];
-        doCheck = false;
-      });
-      plugins = with pkgs.pkgsCross.wasi32.navidromePlugins; [
-        lyrics-plugin
-        apple-music
-      ];
+      package = pkgs.unstable.navidrome.override {
+        navidrome-unwrapped = pkgs.unstable.navidrome-unwrapped.overrideAttrs {
+          patches = [ ./i-hate-album-artists.patch ];
+          doCheck = false;
+        };
+        wasmPlugins = with pkgs.unstable.pkgsCross.wasi32.navidromePlugins; [
+          apple-music
+          lyrics-plugin
+        ];
+      };
       user = username;
       environmentFile = config.sops.secrets.navidrome.path;
       settings = {

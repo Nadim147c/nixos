@@ -16,8 +16,13 @@ in
     {
       systemd.services.slskd.serviceConfig = {
         ProtectHome = mkForce "tmpfs";
-        BindPaths = singleton config.xdg-dirs.torrents; # read-write
+        BindPaths = [
+          "/home/${username}/.dotnet"
+          config.xdg-dirs.torrents
+        ]; # read-write
         BindReadOnlyPaths = singleton config.xdg-dirs.music; # read-only
+        RuntimeDirectory = "slskd";
+        ReadWritePaths = singleton "/run/slskd";
       };
       services.slskd = {
         enable = true;

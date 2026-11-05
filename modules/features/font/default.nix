@@ -12,52 +12,30 @@ in
       sed "s|${pkgs.dejavu_fonts.minimal}|${pkgs.noto-fonts}|" \
         "${pkgs.fontconfig.out}/etc/fonts/fonts.conf" > $out/etc/fonts/fonts.conf
     '';
-    packages.systemFonts =
-      let
-        fonts = pkgs.makeFontsConf {
-          fontDirectories = attrValues {
-            inherit (pkgs)
-              material-symbols
-              noto-fonts
-              noto-fonts-cjk-sans
-              noto-fonts-cjk-serif
-              noto-fonts-color-emoji
-              roboto
-              roboto-flex
-              roboto-mono
-              roboto-serif
-              roboto-slab
-              twemoji-color-font
-              ;
-            inherit (pkgs.nerd-fonts) jetbrains-mono;
-            inherit (self'.packages)
-              pixelarticons
-              dseg_v046
-              electroharmonix
-              google-fonts
-              ;
-          };
-        };
-        bangla = /* xml */ ''
-          <?xml version="1.0" encoding="UTF-8"?>
-          <!DOCTYPE fontconfig SYSTEM "urn:fontconfig:fonts.dtd">
-          <fontconfig>
-            <match target="pattern">
-              <test name="lang" compare="contains">
-                <string>bn</string>
-              </test>
-              <edit name="weight" mode="assign" binding="same">
-                <const>bold</const>
-              </edit>
-            </match>
-          </fontconfig>
-        '';
-      in
-      pkgs.runCommand "font.conf" { inherit bangla; } ''
-        mkdir -p $out
-        cp ${fonts} $out/fonts.conf
-        echo "$bangla" > $out/bangla.conf
-      '';
+    packages.systemFonts = pkgs.makeFontsConf {
+      fontDirectories = attrValues {
+        inherit (pkgs)
+          material-symbols
+          noto-fonts
+          noto-fonts-cjk-sans
+          noto-fonts-cjk-serif
+          noto-fonts-color-emoji
+          roboto
+          roboto-flex
+          roboto-mono
+          roboto-serif
+          roboto-slab
+          twemoji-color-font
+          ;
+        inherit (pkgs.nerd-fonts) jetbrains-mono;
+        inherit (self'.packages)
+          pixelarticons
+          dseg_v046
+          electroharmonix
+          google-fonts
+          ;
+      };
+    };
   };
 
   flake.tree.nixos.gui.font =
@@ -117,11 +95,11 @@ in
             confPackages = mkBefore <| singleton fontconfig;
             defaultFonts = {
               sansSerif = unique [
+                "Noto Sans Bengali"
                 cfg.sans
                 "Rubik"
                 "Roboto"
                 "Noto Sans"
-                "Noto Sans Bengali"
               ];
 
               monospace = unique [
@@ -132,10 +110,10 @@ in
               ];
 
               serif = unique [
+                "Noto Serif Bengali"
                 cfg.serif
                 "Roboto Serif"
                 "Noto Serif"
-                "Noto Serif Bengali"
               ];
 
               emoji = [

@@ -85,8 +85,6 @@ RetroButton {
                     }
 
                     property string rawText: WaybarLyric.text
-                    property string plainText: WaybarLyric.text.replace(/<\/?\w+[^>]*>/g, "")
-                    onPlainTextChanged: textAnimation.restart()
                     text: {
                         if (!rawText || rawText.trim().length === 0) {
                             return root.fortuneQuote;
@@ -108,53 +106,6 @@ RetroButton {
                         family: Appearance.font.family.pixel
                         italic: WaybarLyric.text.length !== 0 && !WaybarLyric.isPlaying
                         pixelSize: Appearance.font.pixelSize.small
-                    }
-
-                    SequentialAnimation {
-                        id: textAnimation
-                        alwaysRunToEnd: true
-
-                        ParallelAnimation {
-                            NumberAnimation {
-                                target: textItem
-                                property: "y"
-                                to: -textItem.height
-                                duration: 100
-                                easing.type: Easing.InSine
-                            }
-                            NumberAnimation {
-                                target: textItem
-                                property: "opacity"
-                                to: 0
-                                duration: 100
-                                easing.type: Easing.InSine
-                            }
-                        }
-
-                        PropertyAction {}
-
-                        PropertyAction {
-                            target: textItem
-                            property: "y"
-                            value: textItem.height
-                        }
-
-                        ParallelAnimation {
-                            NumberAnimation {
-                                target: textItem
-                                property: "y"
-                                to: 0
-                                duration: 100
-                                easing.type: Easing.OutSine
-                            }
-                            NumberAnimation {
-                                target: textItem
-                                property: "opacity"
-                                to: 1
-                                duration: 100
-                                easing.type: Easing.OutSine
-                            }
-                        }
                     }
                 }
             }

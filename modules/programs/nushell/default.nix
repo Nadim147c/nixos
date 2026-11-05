@@ -59,6 +59,8 @@ in
         )
       ];
       options.programs.nushell = {
+        enable = opt.bool false;
+        package = opt.pkg pkgs.nushell;
         extraConfig = opt.block "";
         init = opt.attrs.block { };
         settings = opt.attrs.recursive {

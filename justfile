@@ -5,7 +5,7 @@ nixos:
     sudo nixos-rebuild switch --flake . -L --accept-flake-config
 
 build:
-    nh os build --accept-flake-config .
+    nh os build --accept-flake-config . --keep-going
 
 boot:
     nh os boot --accept-flake-config .
