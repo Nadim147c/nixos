@@ -151,38 +151,6 @@ rec {
     go 0 "";
 
   /*
-    wrapUWSM :: string | package -> string
-
-    Wrap a program so it is launched via `uwsm app --`.
-
-    The result is a shell command string.
-  */
-  wrapUWSM =
-    pkgs: pkg:
-    let
-      exe = if builtins.isString pkg then pkg else getExe pkg;
-    in
-    "${getExe pkgs.uwsm} app -- ${exe}";
-
-  /*
-    wrapUWSM :: package -> string
-
-    Wrap a program so it is launched via `uwsm app --`.
-
-    The result is a shell command string.
-  */
-  wrapUWSM' =
-    pkgs: pkg: name:
-    "${getExe pkgs.uwsm} app -- ${getExe' pkg name}";
-
-  /*
-    flakePackage :: attrs -> package
-
-    Get the default package from a flake.
-  */
-  flakePackage = pkgs: flake: flake.packages.${pkgs.stdenv.hostPlatform.system}.default;
-
-  /*
     genMimes :: string | [string] -> [string] -> attrset
 
     Generate XDG MIME associations for desktop entries.

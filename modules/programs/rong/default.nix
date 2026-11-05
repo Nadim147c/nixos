@@ -10,10 +10,10 @@ let
   inherit (lib.strings) makeBinPath;
 in
 {
-  perSystem = { pkgs, ... }: {
+  perSystem = { pkgs, inputs', ... }: {
     packages.rong-impure = inputs.wrappers.lib.wrapPackage {
       inherit pkgs;
-      package = pkgs.lib.flakePackage inputs.rong;
+      package = inputs'.rong.packages.default;
       prefixVar =
         let
           runtimeInputs = with pkgs; [
@@ -95,7 +95,7 @@ in
     };
 
   flake.tree.nixos.gui.rong =
-    { system, ... }:
+    { self', ... }:
     {
       hj.systemd.services.rong-generate = {
         enable = true;
@@ -103,7 +103,7 @@ in
         before = singleton "graphical-session.target";
         wantedBy = singleton "graphical-session-pre.target";
         serviceConfig = {
-          ExecStart = "-${getExe self.packages.${system}.rong-impure} regen";
+          ExecStart = "-${getExe self'.packages.rong-impure} regen";
           Type = "oneshot";
           RemainAfterExit = "yes";
         };
@@ -111,7 +111,7 @@ in
 
       programs.rong = {
         enable = true;
-        package = self.packages.${system}.rong-impure;
+        package = self'.packages.rong-impure;
         settings = {
           dark = true;
           preview-format = "jpg";
