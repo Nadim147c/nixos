@@ -13,6 +13,10 @@ layout(std140, binding = 0) uniform buf {
     float levels;
 };
 
+float bayerMatrix2x2(vec2 uv) {
+    ivec2 p = ivec2(mod(uv, 2.0));
+    return float((p.x ^ p.y) * 2 + p.x) / 4.0 - 0.375;
+}
 
 vec3 srgb_to_linear(vec3 rgb) {
     vec3 c = max(rgb, vec3(0.0));
@@ -58,6 +62,8 @@ void main() {
 
     if (levels > 1.0) {
       vec3 lab = oklab_from_linear(srgb_to_linear(rgb));
+      float dither = bayerMatrix2x2(pixelizedUV);
+      lab.x = clamp(lab.x + (dither / levels), 0.0, 1.0);
       lab.x = round(lab.x * levels) / levels;
       rgb = linear_to_srgb(linear_from_oklab(lab));
     }
