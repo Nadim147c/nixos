@@ -9,6 +9,7 @@ in
     {
       imports = generateConfig nixos {
         gui.ghostty = false;
+        game.steam = false;
       };
 
       cursor.size = 24;
