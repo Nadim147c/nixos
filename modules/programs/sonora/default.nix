@@ -19,7 +19,7 @@ in
       hj.programs.hyprland = {
         windowRules = singleton {
           name = "music player workspace 4";
-          match.class = "^(sonora)$";
+          match.class = "^(io.github.nolight132.)?(sonora)$";
           workspace = "4 silent";
         };
         programs = singleton {
