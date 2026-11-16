@@ -1,4 +1,9 @@
-{ self, lib, ... }:
+{
+  self,
+  lib,
+  ...
+}:
+
 let
   inherit (lib.attrsets) attrValues;
   inherit (lib.lists) unique singleton;
