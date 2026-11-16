@@ -98,7 +98,7 @@ in
           lspkind.enable = true;
           presets = {
             tailwindcss-language-server.enable = true;
-            harper.enable = true;
+            harper.enable = false;
           };
           otter-nvim.enable = true;
           servers.nimlangserver = {
