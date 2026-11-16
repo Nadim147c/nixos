@@ -90,7 +90,7 @@ RetroButton {
                             return root.fortuneQuote;
                         }
 
-                        const colored = rawText.replace(/<b>/g, `<span style="font-weight: 1000; color: ${highlight};">`).replace(/<\/b>/g, "</span>");
+                        const colored = rawText.replace(/<b>/g, `<span style="bold: true; color: ${highlight};">`).replace(/<\/b>/g, "</span>");
                         if (WaybarLyric.alt !== "getting") {
                             return colored;
                         }

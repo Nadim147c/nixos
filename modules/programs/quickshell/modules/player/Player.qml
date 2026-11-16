@@ -61,7 +61,6 @@ PanelWindow {
                         KuwaharaFilter {
                             anchors.fill: parent
                             kuwaharaStrength: 0.67
-                            bitDepth: 4
                             pixelSize: 2.0
                             Image {
                                 source: WaybarLyric.cover

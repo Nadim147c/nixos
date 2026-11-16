@@ -5,7 +5,7 @@ Item {
     id: root
 
     property color targetColor: Appearance.material.myPrimary ?? "#222222"
-    property real bitDepth: 4.0
+    property real levels: 12
     property real pixelSize: 3.0
     property real kuwaharaStrength: 0.5
 
@@ -33,7 +33,7 @@ Item {
         Behavior on targetColor {
             animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)
         }
-        property real bitDepth: root.bitDepth
+        property real bitDepth: root.levels
         property real pixelSize: root.pixelSize
         property real kuwaharaStrength: root.kuwaharaStrength
         property vector2d size: Qt.vector2d(width, height)

@@ -1,5 +1,8 @@
 pragma ComponentBehavior: Bound
 
+import qs.modules.common
+import qs.modules.widgets
+
 import QtMultimedia
 import QtQuick
 import Quickshell
@@ -158,19 +161,26 @@ PanelWindow {
         live: true
     }
 
-    ShaderEffect {
-        id: effect
+    Pixelate {
         anchors.fill: parent
+        pixelSize: 4
+        levels: 16
 
-        property variant fromSource: root.inverse ? bottomTexture : topTexture
-        property variant toSource: root.inverse ? topTexture : bottomTexture
-        property real t: 0.0
-        property point cursor: root.cursorNormalized
-        property real angle: root.angle
-        property point size: Qt.point(root.width, root.height)
-        property real aspect: root.width / root.height
+        color: Appearance.material.mySurface
+        ShaderEffect {
+            id: effect
+            anchors.fill: parent
 
-        fragmentShader: "./template.frag.qsb"
+            property variant fromSource: root.inverse ? bottomTexture : topTexture
+            property variant toSource: root.inverse ? topTexture : bottomTexture
+            property real t: 0.0
+            property point cursor: root.cursorNormalized
+            property real angle: root.angle
+            property point size: Qt.point(root.width, root.height)
+            property real aspect: root.width / root.height
+
+            fragmentShader: "./template.frag.qsb"
+        }
     }
 
     component Wallpaper: Loader {

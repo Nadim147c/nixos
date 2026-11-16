@@ -1,4 +1,6 @@
 #version 440
+#extension GL_GOOGLE_include_directive : require
+#include "../common/oklab.glsl"
 
 layout(location = 0) in vec2 qt_TexCoord0;
 layout(location = 0) out vec4 fragColor;
@@ -15,65 +17,18 @@ layout(std140, binding = 0) uniform buf {
     float kuwaharaStrength;
 };
 
-vec3 srgb_to_linear(vec3 rgb) {
-    vec3 c = max(rgb, vec3(0.0));
-    return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(vec3(0.04045), c));
+float bayerMatrix2x2(ivec2 cell) {
+    ivec2 p = cell & 1;
+    return float((p.x ^ p.y) * 2 + p.x) / 4.0 - 0.375;
 }
 
-vec3 linear_to_srgb(vec3 c) {
-    vec3 linear = max(c, vec3(0.0));
-    return mix(linear * 12.92, 1.055 * pow(linear, vec3(1.0 / 2.4)) - 0.055, step(vec3(0.0031308), linear));
-}
-
-vec3 oklab_from_linear(vec3 linear) {
-    const mat3 im1 = mat3(0.4121656120, 0.2118591070, 0.0883097947,
-                          0.5362752080, 0.6807189584, 0.2818474174,
-                          0.0514575653, 0.1074065790, 0.6302613616);
-
-    const mat3 im2 = mat3(+0.2104542553, +1.9779984951, +0.0259040371,
-                          +0.7936177850, -2.4285922050, +0.7827717662,
-                          -0.0040720468, +0.4505937099, -0.8086757660);
-
-    vec3 lms = im1 * linear;
-    return im2 * (sign(lms) * pow(abs(lms), vec3(1.0 / 3.0)));
-}
-
-vec3 linear_from_oklab(vec3 oklab) {
-    const mat3 m1 = mat3(+1.000000000, +1.000000000, +1.000000000,
-                         +0.396337777, -0.105561346, -0.089484178,
-                         +0.215803757, -0.063854173, -1.291485548);
-
-    const mat3 m2 = mat3(+4.076724529, -1.268143773, -0.004111989,
-                         -3.307216883, +2.609332323, -0.703476310,
-                         +0.230759054, -0.341134429, +1.706862569);
-    vec3 lms = m1 * oklab;
-    return m2 * (lms * lms * lms);
-}
-
-vec3 oklab_to_oklch(vec3 lab) {
-    float c = length(lab.yz);
-    float h = atan(lab.z, lab.y);
-    return vec3(lab.x, c, h);
-}
-
-vec3 oklch_to_oklab(vec3 lch) {
-    return vec3(lch.x, lch.y * cos(lch.z), lch.y * sin(lch.z));
-}
-
-vec3 srgb_to_oklch(vec3 rgb) {
-    return oklab_to_oklch(oklab_from_linear(srgb_to_linear(rgb)));
-}
-
-vec3 oklch_to_srgb(vec3 lch) {
-    return clamp(linear_to_srgb(linear_from_oklab(oklch_to_oklab(lch))), 0.0, 1.0);
-}
-
+// Works on premultiplied RGBA (what Qt textures contain) and returns premultiplied RGBA.
 vec4 kuwaharaPass(sampler2D tex, vec2 uv, vec2 invTexSize, int r) {
-    vec3 mean[4];
+    vec4 mean[4];
     vec3 variance[4];
 
     for (int i = 0; i < 4; ++i) {
-        mean[i] = vec3(0.0);
+        mean[i] = vec4(0.0);
         variance[i] = vec3(0.0);
     }
 
@@ -88,28 +43,27 @@ vec4 kuwaharaPass(sampler2D tex, vec2 uv, vec2 invTexSize, int r) {
     for (int q = 0; q < 4; ++q) {
         for (int x = bounds[q].x; x <= bounds[q].y; ++x) {
             for (int y = bounds[q].z; y <= bounds[q].w; ++y) {
-                vec3 c = texture(tex, uv + vec2(x, y) * invTexSize).rgb;
+                vec4 c = texture(tex, uv + vec2(x, y) * invTexSize);
                 mean[q] += c;
-                variance[q] += c * c;
+                variance[q] += c.rgb * c.rgb;
             }
         }
         mean[q] /= samplesPerQuadrant;
-        variance[q] = abs(variance[q] / samplesPerQuadrant - mean[q] * mean[q]);
+        variance[q] = abs(variance[q] / samplesPerQuadrant - mean[q].rgb * mean[q].rgb);
     }
 
     float minVar = variance[0].r + variance[0].g + variance[0].b;
-    vec3 finalColor = mean[0];
+    vec4 result = mean[0];
 
     for (int i = 1; i < 4; ++i) {
         float varVal = variance[i].r + variance[i].g + variance[i].b;
         if (varVal < minVar) {
             minVar = varVal;
-            finalColor = mean[i];
+            result = mean[i];
         }
     }
 
-    float alpha = texture(tex, uv).a;
-    return vec4(finalColor, alpha);
+    return result;
 }
 
 vec4 kuwaharaFilter(sampler2D tex, vec2 uv, vec2 invTexSize, float strength) {
@@ -124,27 +78,35 @@ vec4 kuwaharaFilter(sampler2D tex, vec2 uv, vec2 invTexSize, float strength) {
     return mix(rad1, rad2, blendFactor);
 }
 
-float quantizeValue(float value, float bitDepth) {
-    float levels = pow(2.0, bitDepth) - 1.0;
-    return floor(value * levels + 0.5) / levels;
-}
-
 void main() {
     float effectiveGrid = max(pixelSize, 1.0);
-    vec2 pixelizedUV = (floor((qt_TexCoord0 * size) / effectiveGrid) + 0.5) * (effectiveGrid / size);
+    vec2 cell = floor((qt_TexCoord0 * size) / effectiveGrid);
+    vec2 pixelizedUV = (cell + 0.5) * (effectiveGrid / size);
 
     vec4 texColor = kuwaharaFilter(imageTexture, pixelizedUV, 1.0 / size, kuwaharaStrength);
 
-    vec3 srcOklch = srgb_to_oklch(texColor.rgb);
-    vec3 targetOklch = srgb_to_oklch(targetColor.rgb);
+    float alpha = texColor.a;
+    vec3 srcRgb = (alpha > 1e-4) ? clamp(texColor.rgb / alpha, 0.0, 1.0) : vec3(0.0);
+    vec3 targetRgb = (targetColor.a > 1e-4) ? targetColor.rgb / targetColor.a : targetColor.rgb;
+
+    vec3 srcOklch = srgb_to_oklch(srcRgb);
+    vec3 targetOklch = srgb_to_oklch(targetRgb);
 
     float finalChroma = srcOklch.y;
     if (targetOklch.y < 0.05) {
         finalChroma = targetOklch.y;
     }
 
-    vec3 finalOklch = vec3(quantizeValue(srcOklch.x, bitDepth), finalChroma, targetOklch.z);
+    float lightness = srcOklch.x;
+
+    if (bitDepth >= 1.0) {
+        float dither = bayerMatrix2x2(ivec2(cell));
+        lightness = clamp(lightness + (dither / bitDepth), 0.0, 1.0);
+        lightness = round(lightness * bitDepth) / bitDepth;
+    }
+
+    vec3 finalOklch = vec3(lightness, finalChroma, targetOklch.z);
     vec3 finalRgb = oklch_to_srgb(finalOklch);
 
-    fragColor = vec4(finalRgb * texColor.a, texColor.a) * qt_Opacity;
+    fragColor = vec4(finalRgb * alpha, alpha) * qt_Opacity;
 }
