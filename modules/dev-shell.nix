@@ -21,12 +21,12 @@
           quickshell-dev = pkgs.writeShellScriptBin "quickshell-dev" ''
             systemctl --user stop quickshell.service
             trap 'systemctl --user restart quickshell.service' EXIT
-            nix run .#quickshell -- -p modules/programs/quickshell/shell.qml
+            quickshell -p modules/programs/quickshell/shell.qml
           '';
           quickshell-debug = pkgs.writeShellScriptBin "quickshell-debug" ''
             systemctl --user stop quickshell.service
             trap 'systemctl --user restart quickshell.service' EXIT
-            nix run .#quickshell -- --debug=6767 --waitfordebug -p modules/programs/quickshell/shell.qml
+            quickshell --debug=6767 --waitfordebug -p modules/programs/quickshell/shell.qml
           '';
         };
         buildInputs = with pkgs; [
