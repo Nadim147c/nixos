@@ -50,7 +50,7 @@ in
           user-agent=Mozilla/5.0
 
           # script-opts and ytdl-raw-options require specific formatting
-          script-opts=ytdl_hook-ytdl_path=yt-dlp,ytdl_hook-try_ytdl_first=yes
+          script-opts=ytdl_hook-ytdl_path=yt-dlp
           ytdl-raw-options=sub-lang="en,eng,enUS,en-US",yes-playlist=,concurrent-fragments=4
         '';
         "mpv.input".content = /* sh */ ''
@@ -69,11 +69,12 @@ in
           KP6           playlist-next
           <             add sub-delay -0.1
           >             add sub-delay +0.1
+          -             add speed -0.1
           *             set speed 1
           +             add speed +0.1
-          KP_ADD        add speed +0.1
-          -             add speed -0.1
-          KP_SUBTRACT   add speed -0.1
+          KP_DIVIDE     add speed -0.1
+          KP_MULTIPLY   set speed 1
+          KP_SUBTRACT   add speed +0.1
           n             cycle-values af "lavfi=[dynaudnorm=f=75:g=25:p=0.55]" "lavfi=[dynaudnorm=f=50:g=31:p=0.95:m=10.0]" ""
         '';
       };
