@@ -63,6 +63,29 @@ in
               "\nJJ: This commit contains the following changes:\n", "",
               indent("JJ:     ", diff.stat(72)),
             ),
+            surround(
+              "\nJJ: This commit message generator:\n", "",
+              indent("JJ:     ", ${builtins.toJSON ''
+                Generate a concise, factual git commit message for the provided diff.
+
+                Formatting Rules
+                - **Format:** `<scope>: <concise summary of the change>`
+                - **Scope:** Use the primary path or subsystem affected (e.g., `programs/quickshell`, `features/flatpak`, `hosts/chronoshift`, `pkgs/morphe-desktop`, `scripts/ffcompress`, `nix`, `flake`, `treewide`). Use brace expansion when touching multiple related items in the same parent directory (e.g., `programs/{navidrome,slskd,qbittorrent}`).
+                - **Summary:** Use lowercase imperative/present-tense phrasing (e.g., `add ...`, `update ...`, `remove ...`, `disable ...`, `fix ...`, `use ...`). Keep it brief and direct—typically under 60–70 characters.
+                - **Output only:** Return only the commit message, with no markdown fences or extra explanation.
+
+                ### Examples of Target Style
+                - `nix/dev-shells: use system quickshell for quickshell-dev script`
+                - `programs/quickshell: shader update`
+                - `programs/neovim: disable harper lsp`
+                - `programs/{navidrome,slskd,qbittorrent}: update servers icons`
+                - `pkgs/morphe-desktop: update 1.18.0 -> 1.19.0`
+                - `programs/git: replace git-copy.go with git-copy.nu`
+                - `treewide: implement dendritic pattern`
+                - `features/flatpak: uninstall Unmanaged `
+                - `programs/hyprland: fix screen off after sleep`
+              ''}),
+            ),
             "\n",
             "JJ: ignore-rest\n",
             diff.git(),
@@ -80,6 +103,5 @@ in
           ];
         };
       };
-
     };
 }
