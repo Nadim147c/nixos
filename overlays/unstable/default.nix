@@ -1,3 +1,6 @@
 inputs: final: prev: {
-  unstable = inputs.unstable.legacyPackages.${prev.stdenv.hostPlatform.system};
+  unstable = import inputs.unstable {
+    system = prev.stdenv.hostPlatform.system;
+    config = prev.config;
+  };
 }
