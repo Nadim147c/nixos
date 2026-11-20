@@ -1,6 +1,32 @@
 {
   "sonora": {
-    "url": "https://github.com/sonorahq/sonora/releases/download/v0.49.1/sonora-v0.49.1-x86_64.flatpak",
-    "sha256": "sha256-KcYIXZRpjhDb2Wa+P35FW6MGw1YsxA3a+c8bTOHmtzE="
+    "x86_64-linux": {
+      "url": "https://github.com/sonorahq/sonora/releases/download/v0.50.3/sonora-v0.50.3-x86_64.flatpak",
+      "sha256": "sha256-mBJ6n2ByOFsbLclD+XQ+xOvdpXi1uJ0wz99+4dHBfPc="
+    },
+    "aarch64-linux": {
+      "url": "https://github.com/sonorahq/sonora/releases/download/v0.50.3/sonora-v0.50.3-aarch64.flatpak",
+      "sha256": "sha256-wXLmF/pTBQGaeEGA+Y7IGFnlYHT7c+t6hjLdn2WLLlA="
+    }
+  },
+  "photocraft": {
+    "x86_64-linux": {
+      "url": "https://github.com/storytold/photocraft/releases/download/v0.23.1/photocraft-0.23.1-linux-x86_64.flatpak",
+      "sha256": "sha256-XJ3rWPB71U8yOl2YW+0pW0xbFXieAmUeLyA9Xo7yEaU="
+    },
+    "aarch64-linux": {
+      "url": "https://github.com/storytold/photocraft/releases/download/v0.23.1/photocraft-0.23.1-linux-aarch64.flatpak",
+      "sha256": "sha256-DxrAiSTIdrhuCTranoaT+VtVvmE9XueJbU09csXWZ4Y="
+    }
+  },
+  "effectcraft": {
+    "x86_64-linux": {
+      "url": "https://github.com/storytold/effectcraft/releases/download/v0.24.1/effectcraft-0.24.1-linux-x86_64.flatpak",
+      "sha256": "sha256-ovfR/giaPlgK1MhOH43Zg+Bx4S4EESLyWoIKUb+zHwo="
+    },
+    "aarch64-linux": {
+      "url": "https://github.com/storytold/effectcraft/releases/download/v0.24.1/effectcraft-0.24.1-linux-aarch64.flatpak",
+      "sha256": "sha256-CzvRjRKjtcFEQykJOWbNEszqJ5i+wWjnzyO3dNWrrnE="
+    }
   }
 }

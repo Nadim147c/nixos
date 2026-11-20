@@ -8,13 +8,14 @@ let
   inherit (lib.lists) singleton;
   inherit (lib.meta) getExe;
   inherit (lib.strings) escapeShellArg;
-  inherit (config.flake.flatpak.apps.sonora) url sha256;
-
-  appId = "io.github.nolight132.sonora";
 in
 {
   flake.tree.nixos.gui.sonora =
     { system, pkgs, ... }:
+    let
+      inherit (config.flake.flatpak.apps.sonora.${system}) url sha256;
+      appId = "io.github.nolight132.sonora";
+    in
     {
       hj.programs.hyprland = {
         windowRules = singleton {
