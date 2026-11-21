@@ -13,6 +13,7 @@ in
         "-c, --cpu=" = "CPU limit";
         "-m, --memory=" = "Memory limit";
         "-s, --scope" = "Run in terminal scope";
+        "-h, --help" = "Print the help menu";
       };
       completion = {
         positional = singleton [ "$executables" ];
@@ -21,12 +22,37 @@ in
     };
     script =
       pkgs:
-      let
-        args = {
-          inheritPath = true;
-          runtimeInputs = [ pkgs.uwsm ];
-        };
-      in
-      pkgs.writers.writeGoBin name args (builtins.readFile ./control.go);
+      pkgs.stdenv.mkDerivation {
+        inherit name;
+
+        src = ./control.nim;
+        dontUnpack = true;
+
+        nativeBuildInputs = with pkgs; [
+          nim
+          pkg-config
+          writableTmpDirAsHomeHook
+        ];
+        buildInputs = with pkgs; [
+          glibc
+          uwsm
+        ];
+
+        buildPhase = ''
+          runHook preBuild
+          cp $src ./main.nim
+          nim c -d:release -d:uwsmBin=${lib.getExe pkgs.uwsm} main.nim
+          runHook postBuild
+        '';
+
+        installPhase = ''
+          runHook preInstall
+          mkdir -p $out/bin
+          mv main $out/bin/${name}
+          runHook postInstall
+        '';
+
+        meta.mainProgram = name;
+      };
   };
 }
