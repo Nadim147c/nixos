@@ -146,6 +146,32 @@
         "type": "github"
       }
     },
+    "memify": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "topiary-nushell": [
+          "topiary-nushell"
+        ],
+        "tree-sitter-nu": [
+          "tree-sitter-nu"
+        ]
+      },
+      "locked": {
+        "lastModified": 1786113046,
+        "narHash": "sha256-6JacZO4w/jutYkaVRmqMgK46WEdK/BwUdAhthxfnjmU=",
+        "owner": "zedxihan",
+        "repo": "memify",
+        "rev": "8fc2b3970f7b3220da90ee97964ab2c33f6f6a9e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "zedxihan",
+        "repo": "memify",
+        "type": "github"
+      }
+    },
     "mnw": {
       "locked": {
         "lastModified": 1784154424,
@@ -294,6 +320,7 @@
         "hjem": "hjem",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
+        "memify": "memify",
         "nix-flatpak": "nix-flatpak",
         "nix-index-database": "nix-index-database",
         "nixos-hardware": "nixos-hardware",

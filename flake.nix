@@ -92,6 +92,12 @@
       url = "github:Nadim147c/yankd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    memify = {
+      url = "github:zedxihan/memify";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.topiary-nushell.follows = "topiary-nushell";
+      inputs.tree-sitter-nu.follows = "tree-sitter-nu";
+    };
   };
 
   outputs =
