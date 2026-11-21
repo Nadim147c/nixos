@@ -45,16 +45,22 @@ in
     services.navidrome = {
       enable = true;
       openFirewall = true;
-      package = pkgs.unstable.navidrome.override {
-        navidrome-unwrapped = pkgs.unstable.navidrome-unwrapped.overrideAttrs {
-          patches = [ ./i-hate-album-artists.patch ];
-          doCheck = false;
-        };
-        wasmPlugins = with pkgs.unstable.pkgsCross.wasi32.navidromePlugins; [
-          apple-music
-          lyrics-plugin
-        ];
-      };
+      # Pin wasmPlugins by stripping `plugins` from override args
+      # so module options cannot overwrite them.
+      package =
+        let
+          baseNavidrome = pkgs.unstable.navidrome.override {
+            navidrome-unwrapped = pkgs.unstable.navidrome-unwrapped.overrideAttrs {
+              patches = [ ./i-hate-album-artists.patch ];
+              doCheck = false;
+            };
+            wasmPlugins = with pkgs.unstable.pkgsCross.wasi32.navidromePlugins; [
+              apple-music
+              lyrics-plugin
+            ];
+          };
+        in
+        lib.makeOverridable (args: baseNavidrome.override (removeAttrs args [ "plugins" ])) { };
       user = username;
       environmentFile = config.sops.secrets.navidrome.path;
       settings = {
