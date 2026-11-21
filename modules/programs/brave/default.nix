@@ -22,7 +22,6 @@ let
       "nffaoalbilbmmfgbnbgppjihopabppdk" # Video Speed Contoller
       "bkijmpolkanhdehnlnabfooghjdokakc" # Double-click Image Downloader
       "hlepfoohegkhhmjieoechaddaejaokhf" # Refine GitHub
-      "mmcdeiglkbfbicdjboocmhehodogilfl" # Prism integration
 
       # Ublock Origin
       "blockjmkbacgjkknlgpkjjiijinjdanf;https://raw.githubusercontent.com/imputnet/ublock-origin-crx/refs/heads/main/update.xml"
