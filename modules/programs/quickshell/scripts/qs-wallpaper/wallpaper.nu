@@ -29,5 +29,5 @@ def find_wallpaper [wallpaper_dir: string] {
   let current = try { open ~/.local/state/quickshell/wallpaper.txt | str trim } catch { "" }
   mkdir $wallpaper_dir
   # This will error if no item is found
-  fd '\.(mp4|mkv|webm|gif)$' $wallpaper_dir | lines | where ($it != $current) | shuffle | get 0
+  fd '\.(mp4|mkv|webm|gif)$' $wallpaper_dir | lines | where  ($it != $current) | shuffle | get 0
 }

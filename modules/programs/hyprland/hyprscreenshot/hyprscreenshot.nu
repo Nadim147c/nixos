@@ -94,7 +94,7 @@ def similify_path_name [desc: string]: any -> string {
 def get_description []: any -> string {
   let clients = hyprctl clients -j
     | from json
-    | where focusHistoryID == 0
+    | where  focusHistoryID == 0
     | first
   if ($clients == null) {
     return ""

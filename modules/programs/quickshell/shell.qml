@@ -2,19 +2,21 @@
 //@ pragma UseQApplication
 //@ pragma StateDir $BASE/quickshell
 
+// keep-sorted start
+import qs.modules.background
 import qs.modules.bar
 import qs.modules.clipboard
+import qs.modules.collection
+import qs.modules.colorpicker
 import qs.modules.common
+import qs.modules.discord
+import qs.modules.launcher
 import qs.modules.logout
 import qs.modules.osd
 import qs.modules.panel
 import qs.modules.player
 import qs.modules.wallpaper
-import qs.modules.discord
-import qs.modules.launcher
-import qs.modules.background
-import qs.modules.colorpicker
-import qs.modules.collection
+// keep-sorted end
 
 import QtQuick
 import Quickshell

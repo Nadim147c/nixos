@@ -10,11 +10,13 @@ let
   config.allowUnfreePredicate =
     pkg:
     builtins.elem (getName pkg) [
-      "mpv-cut"
+      # keep-sorted start
       "discord"
       "discord-unwrapped"
+      "mpv-cut"
       "steam"
       "steam-unwrapped"
+      # keep-sorted end
     ];
 
 in

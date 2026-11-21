@@ -1,5 +1,7 @@
 {
   nixConfig = {
+    # keep-sorted start block=yes
+    builders-use-substitutes = true;
     eval-cache = true;
     experimental-features = [
       "nix-command"
@@ -7,13 +9,9 @@
       "flakes"
       "pipe-operators"
     ];
-    trusted-users = [
-      "root"
-      "@build"
-      "@wheel"
-      "@admin"
-    ];
-    warn-dirty = false;
+    flake-registry = "";
+    http-connections = 50;
+    show-trace = true;
     substituters = [
       "https://cache.nixos.org"
       "https://nvf.cachix.org"
@@ -22,14 +20,19 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "nvf.cachix.org-1:GMQWiUhZ6ux9D5CvFFMwnc2nFrUHTeGaXRlVBXo+naI="
     ];
-    builders-use-substitutes = true;
-    flake-registry = "";
-    http-connections = 50;
-    show-trace = true;
+    trusted-users = [
+      "root"
+      "@build"
+      "@wheel"
+      "@admin"
+    ];
     use-cgroups = true;
     use-xdg-base-directories = true;
+    warn-dirty = false;
+    # keep-sorted end
   };
   inputs = {
+    # keep-sorted start block=yes
     discord-voice-rpc = {
       url = "https://flakehub.com/f/Nadim147c/discord-voice-rpc/*";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -49,6 +52,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     import-tree.url = "github:vic/import-tree";
+    memify = {
+      url = "github:zedxihan/memify";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.topiary-nushell.follows = "topiary-nushell";
+      inputs.tree-sitter-nu.follows = "tree-sitter-nu";
+    };
     nix-flatpak.url = "https://flakehub.com/f/gmodena/nix-flatpak/*";
     nix-index-database = {
       url = "github:nix-community/nix-index-database";
@@ -59,7 +68,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixpkgs.url = "https://channels.nixos.org/nixos-26.05/nixexprs.tar.xz";
-    unstable.url = "https://flakehub.com/f/DeterminateSystems/nixpkgs-weekly/*";
     nvf = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -84,6 +92,7 @@
       url = "https://flakehub.com/f/numtide/treefmt-nix/0.*";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    unstable.url = "https://flakehub.com/f/DeterminateSystems/nixpkgs-weekly/*";
     wrappers = {
       url = "github:nix-community/nix-wrapper-modules";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -92,12 +101,7 @@
       url = "github:Nadim147c/yankd";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    memify = {
-      url = "github:zedxihan/memify";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.topiary-nushell.follows = "topiary-nushell";
-      inputs.tree-sitter-nu.follows = "tree-sitter-nu";
-    };
+    # keep-sorted end
   };
 
   outputs =

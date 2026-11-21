@@ -26,29 +26,34 @@ let
 in
 {
   inherit createOption;
-  pkg = default: createOption types.package default;
-  path = default: createOption types.path default;
+
+  # keep-sorted start
+  block = default: createOption types.lines default;
   bool = default: createOption types.bool default;
-  num = default: createOption types.number default;
   int = default: createOption types.int default;
   line = default: createOption types.singleLineStr default;
-  str = default: createOption types.str default;
-  block = default: createOption types.lines default;
+  num = default: createOption types.number default;
+  path = default: createOption types.path default;
+  pkg = default: createOption types.package default;
   recursive = default: createOption recursiveType default;
+  str = default: createOption types.str default;
+  # keep-sorted end
 
   null =
     let
       option = type: default: createOption (types.nullOr type) default;
     in
     {
-      pkg = default: option types.package default;
+      # keep-sorted start
+      block = default: option types.lines default;
       bool = default: option types.bool default;
-      num = default: option types.number default;
       int = default: option types.int default;
       line = default: option types.singleLineStr default;
-      str = default: option types.str default;
-      block = default: option types.lines default;
+      num = default: option types.number default;
+      pkg = default: option types.package default;
       recursive = default: option recursiveType default;
+      str = default: option types.str default;
+      # keep-sorted end
     };
 
   attrs =
@@ -56,15 +61,17 @@ in
       option = type: default: createOption (types.attrsOf type) default;
     in
     {
+      # keep-sorted start
       any = default: createOption types.attrs default;
-      pkg = default: option types.package default;
+      block = default: option types.lines default;
       bool = default: option types.bool default;
-      num = default: option types.number default;
       int = default: option types.int default;
       line = default: option types.singleLineStr default;
-      str = default: option types.str default;
-      block = default: option types.lines default;
+      num = default: option types.number default;
+      pkg = default: option types.package default;
       recursive = default: option recursiveType default;
+      str = default: option types.str default;
+      # keep-sorted end
     };
 
   list =
@@ -72,15 +79,17 @@ in
       option = type: default: createOption (types.listOf type) default;
     in
     {
-      pkg = default: option types.package default;
+      # keep-sorted start
+      attrs = default: option types.attrs default;
+      block = default: option types.lines default;
       bool = default: option types.bool default;
-      num = default: option types.number default;
       int = default: option types.int default;
       line = default: option types.singleLineStr default;
-      str = default: option types.str default;
-      block = default: option types.lines default;
-      attrs = default: option types.attrs default;
+      num = default: option types.number default;
       path = default: option types.path default;
+      pkg = default: option types.package default;
       recursive = default: option recursiveType default;
+      str = default: option types.str default;
+      # keep-sorted end
     };
 }

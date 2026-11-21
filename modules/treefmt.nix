@@ -21,6 +21,7 @@ in
         "qmlformat"
         "stylua"
         "taplo"
+        "keep-sorted"
       ];
 
       settings = {

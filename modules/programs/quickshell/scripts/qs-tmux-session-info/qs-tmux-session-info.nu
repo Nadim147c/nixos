@@ -8,7 +8,7 @@ def main [] {
 
   ^tmux list-sessions -F $fmt
   | lines
-  | where ($it | str trim) != ""
+  | where  ($it | str trim) != ""
   | parse "{name}\t{active}\t{windows}\t{last_activity}"
   | update active {|it| $it.active | into int | $in > 0 }
   | update windows {|it| $it.windows | into int }

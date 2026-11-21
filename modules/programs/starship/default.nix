@@ -20,8 +20,7 @@ in
           $os$hostname$directory( [\[](red bold)$git_branch$hg_branch([:](green)$git_state$git_status)[\]](red bold))$nix_shell$status
           ([\[](bold)$shell[\]](bold) )($character)'';
 
-        continuation_prompt = "[  => ](green bold)";
-
+        # keep-sorted start block=yes
         character = {
           success_symbol = "[󰁔](green bold)";
           error_symbol = "[󰁔](red bold)";
@@ -30,45 +29,7 @@ in
           vimcmd_replace_symbol = "[/](yellow bold)";
           vimcmd_visual_symbol = "[|](green bold)";
         };
-
-        os = {
-          format = "$symbol";
-          disabled = false;
-          symbols = {
-            Arch = "[ ](#1793d1)";
-            NixOS = "[ ](#F2F8FD)";
-            Kali = "[ ](#EEEEEE)";
-            Windows = "[ ](#0078D4)";
-          };
-        };
-
-        status = {
-          format = " ([\\[](yellow bold)[$status]($style)[\\]](yellow bold))";
-          disabled = false;
-        };
-
-        hostname = {
-          format = "[\\($hostname\\)]($style) ";
-          style = "yellow";
-        };
-
-        nix_shell = {
-          disabled = false;
-          format = "[ $name](bold blue)";
-        };
-
-        shell = {
-          format = "$indicator";
-          fish_indicator = "[fish](#4EAD4E)";
-          powershell_indicator = "pwsh";
-          bash_indicator = "[bash](#FCFBFB)";
-          cmd_indicator = "cmd";
-          zsh_indicator = "[zsh](bold #4EAD4E)";
-          nu_indicator = "[nu](#4E950B)";
-          unknown_indicator = "shell?";
-          disabled = false;
-        };
-
+        continuation_prompt = "[  => ](green bold)";
         directory = {
           format = " [$path]($style)[$read_only]($read_only_style)";
           read_only_style = "red";
@@ -79,27 +40,12 @@ in
           truncate_to_repo = false;
           truncation_symbol = "…/";
         };
-
-        sudo = {
-          format = "[$symbol]($style)";
-          style = "bold yellow";
-          symbol = "󱐋";
-          disabled = true;
-        };
-
         git_branch = {
           format = "[$symbol$branch(:$remote_branch)]($style)";
           symbol = "";
           style = "red";
         };
-
-        hg_branch = {
-          format = "[ $symbol$branch ]($style)";
-          symbol = " ";
-        };
-
         git_state.format = "([$state\\(($progress_current/$progress_total)\\)]($style))";
-
         git_status = {
           format = "($conflicted$staged$modified$deleted$renamed$untracked$stashed)($ahead_behind)";
           conflicted = "[ !$count! ](red bold)";
@@ -113,6 +59,50 @@ in
           renamed = "[>$count](green bold)";
           deleted = "[-$count](red bold)";
         };
+        hg_branch = {
+          format = "[ $symbol$branch ]($style)";
+          symbol = " ";
+        };
+        hostname = {
+          format = "[\\($hostname\\)]($style) ";
+          style = "yellow";
+        };
+        nix_shell = {
+          disabled = false;
+          format = "[ $name](bold blue)";
+        };
+        os = {
+          format = "$symbol";
+          disabled = false;
+          symbols = {
+            Arch = "[ ](#1793d1)";
+            NixOS = "[ ](#F2F8FD)";
+            Kali = "[ ](#EEEEEE)";
+            Windows = "[ ](#0078D4)";
+          };
+        };
+        shell = {
+          format = "$indicator";
+          fish_indicator = "[fish](#4EAD4E)";
+          powershell_indicator = "pwsh";
+          bash_indicator = "[bash](#FCFBFB)";
+          cmd_indicator = "cmd";
+          zsh_indicator = "[zsh](bold #4EAD4E)";
+          nu_indicator = "[nu](#4E950B)";
+          unknown_indicator = "shell?";
+          disabled = false;
+        };
+        status = {
+          format = " ([\\[](yellow bold)[$status]($style)[\\]](yellow bold))";
+          disabled = false;
+        };
+        sudo = {
+          format = "[$symbol]($style)";
+          style = "bold yellow";
+          symbol = "󱐋";
+          disabled = true;
+        };
+        # keep-sorted end
       };
     };
   };

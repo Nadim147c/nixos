@@ -22,7 +22,7 @@ def main [
     $inputs
     | each {|it| ffprobe -v quiet -print_format json -show_entries stream=width,height $it | from json | get streams }
     | flatten
-    | where {|it| ("width" in $it and "height" in $it) }
+    | where  {|it| ("width" in $it and "height" in $it) }
   )
 
   let n = $inputs | length
@@ -46,7 +46,7 @@ def main [
       | str join $joiner
       | $"($in)hstack=inputs=($count),($extra_filter)[out]"
     )
-    [...$resize $spacer $vstack] | where ($it != "") | str join ";"
+    [...$resize $spacer $vstack] | where  ($it != "") | str join ";"
   } else {
     # Vertical stacking – adapted from horizontal logic
     let min = $size | get width | math min
@@ -64,7 +64,7 @@ def main [
       | str join $joiner
       | $"($in)vstack=inputs=($count),($extra_filter)[out]"
     )
-    [...$resize $spacer $vstack] | where ($it != "") | str join ";"
+    [...$resize $spacer $vstack] | where  ($it != "") | str join ";"
   }
 
   gum log --structured --level debug filter_complex $filter_complex

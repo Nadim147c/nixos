@@ -32,7 +32,7 @@ let format = {|filename|
 }
 
 ls --all $wallpaper_dir
-| where type == file
+| where  type == file
 | sort-by modified --reverse
 | get name
 | each $format

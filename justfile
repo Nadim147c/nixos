@@ -17,7 +17,7 @@ fmt:
     nix fmt
 
 loop:
-  while true; do just build; done
+    while true; do just build; done
 
 quickshell-dev:
     find ./modules -iname "*.frag" -print0 | \
@@ -26,7 +26,7 @@ quickshell-dev:
     quickshell-dev
 
 update-flatpak:
-   nu ./modules/features/flatpak/update.nu
+    nu ./modules/features/flatpak/update.nu
 
 update-discord-settings:
     jq . ~/.config/Equicord/settings/settings.json > ./modules/programs/discord/settings.json
