@@ -48,6 +48,10 @@ in
           watchman.register-snapshot-trigger = false;
         };
 
+        aliases = {
+          "squash-down" = lib.splitString " " "squash --from @ --to @-";
+        };
+
         templates.git_push_bookmark = /* javascript */ ''
           "${username}/change-" ++ change_id.short()
         '';
