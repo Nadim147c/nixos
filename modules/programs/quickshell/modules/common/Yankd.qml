@@ -23,7 +23,7 @@ Singleton {
     }
 
     function set() {
-        Quickshell.execDetached(["yankd", "set", `${currentEntry.eventID}`]);
+        Quickshell.execDetached(["yankd", "set", "--promote", `${currentEntry.eventID}`]);
     }
 
     function remove() {
@@ -49,7 +49,7 @@ Singleton {
     }
 
     function setIndex(i: int) {
-        searchIndex = Math.min(Math.max(i, 0), searchResult.length - 1);
+        searchIndex = Utils.clamp(0, i, searchResult.length - 1);
     }
 
     function next() {
