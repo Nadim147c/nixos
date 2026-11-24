@@ -15,6 +15,7 @@ Text {
     property var defaultFont: shouldUseNumberFont ? Appearance.font.family.numbers : Appearance.font.family.main
 
     font {
+        contextFontMerging: true
         hintingPreference: Font.PreferDefaultHinting
         family: defaultFont
         pixelSize: Appearance?.font.pixelSize.small ?? 15
