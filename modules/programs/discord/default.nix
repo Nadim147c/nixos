@@ -41,7 +41,7 @@ in
       hj.programs.hyprland = {
         windowRules = singleton {
           name = "discord workspace 3";
-          match.class = "^(discord)$";
+          match.class = "^(com.discordapp.)?([dD]iscord)$";
           workspace = "3 silent";
         };
         programs = singleton {
