@@ -163,7 +163,7 @@ PanelWindow {
 
     Pixelate {
         anchors.fill: parent
-        pixelSize: 4
+        pixelSize: height / 480
         levels: 16
 
         color: Appearance.material.mySurface
