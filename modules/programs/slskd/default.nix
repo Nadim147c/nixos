@@ -39,7 +39,7 @@ in
       };
 
       systemd.tmpfiles.rules =
-        attrValues config.services.slskd.settings.directories
+        ([ "/home/${username}/.dotnet" ] ++ attrValues config.services.slskd.settings.directories)
         |> map (dir: "d ${dir} 0755 ${username} users - -");
 
       packages = [
