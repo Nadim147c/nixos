@@ -3,6 +3,7 @@ let programs = [
   ["sonora" "https://github.com/sonorahq/sonora" `sonora-v.+-x86_64.flatpak` `sonora-v.+-aarch64.flatpak`]
   ["photocraft" "https://github.com/storytold/photocraft" `photocraft-.+-linux-x86_64.flatpak` `photocraft-.+-linux-aarch64.flatpak`]
   ["effectcraft" "https://github.com/storytold/effectcraft" `effectcraft-.+-linux-x86_64.flatpak` `effectcraft-.+-linux-aarch64.flatpak`]
+  ["filmcraft" "https://github.com/storytold/filmcraft" `filmcraft-.+-linux-x86_64.flatpak` `filmcraft-.+-linux-aarch64.flatpak`]
 ]
 
 let arches = ["x86_64-linux" "aarch64-linux"]
@@ -10,7 +11,7 @@ let arches = ["x86_64-linux" "aarch64-linux"]
 let result = $programs | reduce -f {} {|row acc|
     let parsed = $row.url | parse "https://github.com/{owner}/{repo}" | get 0
     let api = $"https://api.github.com/repos/($parsed.owner)/($parsed.repo)/releases/latest"
-    let release = http get -H [User-Agent "nushell"] $api
+    let release = http get -H [User-Agent "nushell"] --password $env.GITHUB_TOKEN $api
 
     let per_arch = $arches | reduce -f {} {|arch m|
         let pattern = $row | get $arch
