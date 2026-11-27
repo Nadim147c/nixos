@@ -167,8 +167,13 @@ PanelWindow {
         anchors.bottom: parent.bottom
         anchors.right: parent.right
 
+        Behavior on y {
+            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+        }
+
         ColumnLayout {
             id: list
+            spacing: 0
 
             Repeater {
                 model: server.trackedNotifications
@@ -177,230 +182,330 @@ PanelWindow {
                 onItemAdded: (index, item) => root.cardItems = [...root.cardItems, item]
                 onItemRemoved: (index, item) => root.cardItems = root.cardItems.filter(i => i !== item)
 
-                Card {
-                    id: notification
+                Item {
+                    id: entry
+
                     required property Notification modelData
-                    readonly property real innerWidth: Math.max(0, width - Appearance.space.big * 2)
 
-                    readonly property var detectedCodes: {
-                        const combined = [notification.modelData.summary || "", root.stripHtmlTags(notification.modelData.body || "")].join(" ");
-                        return root.extractOtpCodes(combined);
+                    readonly property int gap: 5
+
+                    property real reveal: 0
+                    property real enterSlide: 1
+                    property real exitSlide: 0
+
+                    readonly property real shown: Math.max(0, reveal)
+                    readonly property real slide: Math.max(0, Math.min(1, enterSlide + exitSlide))
+
+                    property bool closing: false
+                    property bool expiring: false
+                    property bool finished: false
+
+                    function animateClose(expired) {
+                        if (closing)
+                            return;
+                        expiring = !!expired;
+                        closing = true;
+                        exitSlide = 1;
+                        reveal = 0;
                     }
 
-                    readonly property bool hasActions: {
-                        const a = modelData.actions;
-                        for (let i = 0; i < a.length; i++) {
-                            if (a[i].identifier !== "default")
-                                return true;
+                    onRevealChanged: {
+                        if (closing && !finished && reveal <= 0) {
+                            finished = true;
+                            if (expiring)
+                                modelData.expire();
+                            else
+                                modelData.dismiss();
                         }
-                        return false;
                     }
 
+                    Component.onCompleted: {
+                        reveal = 1;
+                        enterSlide = 0;
+                    }
+
+                    Behavior on reveal {
+                        animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
+                    }
+                    Behavior on enterSlide {
+                        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                    }
+                    Behavior on exitSlide {
+                        animation: Appearance.animation.elementMoveExit.numberAnimation.createObject(this)
+                    }
+
+                    clip: true
                     Layout.alignment: Qt.AlignRight
                     Layout.maximumWidth: root.width
-                    Layout.preferredWidth: Math.min(root.width, col.implicitWidth + Appearance.space.big * 2)
-                    Layout.preferredHeight: col.implicitHeight + Appearance.space.big * 2
-                    radius: 5
-                    borderWidth: 2
-                    borderPixelSize: 2
-                    color: Appearance.material.myBackground
+                    Layout.preferredWidth: notification.width
+                    Layout.preferredHeight: notification.height * shown
+                    Layout.topMargin: gap * shown
 
-                    ColumnLayout {
-                        id: col
-                        x: Appearance.space.big
-                        y: Appearance.space.big
-                        width: notification.innerWidth
-                        spacing: 1
+                    Card {
+                        id: notification
 
-                        RowLayout {
-                            Layout.fillWidth: true
-                            Layout.maximumWidth: col.width
-                            Layout.margins: 0
-                            Layout.leftMargin: 5
-                            Layout.rightMargin: 5
+                        readonly property Notification modelData: entry.modelData
+                        readonly property real innerWidth: Math.max(0, width - Appearance.space.big * 2)
 
-                            StyledText {
-                                id: title
+                        readonly property var detectedCodes: {
+                            const combined = [notification.modelData.summary || "", root.stripHtmlTags(notification.modelData.body || "")].join(" ");
+                            return root.extractOtpCodes(combined);
+                        }
+
+                        readonly property bool hasActions: {
+                            const a = modelData.actions;
+                            for (let i = 0; i < a.length; i++) {
+                                if (a[i].identifier !== "default")
+                                    return true;
+                            }
+                            return false;
+                        }
+
+                        readonly property int timeoutMs: {
+                            if (modelData.urgency === NotificationUrgency.Critical)
+                                return 0;
+                            return modelData.expireTimeout > 0 ? modelData.expireTimeout : 5000;
+                        }
+
+                        x: entry.slide * width
+                        opacity: 1 - entry.slide
+
+                        width: Math.min(root.width, col.implicitWidth + Appearance.space.big * 2)
+                        height: col.implicitHeight + Appearance.space.big * 2
+                        radius: 5
+                        borderWidth: 2
+                        borderPixelSize: 2
+                        color: Appearance.material.myBackground
+
+                        MouseArea {
+                            id: mouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onClicked: entry.animateClose(false)
+                        }
+
+                        Timer {
+                            interval: notification.timeoutMs
+                            onIntervalChanged: console.log(`${notification.modelData.id} expires in ${interval}ms`)
+                            running: interval > 0 && !mouseArea.containsMouse && !replyField.activeFocus && !entry.closing
+                            onTriggered: entry.animateClose(true)
+                        }
+
+                        ColumnLayout {
+                            id: col
+                            x: Appearance.space.big
+                            y: Appearance.space.big
+                            width: notification.innerWidth
+                            spacing: 1
+
+                            RowLayout {
                                 Layout.fillWidth: true
-                                Layout.minimumWidth: 0
-                                text: notification.modelData.summary
-                                wrapMode: Text.WordWrap
-                                font {
-                                    pixelSize: Appearance.font.pixelSize.large
-                                }
-                            }
+                                Layout.maximumWidth: col.width
+                                Layout.margins: 0
+                                Layout.leftMargin: 5
+                                Layout.rightMargin: 5
 
-                            RetroButton {
-                                Layout.preferredHeight: 30
-                                Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                                onClicked: notification.modelData.dismiss()
-
-                                Item {
-                                    id: item
-                                    anchors.centerIn: parent
-                                    implicitHeight: parent.contentHeight
-                                    implicitWidth: 20
-
-                                    Text {
-                                        anchors.centerIn: parent
-                                        color: Appearance.material.myOnBackground
-                                        text: "close"
-                                        font.family: Appearance.font.family.iconPixel
-                                        font.pixelSize: Appearance.font.pixelSize.large
-                                    }
-                                }
-                            }
-                        }
-
-                        StyledText {
-                            visible: !!notification.modelData.body
-                            Layout.fillWidth: true
-                            Layout.maximumWidth: col.width
-                            Layout.margins: 5
-                            text: notification.modelData.body
-                            wrapMode: Text.WordWrap
-                            textFormat: Text.RichText
-                            color: Appearance.material.myOnBackground
-                        }
-
-                        Flow {
-                            visible: notification.detectedCodes.length > 0
-                            Layout.fillWidth: true
-                            Layout.maximumWidth: col.width
-                            Layout.margins: 5
-                            spacing: 5
-
-                            Repeater {
-                                model: notification.detectedCodes
-
-                                RetroButton {
-                                    id: copyOtpButton
-                                    required property string modelData
-                                    height: 30
-                                    onClicked: {
-                                        Quickshell.clipboardText = copyOtpButton.modelData;
-                                    }
-
-                                    Item {
-                                        anchors.centerIn: parent
-                                        implicitWidth: copyOtpLabel.implicitWidth + 16
-                                        implicitHeight: copyOtpLabel.implicitHeight
-
-                                        StyledText {
-                                            id: copyOtpLabel
-                                            anchors.centerIn: parent
-                                            text: `Copy "${copyOtpButton.modelData}"`
-                                            color: Appearance.material.myOnBackground
-                                            font.pixelSize: Appearance.font.pixelSize.large
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        RowLayout {
-                            visible: notification.hasActions
-                            Layout.fillWidth: true
-                            Layout.maximumWidth: col.width
-                            Layout.margins: 5
-                            spacing: 5
-
-                            Repeater {
-                                model: notification.modelData.actions
-
-                                RetroButton {
-                                    id: actionButton
-                                    required property NotificationAction modelData
-
-                                    visible: modelData.identifier !== "default"
-                                    Layout.fillWidth: true
+                                Card {
                                     Layout.preferredHeight: 30
-                                    onClicked: {
-                                        modelData.invoke();
-                                        notification.modelData.dismiss();
-                                    }
-
-                                    Item {
-                                        anchors.centerIn: parent
-                                        implicitWidth: actionLabel.implicitWidth + 16
-                                        implicitHeight: actionLabel.implicitHeight
-
-                                        StyledText {
-                                            id: actionLabel
-                                            anchors.centerIn: parent
-                                            text: actionButton.modelData.text
-                                            color: Appearance.material.myOnBackground
-                                            font.pixelSize: Appearance.font.pixelSize.large
+                                    Layout.preferredWidth: 30
+                                    visible: !!notification.modelData.appIcon
+                                    radius: 4
+                                    borderWidth: 1
+                                    borderPixelSize: 2
+                                    Pixelate {
+                                        anchors.fill: parent
+                                        pixelSize: 1
+                                        levels: 32
+                                        StyledImage {
+                                            anchors.fill: parent
+                                            source: notification.modelData.appIcon
                                         }
                                     }
                                 }
-                            }
-                        }
 
-                        Card {
-                            id: replyCard
-                            visible: notification.modelData.hasInlineReply
-                            Layout.fillWidth: true
-                            Layout.maximumWidth: col.width
-                            Layout.margins: 5
-                            Layout.preferredWidth: replyRow.implicitWidth + 10
-                            Layout.preferredHeight: replyRow.implicitHeight + 10
-                            radius: 5
-                            borderWidth: 2
-                            borderPixelSize: 2
-                            color: Appearance.material.myBackground
-
-                            function send() {
-                                const text = replyField.text.trim();
-                                if (text.length === 0)
-                                    return;
-                                notification.modelData.sendInlineReply(text);
-                                replyField.text = "";
-                                notification.modelData.dismiss();
+                                StyledText {
+                                    id: title
+                                    Layout.fillWidth: true
+                                    Layout.minimumWidth: 0
+                                    text: notification.modelData.summary
+                                    wrapMode: Text.WordWrap
+                                    font {
+                                        pixelSize: Appearance.font.pixelSize.large
+                                    }
+                                }
                             }
 
                             RowLayout {
-                                id: replyRow
-                                x: 5
-                                y: 5
-                                width: replyCard.width - 10
-                                spacing: 5
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: col.width
+                                Layout.margins: 5
 
-                                TextField {
-                                    id: replyField
-                                    Layout.fillWidth: true
-                                    Layout.minimumWidth: 0
-                                    // Pinned so typing a long reply doesn't resize the card.
-                                    Layout.preferredWidth: 160
-                                    Layout.alignment: Qt.AlignVCenter
-
-                                    placeholderText: notification.modelData.inlineReplyPlaceholder || "Reply"
-                                    placeholderTextColor: Qt.alpha(Appearance.material.myOnBackground, 0.5)
-                                    color: Appearance.material.myOnBackground
-                                    font.pixelSize: Appearance.font.pixelSize.large
-                                    selectByMouse: true
-                                    background: null
-
-                                    onAccepted: replyCard.send()
+                                Card {
+                                    Layout.preferredHeight: 100
+                                    Layout.preferredWidth: 100
+                                    visible: !!notification.modelData.appIcon
+                                    radius: 4
+                                    borderWidth: 1
+                                    borderPixelSize: 2
+                                    Pixelate {
+                                        anchors.fill: parent
+                                        pixelSize: 2.5
+                                        levels: 32
+                                        StyledImage {
+                                            source: notification.modelData.image
+                                        }
+                                    }
                                 }
 
-                                RetroButton {
-                                    Layout.preferredHeight: 30
-                                    Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                                    onClicked: replyCard.send()
+                                StyledText {
+                                    Layout.alignment: Qt.AlignTop
+                                    Layout.fillWidth: true
+                                    visible: !!notification.modelData.body
+                                    text: notification.modelData.body
+                                    wrapMode: Text.WordWrap
+                                    textFormat: Text.RichText
+                                    color: Appearance.material.myOnBackground
+                                }
+                            }
 
-                                    Item {
-                                        anchors.centerIn: parent
-                                        implicitHeight: sendIcon.implicitHeight
-                                        implicitWidth: 20
+                            Flow {
+                                visible: notification.detectedCodes.length > 0
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: col.width
+                                Layout.margins: 5
+                                spacing: 5
 
-                                        Text {
-                                            id: sendIcon
+                                Repeater {
+                                    model: notification.detectedCodes
+
+                                    RetroButton {
+                                        id: copyOtpButton
+                                        required property string modelData
+                                        height: 30
+                                        onClicked: {
+                                            Quickshell.clipboardText = copyOtpButton.modelData;
+                                        }
+
+                                        Item {
                                             anchors.centerIn: parent
-                                            color: Appearance.material.myOnBackground
-                                            text: "send"
-                                            font.family: Appearance.font.family.iconPixel
-                                            font.pixelSize: Appearance.font.pixelSize.large
+                                            implicitWidth: copyOtpLabel.implicitWidth + 16
+                                            implicitHeight: copyOtpLabel.implicitHeight
+
+                                            StyledText {
+                                                id: copyOtpLabel
+                                                anchors.centerIn: parent
+                                                text: `Copy "${copyOtpButton.modelData}"`
+                                                color: Appearance.material.myOnBackground
+                                                font.pixelSize: Appearance.font.pixelSize.large
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            RowLayout {
+                                visible: notification.hasActions
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: col.width
+                                Layout.margins: 5
+                                spacing: 5
+
+                                Repeater {
+                                    model: notification.modelData.actions
+
+                                    RetroButton {
+                                        id: actionButton
+                                        required property NotificationAction modelData
+
+                                        visible: modelData.identifier !== "default"
+                                        Layout.fillWidth: true
+                                        Layout.preferredHeight: 30
+                                        onClicked: {
+                                            modelData.invoke();
+                                            entry.animateClose(false);
+                                        }
+
+                                        Item {
+                                            anchors.centerIn: parent
+                                            implicitWidth: actionLabel.implicitWidth + 16
+                                            implicitHeight: actionLabel.implicitHeight
+
+                                            StyledText {
+                                                id: actionLabel
+                                                anchors.centerIn: parent
+                                                text: actionButton.modelData.text
+                                                color: Appearance.material.myOnBackground
+                                                font.pixelSize: Appearance.font.pixelSize.large
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            Card {
+                                id: replyCard
+                                visible: notification.modelData.hasInlineReply
+                                Layout.fillWidth: true
+                                Layout.maximumWidth: col.width
+                                Layout.margins: 5
+                                Layout.preferredWidth: replyRow.implicitWidth + 10
+                                Layout.preferredHeight: replyRow.implicitHeight + 10
+                                radius: 5
+                                borderWidth: 2
+                                borderPixelSize: 2
+                                color: Appearance.material.myBackground
+
+                                function send() {
+                                    const text = replyField.text.trim();
+                                    if (text.length === 0)
+                                        return;
+                                    notification.modelData.sendInlineReply(text);
+                                    replyField.text = "";
+                                    entry.animateClose(false);
+                                }
+
+                                RowLayout {
+                                    id: replyRow
+                                    x: 5
+                                    y: 5
+                                    width: replyCard.width - 10
+                                    spacing: 5
+
+                                    TextField {
+                                        id: replyField
+                                        Layout.fillWidth: true
+                                        Layout.minimumWidth: 0
+                                        Layout.preferredWidth: 160
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        placeholderText: notification.modelData.inlineReplyPlaceholder || "Reply"
+                                        placeholderTextColor: Qt.alpha(Appearance.material.myOnBackground, 0.5)
+                                        color: Appearance.material.myOnBackground
+                                        font.pixelSize: Appearance.font.pixelSize.large
+                                        selectByMouse: true
+                                        background: null
+
+                                        onAccepted: replyCard.send()
+                                    }
+
+                                    RetroButton {
+                                        Layout.preferredHeight: 30
+                                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                                        onClicked: replyCard.send()
+
+                                        Item {
+                                            anchors.centerIn: parent
+                                            implicitHeight: sendIcon.implicitHeight
+                                            implicitWidth: 20
+
+                                            Text {
+                                                id: sendIcon
+                                                anchors.centerIn: parent
+                                                color: Appearance.material.myOnBackground
+                                                text: "send"
+                                                font.family: Appearance.font.family.iconPixel
+                                                font.pixelSize: Appearance.font.pixelSize.large
+                                            }
                                         }
                                     }
                                 }
